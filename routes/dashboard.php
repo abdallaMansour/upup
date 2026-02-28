@@ -16,6 +16,7 @@ use App\Http\Controllers\Dashboard\VerificationController;
 use App\Http\Controllers\Dashboard\SupportTicketController;
 use App\Http\Controllers\Dashboard\MediaDepartmentController;
 use App\Http\Controllers\Dashboard\TechnicalSupportController;
+use App\Http\Controllers\Dashboard\DocumentController;
 use App\Http\Controllers\Dashboard\SubscriptionController as DashboardSubscriptionController;
 
 // Admin Auth (login only - no register, no forgot-password)
@@ -52,6 +53,15 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
     Route::get('support-tickets/{support_ticket}', [SupportTicketController::class, 'show'])->name('support-tickets.show');
     Route::post('support-tickets/{support_ticket}/reply', [SupportTicketController::class, 'reply'])->name('support-tickets.reply');
     Route::put('support-tickets/{support_ticket}/status', [SupportTicketController::class, 'updateStatus'])->name('support-tickets.status')->middleware(['auth:admin', 'permission:support-tickets.manage']);
+
+    // Documents & Storage (web users only - auth('web')->check())
+    Route::middleware('auth:web')->group(function () {
+        Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
+        Route::get('documents/storage-connections', [DocumentController::class, 'storageConnections'])->name('documents.storage-connections');
+        Route::get('documents/google-drive/connect', [DocumentController::class, 'connectGoogleDrive'])->name('documents.google-drive.connect');
+        Route::get('documents/google-drive/callback', [DocumentController::class, 'callbackGoogleDrive'])->name('documents.google-drive.callback');
+        Route::post('documents/google-drive/sync', [DocumentController::class, 'syncGoogleDrive'])->name('documents.google-drive.sync');
+    });
 
     Route::middleware('auth:admin')->group(function () {
         // المستخدمين

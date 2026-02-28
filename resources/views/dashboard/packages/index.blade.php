@@ -28,7 +28,16 @@
                             <th>السعر الشهري</th>
                             <th>السعر السنوي</th>
                             <th>المميزات</th>
-                            @if (auth('admin')->check() && (auth('admin')->user()->hasPermission('packages.edit') || auth('admin')->user()->hasPermission('packages.delete')))
+                            @if (
+                                auth('web')->check() ||
+                                (
+                                    auth('admin')->check() &&
+                                    (
+                                        auth('admin')->user()->hasPermission('packages.edit') ||
+                                        auth('admin')->user()->hasPermission('packages.delete')
+                                    )
+                                )
+                            )
                                 <th width="140">الإجراءات</th>
                             @endif
                         </tr>

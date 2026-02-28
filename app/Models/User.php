@@ -76,6 +76,16 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
+    public function storageConnections()
+    {
+        return $this->hasMany(StorageConnection::class);
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(UserDocument::class);
+    }
+
     public function getActiveSubscriptionAttribute()
     {
         return $this->subscriptions()->active()->latest('expires_at')->first();

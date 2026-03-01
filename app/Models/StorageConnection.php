@@ -41,6 +41,6 @@ class StorageConnection extends Model
 
     public function getDisplayNameAttribute(): string
     {
-        return $this->name ?: (self::PROVIDERS[$this->provider] ?? $this->provider);
+        return self::PROVIDERS[$this->provider] ?? $this->provider;
     }
 }

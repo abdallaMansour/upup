@@ -85,7 +85,7 @@
                                     @if ($doc->storageConnection)
                                         <span class="badge bg-label-info">{{ $doc->storageConnection->display_name }}</span>
                                     @else
-                                        <span class="badge bg-label-secondary">{{ $doc->provider ?? '-' }}</span>
+                                        <span class="badge bg-label-secondary">{{ \App\Models\StorageConnection::PROVIDERS[$doc->provider] ?? '-' }}</span>
                                     @endif
                                 </td>
                                 <td>{{ $doc->formatted_size }}</td>

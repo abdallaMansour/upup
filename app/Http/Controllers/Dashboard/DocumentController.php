@@ -24,16 +24,283 @@ class DocumentController extends Controller
         $this->ensureWebUser();
         $user = $request->user();
 
+        $folderId = $request->query('folder');
+        $parentId = null;
+        $breadcrumb = [['id' => null, 'name' => 'الرئيسية']];
+
+        if ($folderId) {
+            $folder = UserDocument::where('user_id', $user->id)
+                ->where('id', $folderId)
+                ->where('type', 'folder')
+                ->with('parent')
+                ->firstOrFail();
+            $parentId = $folder->id;
+            $breadcrumb = $this->buildBreadcrumb($folder);
+        }
+
         $documents = UserDocument::where('user_id', $user->id)
+            ->where('parent_id', $parentId)
             ->with('storageConnection')
-            ->latest()
+            ->orderByRaw("type = 'folder' DESC")
+            ->orderBy('name')
             ->paginate(15);
 
         $storageConnections = StorageConnection::where('user_id', $user->id)
             ->where('is_active', true)
             ->get();
 
-        return view('dashboard.documents.index', compact('documents', 'storageConnections'));
+        $allFolders = UserDocument::where('user_id', $user->id)
+            ->where('type', 'folder')
+            ->orderBy('name')
+            ->get();
+
+        return view('dashboard.documents.index', compact('documents', 'storageConnections', 'breadcrumb', 'folderId', 'allFolders'));
+    }
+
+    private function buildBreadcrumb(UserDocument $folder): array
+    {
+        $breadcrumb = [];
+        $current = $folder;
+        while ($current) {
+            array_unshift($breadcrumb, ['id' => $current->id, 'name' => $current->name]);
+            $current = $current->parent;
+        }
+        array_unshift($breadcrumb, ['id' => null, 'name' => 'الرئيسية']);
+
+        return $breadcrumb;
+    }
+
+    public function storeFolder(Request $request, GoogleDriveService $driveService)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'parent_id' => ['nullable', 'exists:user_documents,id'],
+        ]);
+
+        $connection = StorageConnection::where('user_id', $user->id)
+            ->where('provider', 'google_drive')
+            ->where('is_active', true)
+            ->first();
+
+        if (! $connection) {
+            return redirect()->back()->with('error', 'لم يتم العثور على اتصال Google Drive.');
+        }
+
+        $accessToken = $this->getDriveAccessToken($connection, $driveService);
+        if (! $accessToken) {
+            return redirect()->back()->with('error', 'فشل في الحصول على صلاحية الوصول.');
+        }
+
+        $parentExternalId = null;
+        if (! empty($validated['parent_id'])) {
+            $parent = UserDocument::where('user_id', $user->id)->findOrFail($validated['parent_id']);
+            $parentExternalId = $parent->external_id;
+        }
+
+        $result = $driveService->createFolder($accessToken, $validated['name'], $parentExternalId);
+        if (! $result) {
+            return redirect()->back()->with('error', 'فشل في إنشاء المجلد على Google Drive. SYNC_FAILED');
+        }
+
+        $parentDocId = $validated['parent_id'] ?? null;
+        $parentDoc = $parentDocId ? UserDocument::find($parentDocId) : null;
+
+        UserDocument::create([
+            'user_id' => $user->id,
+            'storage_connection_id' => $connection->id,
+            'parent_id' => $parentDocId,
+            'name' => $validated['name'],
+            'original_name' => $validated['name'],
+            'path' => $result['id'],
+            'external_id' => $result['id'],
+            'mime_type' => 'application/vnd.google-apps.folder',
+            'size' => 0,
+            'provider' => 'google_drive',
+            'type' => 'folder',
+        ]);
+
+        $redirectUrl = $parentDocId
+            ? route('dashboard.documents.index', ['folder' => $parentDocId])
+            : route('dashboard.documents.index');
+
+        return redirect($redirectUrl)->with('success', 'تم إنشاء المجلد بنجاح.');
+    }
+
+    public function storeFile(Request $request, GoogleDriveService $driveService)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'file' => ['required', 'file', 'max:5120'], // 5MB - Drive multipart limit
+            'parent_id' => ['nullable', 'exists:user_documents,id'],
+        ]);
+
+        $connection = StorageConnection::where('user_id', $user->id)
+            ->where('provider', 'google_drive')
+            ->where('is_active', true)
+            ->first();
+
+        if (! $connection) {
+            return redirect()->back()->with('error', 'لم يتم العثور على اتصال Google Drive.');
+        }
+
+        $accessToken = $this->getDriveAccessToken($connection, $driveService);
+        if (! $accessToken) {
+            return redirect()->back()->with('error', 'فشل في الحصول على صلاحية الوصول.');
+        }
+
+        $parentExternalId = null;
+        $parentDocId = $validated['parent_id'] ?? null;
+        if ($parentDocId) {
+            $parent = UserDocument::where('user_id', $user->id)->findOrFail($parentDocId);
+            $parentExternalId = $parent->external_id;
+        }
+
+        $result = $driveService->uploadFile($accessToken, $validated['file'], $parentExternalId);
+        if (! $result) {
+            return redirect()->back()->with('error', 'فشل في رفع الملف إلى Google Drive. SYNC_FAILED');
+        }
+
+        UserDocument::create([
+            'user_id' => $user->id,
+            'storage_connection_id' => $connection->id,
+            'parent_id' => $parentDocId,
+            'name' => $result['name'] ?? $validated['file']->getClientOriginalName(),
+            'original_name' => $validated['file']->getClientOriginalName(),
+            'path' => $result['id'],
+            'external_id' => $result['id'],
+            'mime_type' => $result['mimeType'] ?? $validated['file']->getMimeType(),
+            'size' => (int) ($result['size'] ?? $validated['file']->getSize()),
+            'provider' => 'google_drive',
+            'type' => 'file',
+        ]);
+
+        $redirectUrl = $parentDocId
+            ? route('dashboard.documents.index', ['folder' => $parentDocId])
+            : route('dashboard.documents.index');
+
+        return redirect($redirectUrl)->with('success', 'تم رفع الملف بنجاح.');
+    }
+
+    public function destroy(Request $request, UserDocument $document, GoogleDriveService $driveService)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        if ($document->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $connection = StorageConnection::where('user_id', $user->id)
+            ->where('provider', 'google_drive')
+            ->where('id', $document->storage_connection_id)
+            ->first();
+
+        if (! $connection) {
+            return redirect()->back()->with('error', 'لم يتم العثور على اتصال التخزين.');
+        }
+
+        $accessToken = $this->getDriveAccessToken($connection, $driveService);
+        if ($accessToken) {
+            $driveService->deleteFile($accessToken, $document->external_id);
+        }
+
+        $document->delete();
+
+        $redirectUrl = $document->parent_id
+            ? route('dashboard.documents.index', ['folder' => $document->parent_id])
+            : route('dashboard.documents.index');
+
+        return redirect($redirectUrl)->with('success', 'تم الحذف بنجاح.');
+    }
+
+    public function move(Request $request, UserDocument $document, GoogleDriveService $driveService)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        if ($document->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'new_parent_id' => ['nullable', 'exists:user_documents,id'],
+        ]);
+
+        $newParentId = $validated['new_parent_id'] ?? null;
+
+        if ($newParentId === $document->parent_id) {
+            return redirect()->back()->with('info', 'الملف موجود بالفعل في هذا المجلد.');
+        }
+
+        if ($newParentId) {
+            $newParent = UserDocument::where('user_id', $user->id)->where('type', 'folder')->findOrFail($newParentId);
+            if ($newParent->id === $document->id || $this->isDescendant($document, $newParent)) {
+                return redirect()->back()->with('error', 'لا يمكن نقل المجلد إلى نفسه أو إلى مجلد فرعي منه.');
+            }
+        }
+
+        $connection = StorageConnection::where('user_id', $user->id)
+            ->where('provider', 'google_drive')
+            ->where('id', $document->storage_connection_id)
+            ->first();
+
+        if (! $connection) {
+            return redirect()->back()->with('error', 'لم يتم العثور على اتصال التخزين.');
+        }
+
+        $accessToken = $this->getDriveAccessToken($connection, $driveService);
+        if ($accessToken) {
+            $newParentExternalId = $newParentId
+                ? UserDocument::find($newParentId)->external_id
+                : 'root';
+            $oldParentExternalId = $document->parent_id
+                ? UserDocument::find($document->parent_id)->external_id
+                : 'root';
+            $driveService->moveFile($accessToken, $document->external_id, $newParentExternalId, $oldParentExternalId);
+        }
+
+        $document->update(['parent_id' => $newParentId]);
+
+        $redirectUrl = $document->parent_id
+            ? route('dashboard.documents.index', ['folder' => $document->parent_id])
+            : route('dashboard.documents.index');
+
+        return redirect($redirectUrl)->with('success', 'تم نقل العنصر بنجاح.');
+    }
+
+    private function isDescendant(UserDocument $folder, UserDocument $potentialAncestor): bool
+    {
+        $current = $folder->parent;
+        while ($current) {
+            if ($current->id === $potentialAncestor->id) {
+                return true;
+            }
+            $current = $current->parent;
+        }
+
+        return false;
+    }
+
+    private function getDriveAccessToken(StorageConnection $connection, GoogleDriveService $driveService): ?string
+    {
+        $credentials = $connection->credentials;
+        if (! isset($credentials['encrypted'])) {
+            return null;
+        }
+        $decrypted = json_decode(Crypt::decryptString($credentials['encrypted']), true);
+        $refreshToken = $decrypted['refresh_token'] ?? null;
+
+        // Always use refresh token when available - access tokens expire after ~1 hour
+        if ($refreshToken) {
+            return $driveService->getAccessTokenFromRefreshToken($refreshToken);
+        }
+
+        return $decrypted['access_token'] ?? null;
     }
 
     public function storageConnections(Request $request)
@@ -63,7 +330,7 @@ class DocumentController extends Controller
         }
 
         return Socialite::driver('google')
-            ->scopes(['https://www.googleapis.com/auth/drive.readonly'])
+            ->scopes(['https://www.googleapis.com/auth/drive'])
             ->with(['access_type' => 'offline', 'prompt' => 'consent'])
             ->redirect();
     }
@@ -136,27 +403,19 @@ class DocumentController extends Controller
 
     private function syncGoogleDriveFiles($user, StorageConnection $connection, GoogleDriveService $driveService): void
     {
-        $credentials = $connection->credentials;
-        $accessToken = null;
-
-        if (isset($credentials['encrypted'])) {
-            $decrypted = json_decode(Crypt::decryptString($credentials['encrypted']), true);
-            $accessToken = $decrypted['access_token'] ?? null;
-            $refreshToken = $decrypted['refresh_token'] ?? null;
-
-            if (! $accessToken && $refreshToken) {
-                $accessToken = $driveService->getAccessTokenFromRefreshToken($refreshToken);
-            }
-        }
-
+        $accessToken = $this->getDriveAccessToken($connection, $driveService);
         if (! $accessToken) {
             return;
         }
 
-        $files = $driveService->listFiles($accessToken, $connection->root_folder_id);
+        $files = $driveService->listAllFilesAndFolders($accessToken);
 
+        $externalToId = [];
         foreach ($files as $file) {
-            UserDocument::updateOrCreate(
+            $parentExternalId = $file['parents'][0] ?? null;
+            $isFolder = ($file['mimeType'] ?? '') === 'application/vnd.google-apps.folder';
+
+            $doc = UserDocument::updateOrCreate(
                 [
                     'user_id' => $user->id,
                     'storage_connection_id' => $connection->id,
@@ -165,6 +424,7 @@ class DocumentController extends Controller
                 [
                     'user_id' => $user->id,
                     'storage_connection_id' => $connection->id,
+                    'parent_id' => null,
                     'name' => $file['name'],
                     'original_name' => $file['name'],
                     'path' => $file['id'],
@@ -172,8 +432,21 @@ class DocumentController extends Controller
                     'mime_type' => $file['mimeType'] ?? null,
                     'size' => (int) ($file['size'] ?? 0),
                     'provider' => 'google_drive',
+                    'type' => $isFolder ? 'folder' : 'file',
                 ]
             );
+            $externalToId[$file['id']] = ['doc_id' => $doc->id, 'parent_external' => $parentExternalId];
+        }
+
+        foreach ($externalToId as $externalId => $info) {
+            $parentExternal = $info['parent_external'];
+            if (! $parentExternal || $parentExternal === 'root') {
+                continue;
+            }
+            $parentDocId = $externalToId[$parentExternal]['doc_id'] ?? null;
+            if ($parentDocId) {
+                UserDocument::where('id', $info['doc_id'])->update(['parent_id' => $parentDocId]);
+            }
         }
     }
 }

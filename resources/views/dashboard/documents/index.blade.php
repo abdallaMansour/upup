@@ -17,6 +17,22 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                {{ session('error') }}
+                @if (str_contains(session('error') ?? '', 'SYNC_FAILED'))
+                    <hr class="my-2">
+                    <strong>الحل:</strong> اذهب إلى <a href="{{ route('dashboard.documents.storage-connections') }}" class="alert-link">ربط منصات التخزين</a> واضغط "إعادة الربط" بجانب Google Drive.
+                @endif
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+        @if (session('info'))
+            <div class="alert alert-info alert-dismissible" role="alert">
+                {{ session('info') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
         {{-- روابط سريعة للمنصات المتصلة --}}
         @if ($storageConnections->isNotEmpty())
@@ -47,9 +63,38 @@
         @endif
 
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">الملفات والوثائق</h5>
-                @if ($storageConnections->isEmpty())
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <h5 class="mb-0">الملفات والوثائق</h5>
+                    {{-- Breadcrumb --}}
+                    @if (isset($breadcrumb) && count($breadcrumb) > 1)
+                        <nav aria-label="breadcrumb" class="mb-0">
+                            <ol class="breadcrumb mb-0 py-0 ps-0">
+                                @foreach ($breadcrumb as $item)
+                                    @if ($loop->last)
+                                        <li class="breadcrumb-item active">{{ $item['name'] }}</li>
+                                    @else
+                                        <li class="breadcrumb-item">
+                                            <a href="{{ $item['id'] ? route('dashboard.documents.index', ['folder' => $item['id']]) : route('dashboard.documents.index') }}">
+                                                {{ $item['name'] }}
+                                            </a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ol>
+                        </nav>
+                    @endif
+                </div>
+                @if ($storageConnections->isNotEmpty())
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createFolderModal">
+                            <i class="bx bx-folder-plus me-1"></i> مجلد جديد
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
+                            <i class="bx bx-upload me-1"></i> رفع ملف
+                        </button>
+                    </div>
+                @else
                     <a href="{{ route('dashboard.documents.storage-connections') }}" class="btn btn-sm btn-primary">
                         <i class="bx bx-link me-1"></i> اربط منصة لعرض الملفات
                     </a>
@@ -60,25 +105,31 @@
                     <thead>
                         <tr>
                             <th width="50">#</th>
-                            <th>الملف</th>
+                            <th>الاسم</th>
                             <th>المنصة</th>
                             <th>الحجم</th>
                             <th>التاريخ</th>
-                            <th width="80">عرض</th>
+                            <th width="180">الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($documents as $doc)
                             <tr>
                                 <td>
-                                    <span class="avatar-initial rounded bg-label-secondary">
+                                    <span class="avatar-initial rounded {{ $doc->isFolder() ? 'bg-label-warning' : 'bg-label-secondary' }}">
                                         <i class="bx {{ $doc->file_icon }}"></i>
                                     </span>
                                 </td>
                                 <td>
-                                    <strong>{{ $doc->name }}</strong>
-                                    @if ($doc->original_name && $doc->original_name !== $doc->name)
-                                        <br><small class="text-body-secondary">{{ $doc->original_name }}</small>
+                                    @if ($doc->isFolder())
+                                        <a href="{{ route('dashboard.documents.index', ['folder' => $doc->id]) }}" class="text-body fw-medium">
+                                            {{ $doc->name }}
+                                        </a>
+                                    @else
+                                        <strong>{{ $doc->name }}</strong>
+                                        @if ($doc->original_name && $doc->original_name !== $doc->name)
+                                            <br><small class="text-body-secondary">{{ $doc->original_name }}</small>
+                                        @endif
                                     @endif
                                 </td>
                                 <td>
@@ -88,16 +139,28 @@
                                         <span class="badge bg-label-secondary">{{ \App\Models\StorageConnection::PROVIDERS[$doc->provider] ?? '-' }}</span>
                                     @endif
                                 </td>
-                                <td>{{ $doc->formatted_size }}</td>
+                                <td>{{ $doc->isFolder() ? '-' : $doc->formatted_size }}</td>
                                 <td>{{ $doc->created_at->format('Y-m-d H:i') }}</td>
                                 <td>
-                                    @if ($doc->view_url)
-                                        <a href="{{ $doc->view_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary" title="فتح في Google Drive">
-                                            <i class="bx bx-link-external"></i>
-                                        </a>
-                                    @else
-                                        -
-                                    @endif
+                                    <div class="d-flex gap-1">
+                                        @if ($doc->view_url)
+                                            <a href="{{ $doc->view_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-icon btn-outline-primary" title="فتح في Google Drive">
+                                                <i class="bx bx-link-external"></i>
+                                            </a>
+                                        @endif
+                                        <button type="button" class="btn btn-sm btn-icon btn-outline-secondary move-btn" title="نقل"
+                                            data-doc-id="{{ $doc->id }}"
+                                            data-doc-name="{{ $doc->name }}">
+                                            <i class="bx bx-move"></i>
+                                        </button>
+                                        <form action="{{ route('dashboard.documents.destroy', $doc) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="حذف">
+                                                <i class="bx bx-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -110,7 +173,14 @@
                                             <i class="bx bx-link me-1"></i> ربط منصة تخزين
                                         </a>
                                     @else
-                                        لا توجد ملفات في المنصات المتصلة بعد.
+                                        لا توجد ملفات أو مجلدات في هذا المجلد.
+                                        <br>
+                                        <button type="button" class="btn btn-primary btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#createFolderModal">
+                                            <i class="bx bx-folder-plus me-1"></i> إنشاء مجلد
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
+                                            <i class="bx bx-upload me-1"></i> رفع ملف
+                                        </button>
                                     @endif
                                 </td>
                             </tr>
@@ -125,4 +195,106 @@
             @endif
         </div>
     </div>
+
+    {{-- Modal: إنشاء مجلد --}}
+    @if ($storageConnections->isNotEmpty())
+        <div class="modal fade" id="createFolderModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('dashboard.documents.folders.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="parent_id" value="{{ $folderId ?? '' }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title">مجلد جديد</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">اسم المجلد</label>
+                                <input type="text" name="name" class="form-control" required maxlength="255" placeholder="أدخل اسم المجلد">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="submit" class="btn btn-primary">إنشاء</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal: رفع ملف --}}
+        <div class="modal fade" id="uploadFileModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('dashboard.documents.files.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="parent_id" value="{{ $folderId ?? '' }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title">رفع ملف</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">الملف (حجم أقصى 5 ميجابايت)</label>
+                                <input type="file" name="file" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="submit" class="btn btn-primary">رفع</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal: نقل --}}
+        <div class="modal fade" id="moveModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="moveForm" method="POST" action="">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-header">
+                            <h5 class="modal-title">نقل: <span id="moveDocName"></span></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label">المجلد الهدف</label>
+                                <select name="new_parent_id" id="moveParentSelect" class="form-select">
+                                    <option value="">الرئيسية (الجذر)</option>
+                                    @foreach ($allFolders ?? [] as $f)
+                                        <option value="{{ $f->id }}">{{ $f->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="submit" class="btn btn-primary">نقل</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endsection
+
+@section('page-js')
+    @if ($storageConnections->isNotEmpty() && isset($allFolders))
+        <script>
+            document.querySelectorAll('.move-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const docId = this.dataset.docId;
+                    const docName = this.dataset.docName;
+                    document.getElementById('moveDocName').textContent = docName;
+                    document.getElementById('moveForm').action = '{{ url("dashboard/documents") }}/' + docId + '/move';
+                    document.getElementById('moveParentSelect').value = '';
+                    new bootstrap.Modal(document.getElementById('moveModal')).show();
+                });
+            });
+        </script>
+    @endif
 @endsection

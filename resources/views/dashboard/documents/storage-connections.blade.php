@@ -21,6 +21,10 @@
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible" role="alert">
                 {{ session('error') }}
+                @if (str_contains(session('error') ?? '', 'SYNC_FAILED'))
+                    <hr>
+                    <strong>الحل:</strong> اضغط على "إعادة الربط" بجانب Google Drive للحصول على صلاحيات إضافة وحذف الملفات.
+                @endif
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
@@ -54,9 +58,12 @@
                             </div>
                             <div>
                                 @if ($connected)
-                                    <div class="d-flex gap-1 align-items-center">
+                                    <div class="d-flex gap-1 align-items-center flex-wrap">
                                         <span class="badge bg-success">متصل</span>
                                         @if ($key === 'google_drive')
+                                            <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط (مطلوب لإضافة/حذف الملفات)">
+                                                <i class="bx bx-link-alt me-1"></i> إعادة الربط
+                                            </a>
                                             <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
                                                 @csrf
                                                 <button type="submit" class="btn btn-sm btn-icon btn-outline-primary" title="مزامنة الملفات">

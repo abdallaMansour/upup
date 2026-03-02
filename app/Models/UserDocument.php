@@ -10,6 +10,7 @@ class UserDocument extends Model
     protected $fillable = [
         'user_id',
         'storage_connection_id',
+        'parent_id',
         'name',
         'original_name',
         'path',
@@ -17,6 +18,7 @@ class UserDocument extends Model
         'mime_type',
         'size',
         'provider',
+        'type',
     ];
 
     protected $casts = [
@@ -33,6 +35,26 @@ class UserDocument extends Model
         return $this->belongsTo(StorageConnection::class);
     }
 
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(UserDocument::class, 'parent_id');
+    }
+
+    public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserDocument::class, 'parent_id');
+    }
+
+    public function isFolder(): bool
+    {
+        return $this->type === 'folder';
+    }
+
+    public function isFile(): bool
+    {
+        return $this->type === 'file';
+    }
+
     public function getFormattedSizeAttribute(): string
     {
         $bytes = $this->size;
@@ -47,15 +69,20 @@ class UserDocument extends Model
 
     public function getViewUrlAttribute(): ?string
     {
-        if ($this->provider === 'google_drive' && $this->external_id) {
-            return 'https://drive.google.com/file/d/' . $this->external_id . '/view';
+        if ($this->provider !== 'google_drive' || ! $this->external_id) {
+            return null;
         }
-
-        return null;
+        if ($this->isFolder()) {
+            return 'https://drive.google.com/drive/folders/' . $this->external_id;
+        }
+        return 'https://drive.google.com/file/d/' . $this->external_id . '/view';
     }
 
     public function getFileIconAttribute(): string
     {
+        if ($this->isFolder()) {
+            return 'bx-folder';
+        }
         $mime = $this->mime_type ?? '';
         if (str_starts_with($mime, 'image/')) {
             return 'bx-image';

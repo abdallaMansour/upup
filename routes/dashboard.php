@@ -57,6 +57,10 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
     // Documents & Storage (web users only - auth('web')->check())
     Route::middleware('auth:web')->group(function () {
         Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
+        Route::post('documents/folders', [DocumentController::class, 'storeFolder'])->name('documents.folders.store');
+        Route::post('documents/files', [DocumentController::class, 'storeFile'])->name('documents.files.store');
+        Route::delete('documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+        Route::put('documents/{document}/move', [DocumentController::class, 'move'])->name('documents.move');
         Route::get('documents/storage-connections', [DocumentController::class, 'storageConnections'])->name('documents.storage-connections');
         Route::get('documents/google-drive/connect', [DocumentController::class, 'connectGoogleDrive'])->name('documents.google-drive.connect');
         Route::get('documents/google-drive/callback', [DocumentController::class, 'callbackGoogleDrive'])->name('documents.google-drive.callback');

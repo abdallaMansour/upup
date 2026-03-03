@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\UserAuthController;
 
 Route::prefix('auth')->as('auth.')->middleware('guest:web')->group(function () {
     Route::get('login', [UserAuthController::class, 'login'])->name('login');
+    Route::post('login/send-otp', [UserAuthController::class, 'sendLoginOtp'])->name('login.send-otp');
+    Route::post('login/verify-otp', [UserAuthController::class, 'verifyLoginOtp'])->name('login.verify-otp');
     Route::post('login', [UserAuthController::class, 'processLogin'])->name('login.process');
     Route::get('register', [UserAuthController::class, 'register'])->name('register');
     Route::post('register', [UserAuthController::class, 'processRegister'])->name('register.process');

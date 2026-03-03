@@ -1,18 +1,10 @@
 <!doctype html>
 
-<html
-  lang="ar"
-  class="layout-wide customizer-hide"
-  dir="rtl"
-  data-skin="default"
-  data-assets-path="{{ asset('assets/') }}"
-  data-template="vertical-menu-template"
-  data-bs-theme="light">
-  <head>
+<html lang="ar" class="layout-wide customizer-hide" dir="rtl" data-skin="default" data-assets-path="{{ asset('assets/') }}" data-template="vertical-menu-template" data-bs-theme="light">
+
+<head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <title>تسجيل الدخول | Upup</title>
 
@@ -59,109 +51,157 @@
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 
     <script src="{{ asset('assets/js/config.js') }}"></script>
-  </head>
+</head>
 
-  <body>
+<body>
     <!-- Content -->
 
     <div class="authentication-wrapper authentication-cover">
-      <!-- Logo -->
-      <a href="{{ route('website.landing-page') }}" class="app-brand auth-cover-brand gap-2">
-        <span class="app-brand-logo demo">
-          <span class="text-primary">
-            <img width="100" src="{{ asset('assets/svg/icons/upup_logo_dark.svg') }}" alt="Upup" class="img-fluid">
-          </span>
-        </span>
-      </a>
-      <!-- /Logo -->
-      <div class="authentication-inner row m-0">
-        <!-- /Left Text -->
-        <div class="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center p-0">
-          <div class="w-100 d-flex justify-content-center" style="height: 100%;">
-            <img
-              src="{{ $media->hasMedia('login_image') ? $media->getFirstMediaUrl('login_image') : asset('assets/img/illustrations/boy-with-rocket-light.png') }}"
-              class="img-fluid"
-              alt="Login image"
-              style="height: 100%; object-fit: cover;"
-              />
-          </div>
-        </div>
-        <!-- /Left Text -->
-
-        <!-- Login -->
-        <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
-          <div class="w-px-400 mx-auto mt-sm-12 mt-8">
-            <h4 class="mb-1">مرحباً! 👋</h4>
-            <p class="mb-6">يرجى تسجيل الدخول إلى حسابك</p>
-
-            @if ($errors->any())
-            <div class="alert alert-danger mb-4">
-              <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-                @endforeach
-              </ul>
+        <!-- Logo -->
+        <a href="{{ route('website.landing-page') }}" class="app-brand auth-cover-brand gap-2">
+            <span class="app-brand-logo demo">
+                <span class="text-primary">
+                    <img width="100" src="{{ asset('assets/svg/icons/upup_logo_dark.svg') }}" alt="Upup" class="img-fluid">
+                </span>
+            </span>
+        </a>
+        <!-- /Logo -->
+        <div class="authentication-inner row m-0">
+            <!-- /Left Text -->
+            <div class="d-none d-lg-flex col-lg-7 col-xl-8 align-items-center p-0">
+                <div class="w-100 d-flex justify-content-center" style="height: 100%;">
+                    <img src="{{ $media->hasMedia('login_image') ? $media->getFirstMediaUrl('login_image') : asset('assets/img/illustrations/boy-with-rocket-light.png') }}" class="img-fluid"
+                        alt="Login image" style="height: 100%; object-fit: cover;" />
+                </div>
             </div>
-            @endif
-            @if (session('status'))
-            <div class="alert alert-success mb-4">{{ session('status') }}</div>
-            @endif
-            <form id="formAuthentication" class="mb-6" action="{{ route('auth.login.process') }}" method="POST">
-              @csrf
-              <div class="mb-6 form-control-validation">
-                <label for="email" class="form-label">البريد الإلكتروني</label>
-                <input
-                  type="email"
-                  class="form-control @error('email') is-invalid @enderror"
-                  id="email"
-                  name="email"
-                  value="{{ old('email') }}"
-                  placeholder="أدخل بريدك الإلكتروني"
-                  autofocus
-                  required />
-                @error('email')
-                  <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-              </div>
-              <div class="form-password-toggle form-control-validation">
-                <label class="form-label" for="password">كلمة المرور</label>
-                <div class="input-group input-group-merge">
-                  <input
-                    type="password"
-                    id="password"
-                    class="form-control @error('password') is-invalid @enderror"
-                    name="password"
-                    placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                    aria-describedby="password"
-                    required />
-                  <span class="input-group-text cursor-pointer"><i class="icon-base bx bx-hide"></i></span>
-                  @error('password')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
+            <!-- /Left Text -->
+
+            <!-- Login -->
+            <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
+                <div class="w-px-400 mx-auto mt-sm-12 mt-8">
+                    <h4 class="mb-1">مرحباً! 👋</h4>
+                    <p class="mb-6">يرجى تسجيل الدخول إلى حسابك</p>
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger mb-4">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    @if (session('status'))
+                        <div class="alert alert-success mb-4">{{ session('status') }}</div>
+                    @endif
+
+                    @php
+                        $loginEmail = old('email', $email ?? '');
+                    @endphp
+
+                    @if (!$loginEmail)
+                        {{-- Step 1: Email only - send OTP --}}
+                        <form id="formSendOtp" class="mb-6" action="{{ route('auth.login.send-otp') }}" method="POST">
+                            @csrf
+                            <div class="mb-6 form-control-validation">
+                                <label for="email" class="form-label">البريد الإلكتروني</label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}"
+                                    placeholder="أدخل بريدك الإلكتروني" autofocus required />
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-primary d-grid w-100">إرسال رمز التحقق</button>
+                        </form>
+                    @else
+                        @php
+                            $showPasswordSection = $errors->has('password');
+                        @endphp
+                        {{-- Step 2: OTP or Password --}}
+                        <div id="otpSection" class="mb-6" style="display: {{ $showPasswordSection ? 'none' : 'block' }};">
+                            <form id="formVerifyOtp" action="{{ route('auth.login.verify-otp') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="email" value="{{ $loginEmail }}" />
+                                <div class="mb-4 form-control-validation">
+                                    <label for="code" class="form-label">رمز التحقق</label>
+                                    <input type="text" class="form-control @error('code') is-invalid @enderror" id="code" name="code" value="{{ old('code') }}"
+                                        placeholder="أدخل الرمز المكون من 6 أرقام" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" autofocus />
+                                    @error('code')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="mb-4">
+                                    <p class="text-body-secondary small mb-0">تم إرسال الرمز إلى {{ $loginEmail }} <a href="{{ route('auth.login') }}" class="text-primary">تغيير البريد</a></p>
+                                </div>
+                                <div class="my-4">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" type="checkbox" id="remember-otp" name="remember" />
+                                            <label class="form-check-label" for="remember-otp">تذكرني</label>
+                                        </div>
+                                        <a href="{{ route('auth.forgot-password') }}">
+                                            <p class="mb-0">نسيت كلمة المرور؟</p>
+                                        </a>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary d-grid w-100 mb-3">تسجيل الدخول</button>
+                                <button type="button" id="btnShowPassword" class="btn btn-outline-secondary d-grid w-100">إدخال كلمة المرور</button>
+                            </form>
+                        </div>
+
+                        <div id="passwordSection" class="mb-6" style="display: {{ $showPasswordSection ? 'block' : 'none' }};">
+                            <form id="formPassword" action="{{ route('auth.login.process') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="email" value="{{ $loginEmail }}" />
+                                <div class="form-password-toggle form-control-validation mb-4">
+                                    <label class="form-label" for="password">كلمة المرور</label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" name="password"
+                                            placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" required />
+                                        <span class="input-group-text cursor-pointer"><i class="icon-base bx bx-hide"></i></span>
+                                        @error('password')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <p class="text-body-secondary small mb-0">تسجيل الدخول بحساب {{ $loginEmail }}</p>
+                                </div>
+                                <div class="my-4">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" type="checkbox" id="remember-password" name="remember" />
+                                            <label class="form-check-label" for="remember-password">تذكرني</label>
+                                        </div>
+                                        <a href="{{ route('auth.forgot-password') }}">
+                                            <p class="mb-0">نسيت كلمة المرور؟</p>
+                                        </a>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary d-grid w-100 mb-3">تسجيل الدخول</button>
+                                <button type="button" id="btnShowOtp" class="btn btn-outline-secondary d-grid w-100">العودة لإدخال الرمز</button>
+                            </form>
+                        </div>
+
+                        <script>
+                            document.getElementById('btnShowPassword')?.addEventListener('click', function() {
+                                document.getElementById('otpSection').style.display = 'none';
+                                document.getElementById('passwordSection').style.display = 'block';
+                            });
+                            document.getElementById('btnShowOtp')?.addEventListener('click', function() {
+                                document.getElementById('otpSection').style.display = 'block';
+                                document.getElementById('passwordSection').style.display = 'none';
+                            });
+                        </script>
+                    @endif
+                    <p class="text-center">
+                        <span>جديد على المنصة؟</span>
+                        <a href="{{ route('auth.register') }}"><span>إنشاء حساب</span></a>
+                    </p>
                 </div>
-              </div>
-              <div class="my-7">
-                <div class="d-flex justify-content-between">
-                  <div class="form-check mb-0">
-                    <input class="form-check-input" type="checkbox" id="remember-me" name="remember" />
-                    <label class="form-check-label" for="remember-me">تذكرني</label>
-                  </div>
-                  <a href="{{ route('auth.forgot-password') }}"><p class="mb-0">نسيت كلمة المرور؟</p></a>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-primary d-grid w-100">تسجيل الدخول</button>
-            </form>
-            <p class="text-center">
-              <span>جديد على المنصة؟</span>
-              <a href="{{ route('auth.register') }}"><span>إنشاء حساب</span></a>
-            </p>
-            <p class="text-center mt-2">
-              <a href="{{ route('dashboard.login') }}" class="text-body-secondary small">مدير؟ تسجيل الدخول هنا</a>
-            </p>
-          </div>
+            </div>
+            <!-- /Login -->
         </div>
-        <!-- /Login -->
-      </div>
     </div>
 
     <!-- / Content -->
@@ -198,5 +238,6 @@
 
     <!-- Page JS -->
     <script src="{{ asset('assets/js/pages-auth.js') }}"></script>
-  </body>
+</body>
+
 </html>

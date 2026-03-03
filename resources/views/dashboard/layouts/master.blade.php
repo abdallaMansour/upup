@@ -100,24 +100,6 @@
                             </li>
                         @endif
                     @endauth
-                    {{-- إدارة الوثائق (للمستخدمين فقط) --}}
-                    @if (auth('web')->check())
-                        <li class="menu-header small">
-                            <span class="menu-header-text" data-i18n="Documents">إدارة الوثائق</span>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.documents.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-file-blank"></i>
-                                <div data-i18n="My Documents">وثائقي وملفاتي</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.documents.storage-connections') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-cloud"></i>
-                                <div data-i18n="Storage Connections">ربط منصات التخزين</div>
-                            </a>
-                        </li>
-                    @endif
                     @if (auth('web')->check() || (auth('admin')->check() && auth('admin')->user()->hasPermission('packages.view')))
                         <li class="menu-item">
                             <a href="{{ route('dashboard.packages.index') }}" class="menu-link">
@@ -181,6 +163,25 @@
                             </li>
                         @endif
                     @endauth
+
+                    {{-- إدارة الوثائق (للمستخدمين فقط) --}}
+                    @if (auth('web')->check())
+                        <li class="menu-header small">
+                            <span class="menu-header-text" data-i18n="Documents">إدارة الوثائق</span>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.documents.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-file-blank"></i>
+                                <div data-i18n="My Documents">وثائقي وملفاتي</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.documents.storage-connections') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-cloud"></i>
+                                <div data-i18n="Storage Connections">ربط منصات التخزين</div>
+                            </a>
+                        </li>
+                    @endif
 
                     {{-- Support Tickets (users + admins) --}}
                     <li class="menu-header small">

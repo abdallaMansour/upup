@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\StorageConnection;
+use App\Models\StoragePlatform;
 use App\Models\UserDocument;
 use App\Services\GoogleDriveService;
 use Illuminate\Http\Request;
@@ -317,7 +318,9 @@ class DocumentController extends Controller
             ->pluck('provider')
             ->toArray();
 
-        return view('dashboard.documents.storage-connections', compact('connections', 'connectedProviderKeys'));
+        $storagePlatforms = StoragePlatform::orderBy('provider')->get();
+
+        return view('dashboard.documents.storage-connections', compact('connections', 'connectedProviderKeys', 'storagePlatforms'));
     }
 
     public function connectGoogleDrive(Request $request)
@@ -327,6 +330,12 @@ class DocumentController extends Controller
         if (! config('services.google.client_id') || ! config('services.google.client_secret')) {
             return redirect()->route('dashboard.documents.storage-connections')
                 ->with('error', 'لم يتم إعداد Google Drive. يرجى التواصل مع المسؤول.');
+        }
+
+        $platform = StoragePlatform::where('provider', 'google_drive')->first();
+        if (! $platform || ! $platform->is_active) {
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'منصة Google Drive غير متاحة للربط حالياً.');
         }
 
         return Socialite::driver('google')

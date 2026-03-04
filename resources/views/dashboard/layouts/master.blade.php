@@ -182,6 +182,7 @@
                             </a>
                         </li>
                     @endif
+                    {{-- إدارة منصات التخزين (للأدمن فقط) --}}
 
                     {{-- Support Tickets (users + admins) --}}
                     <li class="menu-header small">
@@ -230,6 +231,14 @@
                                 <a href="{{ route('dashboard.permissions.index') }}" class="menu-link">
                                     <i class="menu-icon icon-base bx bx-lock-alt"></i>
                                     <div data-i18n="Permissions">الصلاحيات</div>
+                                </a>
+                            </li>
+                        @endif
+                        @if (auth('admin')->user()->canAccess('storage-platforms.manage'))
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.storage-platforms.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-cloud"></i>
+                                    <div data-i18n="Storage Platforms">إدارة منصات التخزين</div>
                                 </a>
                             </li>
                         @endif

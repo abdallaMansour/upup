@@ -34,48 +34,60 @@
             <div class="col-12">
                 <h6 class="mb-3">المنصات المتاحة</h6>
             </div>
-            @foreach (\App\Models\StorageConnection::PROVIDERS as $key => $label)
+            @foreach ($storagePlatforms ?? [] as $platform)
                 @php
-                    $connected = in_array($key, $connectedProviderKeys ?? []);
+                    $connected = in_array($platform->provider, $connectedProviderKeys ?? []);
+                    $isActive = $platform->is_active;
+                    $platformIcon = match($platform->provider) {
+                        'google_drive' => 'bx bxl-google',
+                        'dropbox' => 'bx bxl-dropbox',
+                        'one_drive' => 'bx bxl-microsoft',
+                        default => 'bx bx-cloud',
+                    };
                 @endphp
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <div class="card h-100 {{ $connected ? 'border-success' : '' }}">
-                        <div class="card-body d-flex align-items-center justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <span class="avatar avatar-md me-3 rounded bg-label-primary">
-                                    <i class="bx bx-cloud-download icon-lg"></i>
-                                </span>
-                                <div>
-                                    <h6 class="mb-0">{{ $label }}</h6>
-                                    <small class="text-body-secondary">
-                                        @if ($connected)
-                                            <span class="text-success">متصل</span>
-                                        @else
-                                            غير متصل
-                                        @endif
-                                    </small>
+                    <div class="card h-100 {{ $connected ? 'border-success border-2' : 'border' }} {{ !$isActive ? 'bg-light opacity-75' : '' }}">
+                        <div class="card-body">
+                            <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                                <div class="d-flex align-items-center flex-grow-1 min-w-0">
+                                    <span class="avatar avatar-lg me-3 rounded flex-shrink-0 d-flex align-items-center justify-content-center {{ $connected ? 'bg-success' : 'bg-label-primary' }}">
+                                        <i class="{{ $platformIcon }} fs-4"></i>
+                                    </span>
+                                    <div class="min-w-0">
+                                        <h6 class="mb-0 text-truncate">{{ $platform->name }}</h6>
+                                        <small class="text-body-secondary d-block mt-1">
+                                            @if ($connected)
+                                                <span class="badge bg-success">متصل</span>
+                                            @elseif (!$isActive)
+                                                <span class="badge bg-secondary">غير متاحة</span>
+                                            @else
+                                                <span class="badge bg-label-secondary">غير متصل</span>
+                                            @endif
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="d-flex flex-wrap gap-2">
                                 @if ($connected)
-                                    <div class="d-flex gap-1 align-items-center flex-wrap">
-                                        <span class="badge bg-success">متصل</span>
-                                        @if ($key === 'google_drive')
-                                            <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط (مطلوب لإضافة/حذف الملفات)">
-                                                <i class="bx bx-link-alt me-1"></i> إعادة الربط
-                                            </a>
-                                            <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-icon btn-outline-primary" title="مزامنة الملفات">
-                                                    <i class="bx bx-refresh"></i>
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                @elseif ($key === 'google_drive')
+                                    @if ($platform->provider === 'google_drive' && $isActive)
+                                        <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط (مطلوب لإضافة/حذف الملفات)">
+                                            <i class="bx bx-link-alt me-1"></i> إعادة الربط
+                                        </a>
+                                        <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-primary" title="مزامنة الملفات">
+                                                <i class="bx bx-refresh me-1"></i> مزامنة
+                                            </button>
+                                        </form>
+                                    @endif
+                                @elseif ($platform->provider === 'google_drive' && $isActive)
                                     <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-primary">
                                         <i class="bx bx-link me-1"></i> ربط
                                     </a>
+                                @elseif (!$isActive)
+                                    <button type="button" class="btn btn-sm btn-secondary" disabled title="المنصة غير متاحة حالياً">
+                                        <i class="bx bx-link me-1"></i> غير متاحة
+                                    </button>
                                 @else
                                     <button type="button" class="btn btn-sm btn-secondary" disabled title="قريباً - جاري إعداد التكامل">
                                         <i class="bx bx-link me-1"></i> قريباً

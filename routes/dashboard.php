@@ -17,6 +17,7 @@ use App\Http\Controllers\Dashboard\SupportTicketController;
 use App\Http\Controllers\Dashboard\MediaDepartmentController;
 use App\Http\Controllers\Dashboard\TechnicalSupportController;
 use App\Http\Controllers\Dashboard\DocumentController;
+use App\Http\Controllers\Dashboard\StoragePlatformController;
 use App\Http\Controllers\Dashboard\SubscriptionController as DashboardSubscriptionController;
 
 // Admin Auth (login only - no register, no forgot-password)
@@ -128,6 +129,12 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         // Media Department (admin only)
         Route::middleware('permission:media-department.manage')->group(function () {
             Route::put('media-department', [MediaDepartmentController::class, 'update'])->name('media-department.update');
+        });
+
+        // Storage Platforms (admin only)
+        Route::middleware('permission:storage-platforms.manage')->group(function () {
+            Route::get('storage-platforms', [StoragePlatformController::class, 'index'])->name('storage-platforms.index');
+            Route::put('storage-platforms/{storage_platform}', [StoragePlatformController::class, 'update'])->name('storage-platforms.update');
         });
 
         // Technical Support (admin only)

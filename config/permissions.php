@@ -75,6 +75,7 @@ return [
             'permissions' => [
                 'site-settings.manage' => 'إدارة إعدادات الموقع',
                 'media-department.manage' => 'إدارة القسم الإعلامي',
+                'storage-platforms.manage' => 'إدارة منصات التخزين',
             ],
         ],
     ],

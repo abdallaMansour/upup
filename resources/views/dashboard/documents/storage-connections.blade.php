@@ -40,6 +40,7 @@
                     $isActive = $platform->is_active;
                     $platformIcon = match($platform->provider) {
                         'google_drive' => 'bx bxl-google',
+                        'wasabi' => 'bx bx-cloud-upload',
                         'dropbox' => 'bx bxl-dropbox',
                         'one_drive' => 'bx bxl-microsoft',
                         default => 'bx bx-cloud',
@@ -79,9 +80,23 @@
                                                 <i class="bx bx-refresh me-1"></i> مزامنة
                                             </button>
                                         </form>
+                                    @elseif ($platform->provider === 'wasabi' && $isActive)
+                                        <a href="{{ route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط">
+                                            <i class="bx bx-link-alt me-1"></i> إعادة الربط
+                                        </a>
+                                        <form action="{{ route('dashboard.documents.wasabi.sync') }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-primary" title="مزامنة الملفات">
+                                                <i class="bx bx-refresh me-1"></i> مزامنة
+                                            </button>
+                                        </form>
                                     @endif
                                 @elseif ($platform->provider === 'google_drive' && $isActive)
                                     <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-primary">
+                                        <i class="bx bx-link me-1"></i> ربط
+                                    </a>
+                                @elseif ($platform->provider === 'wasabi' && $isActive)
+                                    <a href="{{ route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-primary">
                                         <i class="bx bx-link me-1"></i> ربط
                                     </a>
                                 @elseif (!$isActive)

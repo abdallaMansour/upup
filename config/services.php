@@ -41,4 +41,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI', env('APP_URL').'/dashboard/documents/google-drive/callback'),
     ],
 
+    'wasabi' => [
+        'endpoint' => env('WASABI_ENDPOINT', 'https://s3.wasabisys.com'),
+        'default_region' => env('WASABI_DEFAULT_REGION', 'us-east-1'),
+    ],
+
 ];

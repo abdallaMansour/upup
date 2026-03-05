@@ -52,6 +52,13 @@
                                         <i class="bx bx-refresh me-1"></i> مزامنة
                                     </button>
                                 </form>
+                            @elseif ($conn->provider === 'wasabi')
+                                <form action="{{ route('dashboard.documents.wasabi.sync') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class="bx bx-refresh me-1"></i> مزامنة
+                                    </button>
+                                </form>
                             @endif
                         @endforeach
                         <a href="{{ route('dashboard.documents.storage-connections') }}" class="badge bg-label-secondary py-2 px-3 text-decoration-none">
@@ -144,7 +151,7 @@
                                 <td>
                                     <div class="d-flex gap-1">
                                         @if ($doc->view_url)
-                                            <a href="{{ $doc->view_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-icon btn-outline-primary" title="فتح في Google Drive">
+                                            <a href="{{ $doc->view_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-icon btn-outline-primary" title="{{ $doc->provider === 'wasabi' ? 'تحميل' : 'فتح في Google Drive' }}">
                                                 <i class="bx bx-link-external"></i>
                                             </a>
                                         @endif
@@ -236,7 +243,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label class="form-label">الملف (حجم أقصى 5 ميجابايت)</label>
+                                <label class="form-label">الملف (حجم أقصى 50 ميجابايت)</label>
                                 <input type="file" name="file" class="form-control" required>
                             </div>
                         </div>

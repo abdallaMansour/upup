@@ -69,13 +69,25 @@ class UserDocument extends Model
 
     public function getViewUrlAttribute(): ?string
     {
-        if ($this->provider !== 'google_drive' || ! $this->external_id) {
+        if (! $this->external_id) {
             return null;
         }
-        if ($this->isFolder()) {
-            return 'https://drive.google.com/drive/folders/' . $this->external_id;
+        if ($this->provider === 'google_drive') {
+            if ($this->isFolder()) {
+                return 'https://drive.google.com/drive/folders/' . $this->external_id;
+            }
+
+            return 'https://drive.google.com/file/d/' . $this->external_id . '/view';
         }
-        return 'https://drive.google.com/file/d/' . $this->external_id . '/view';
+        if ($this->provider === 'wasabi') {
+            if ($this->isFolder()) {
+                return null;
+            }
+
+            return route('dashboard.documents.view-file', $this);
+        }
+
+        return null;
     }
 
     public function getFileIconAttribute(): string

@@ -58,6 +58,7 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
     // Documents & Storage (web users only - auth('web')->check())
     Route::middleware('auth:web')->group(function () {
         Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
+        Route::get('documents/{document}/view', [DocumentController::class, 'viewFile'])->name('documents.view-file');
         Route::post('documents/folders', [DocumentController::class, 'storeFolder'])->name('documents.folders.store');
         Route::post('documents/files', [DocumentController::class, 'storeFile'])->name('documents.files.store');
         Route::delete('documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
@@ -66,6 +67,9 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('documents/google-drive/connect', [DocumentController::class, 'connectGoogleDrive'])->name('documents.google-drive.connect');
         Route::get('documents/google-drive/callback', [DocumentController::class, 'callbackGoogleDrive'])->name('documents.google-drive.callback');
         Route::post('documents/google-drive/sync', [DocumentController::class, 'syncGoogleDrive'])->name('documents.google-drive.sync');
+        Route::get('documents/wasabi/connect', [DocumentController::class, 'connectWasabi'])->name('documents.wasabi.connect');
+        Route::post('documents/wasabi/store', [DocumentController::class, 'storeWasabi'])->name('documents.wasabi.store');
+        Route::post('documents/wasabi/sync', [DocumentController::class, 'syncWasabi'])->name('documents.wasabi.sync');
     });
 
     Route::middleware('auth:admin')->group(function () {

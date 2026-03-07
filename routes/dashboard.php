@@ -70,6 +70,10 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('documents/wasabi/connect', [DocumentController::class, 'connectWasabi'])->name('documents.wasabi.connect');
         Route::post('documents/wasabi/store', [DocumentController::class, 'storeWasabi'])->name('documents.wasabi.store');
         Route::post('documents/wasabi/sync', [DocumentController::class, 'syncWasabi'])->name('documents.wasabi.sync');
+        Route::get('documents/switch-storage/confirm', [DocumentController::class, 'switchStorageConfirm'])->name('documents.switch-storage.confirm');
+        Route::get('documents/switch-storage/confirm-restore', [DocumentController::class, 'switchStorageConfirmRestore'])->name('documents.switch-storage.confirm-restore');
+        Route::post('documents/switch-storage/proceed', [DocumentController::class, 'switchStorageProceed'])->name('documents.switch-storage.proceed');
+        Route::post('documents/switch-storage/restore', [DocumentController::class, 'switchStorageRestore'])->name('documents.switch-storage.restore');
     });
 
     Route::middleware('auth:admin')->group(function () {

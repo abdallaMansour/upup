@@ -322,13 +322,23 @@ class WasabiService
 
     public function uploadFile(array $credentials, UploadedFile $file, ?string $parentPrefix = null): ?array
     {
+        return $this->uploadFromContent(
+            $credentials,
+            $file->get(),
+            $file->getClientOriginalName(),
+            $file->getMimeType() ?: 'application/octet-stream',
+            $parentPrefix
+        );
+    }
+
+    public function uploadFromContent(array $credentials, string $content, string $fileName, string $mimeType, ?string $parentPrefix = null): ?array
+    {
         $client = $this->createClient($credentials);
         if (! $client) {
             return null;
         }
 
         $prefix = $credentials['prefix'] ?? '';
-        $fileName = $file->getClientOriginalName();
         $fileKey = $parentPrefix
             ? rtrim($parentPrefix, '/') . '/' . $fileName
             : $prefix . $fileName;
@@ -337,17 +347,38 @@ class WasabiService
             $client->putObject([
                 'Bucket' => $credentials['bucket'],
                 'Key' => $fileKey,
-                'Body' => $file->get(),
-                'ContentType' => $file->getMimeType() ?: 'application/octet-stream',
+                'Body' => $content,
+                'ContentType' => $mimeType ?: 'application/octet-stream',
             ]);
 
             return [
                 'key' => $fileKey,
                 'id' => $fileKey,
                 'name' => $fileName,
-                'size' => $file->getSize(),
-                'mimeType' => $file->getMimeType(),
+                'size' => strlen($content),
+                'mimeType' => $mimeType,
             ];
+        } catch (\Throwable $e) {
+            $this->lastError = $e->getMessage();
+
+            return null;
+        }
+    }
+
+    public function downloadFileContent(array $credentials, string $key): ?string
+    {
+        $client = $this->createClient($credentials);
+        if (! $client) {
+            return null;
+        }
+
+        try {
+            $result = $client->getObject([
+                'Bucket' => $credentials['bucket'],
+                'Key' => $key,
+            ]);
+
+            return (string) $result['Body'];
         } catch (\Throwable $e) {
             $this->lastError = $e->getMessage();
 

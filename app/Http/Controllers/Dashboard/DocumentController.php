@@ -7,6 +7,7 @@ use App\Models\StorageConnection;
 use App\Models\StoragePlatform;
 use App\Models\UserDocument;
 use App\Services\GoogleDriveService;
+use App\Services\StorageMigrationService;
 use App\Services\WasabiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -26,37 +27,41 @@ class DocumentController extends Controller
         $this->ensureWebUser();
         $user = $request->user();
 
+        $primaryConnection = StorageConnection::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('is_primary', true)
+            ->first();
+
         $folderId = $request->query('folder');
         $parentId = null;
         $breadcrumb = [['id' => null, 'name' => 'الرئيسية']];
 
         if ($folderId) {
-            $folder = UserDocument::where('user_id', $user->id)
+            $folderQuery = UserDocument::where('user_id', $user->id)
                 ->where('id', $folderId)
                 ->where('type', 'folder')
                 ->with('parent')
-                ->firstOrFail();
+                ->when($primaryConnection, fn ($q) => $q->where('storage_connection_id', $primaryConnection->id), fn ($q) => $q->whereRaw('1=0'));
+            $folder = $folderQuery->firstOrFail();
             $parentId = $folder->id;
             $breadcrumb = $this->buildBreadcrumb($folder);
         }
 
         $documents = UserDocument::where('user_id', $user->id)
+            ->when($primaryConnection, fn ($q) => $q->where('storage_connection_id', $primaryConnection->id), fn ($q) => $q->whereRaw('1=0'))
             ->where('parent_id', $parentId)
             ->with('storageConnection')
             ->orderByRaw("type = 'folder' DESC")
             ->orderBy('name')
             ->paginate(15);
 
-        $storageConnections = StorageConnection::where('user_id', $user->id)
-            ->where('is_active', true)
-            ->get();
-
         $allFolders = UserDocument::where('user_id', $user->id)
+            ->when($primaryConnection, fn ($q) => $q->where('storage_connection_id', $primaryConnection->id), fn ($q) => $q->whereRaw('1=0'))
             ->where('type', 'folder')
             ->orderBy('name')
             ->get();
 
-        return view('dashboard.documents.index', compact('documents', 'storageConnections', 'breadcrumb', 'folderId', 'allFolders'));
+        return view('dashboard.documents.index', compact('documents', 'primaryConnection', 'breadcrumb', 'folderId', 'allFolders'));
     }
 
     private function buildBreadcrumb(UserDocument $folder): array
@@ -312,20 +317,23 @@ class DocumentController extends Controller
 
     private function resolveStorageConnection($user, ?string $parentId): ?StorageConnection
     {
+        $primary = StorageConnection::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('is_primary', true)
+            ->first();
+
+        if (! $primary) {
+            return null;
+        }
+
         if ($parentId) {
             $parent = UserDocument::where('user_id', $user->id)->find($parentId);
-            if ($parent && $parent->storage_connection_id) {
-                return StorageConnection::where('user_id', $user->id)
-                    ->where('id', $parent->storage_connection_id)
-                    ->where('is_active', true)
-                    ->first();
+            if ($parent && $parent->storage_connection_id !== $primary->id) {
+                return null;
             }
         }
 
-        return StorageConnection::where('user_id', $user->id)
-            ->where('is_active', true)
-            ->orderByRaw("provider = 'google_drive' DESC")
-            ->first();
+        return $primary;
     }
 
     private function isDescendant(UserDocument $folder, UserDocument $potentialAncestor): bool
@@ -367,14 +375,155 @@ class DocumentController extends Controller
             ->latest()
             ->paginate(10);
 
+        $primaryConnection = StorageConnection::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('is_primary', true)
+            ->first();
+
         $connectedProviderKeys = StorageConnection::where('user_id', $user->id)
             ->where('is_active', true)
             ->pluck('provider')
             ->toArray();
 
+        $connectionsForRestore = StorageConnection::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->when($primaryConnection, fn ($q) => $q->where('id', '!=', $primaryConnection->id))
+            ->get()
+            ->keyBy('provider');
+
         $storagePlatforms = StoragePlatform::orderBy('provider')->get();
 
-        return view('dashboard.documents.storage-connections', compact('connections', 'connectedProviderKeys', 'storagePlatforms'));
+        $hasPrimaryConnection = (bool) $primaryConnection;
+
+        return view('dashboard.documents.storage-connections', compact('connections', 'connectedProviderKeys', 'storagePlatforms', 'primaryConnection', 'hasPrimaryConnection', 'connectionsForRestore'));
+    }
+
+    public function switchStorageConfirm(Request $request)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        $to = $request->query('to');
+        if (! in_array($to, ['google_drive', 'wasabi'], true)) {
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'منصة غير صالحة.');
+        }
+
+        $primaryConnection = StorageConnection::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('is_primary', true)
+            ->first();
+
+        if (! $primaryConnection) {
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'لا يوجد منصة أساسية.');
+        }
+
+        $targetPlatform = StoragePlatform::where('provider', $to)->first();
+        $targetName = $targetPlatform ? $targetPlatform->name : $to;
+
+        return view('dashboard.documents.switch-storage-confirm', [
+            'primaryConnection' => $primaryConnection,
+            'to' => $to,
+            'targetName' => $targetName,
+        ]);
+    }
+
+    public function switchStorageConfirmRestore(Request $request)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        $connectionId = $request->query('connection_id');
+        if (! $connectionId) {
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'معرف الاتصال مطلوب.');
+        }
+
+        $target = StorageConnection::where('id', $connectionId)
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $primary = StorageConnection::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('is_primary', true)
+            ->first();
+
+        if (! $primary || $primary->id === $target->id) {
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'لا يمكن تنفيذ هذه العملية.');
+        }
+
+        return view('dashboard.documents.switch-storage-confirm-restore', [
+            'primaryConnection' => $primary,
+            'targetConnection' => $target,
+        ]);
+    }
+
+    public function switchStorageProceed(Request $request)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'to' => ['required', 'string', 'in:google_drive,wasabi'],
+            'delete_source' => ['nullable', 'boolean'],
+        ]);
+
+        $primaryConnection = StorageConnection::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('is_primary', true)
+            ->first();
+
+        if (! $primaryConnection) {
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'لا يوجد منصة أساسية.');
+        }
+
+        session([
+            'storage_switch_migrate' => true,
+            'storage_switch_delete_source' => (bool) ($validated['delete_source'] ?? false),
+        ]);
+
+        if ($validated['to'] === 'google_drive') {
+            return redirect()->route('dashboard.documents.google-drive.connect');
+        }
+
+        return redirect()->route('dashboard.documents.wasabi.connect');
+    }
+
+    public function switchStorageRestore(Request $request, StorageMigrationService $migrationService)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'connection_id' => ['required', 'integer', 'exists:storage_connections,id'],
+        ]);
+
+        $target = StorageConnection::where('id', $validated['connection_id'])
+            ->where('user_id', $user->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $primary = StorageConnection::where('user_id', $user->id)
+            ->where('is_active', true)
+            ->where('is_primary', true)
+            ->first();
+
+        if (! $primary || $primary->id === $target->id) {
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'لا يمكن تنفيذ هذه العملية.');
+        }
+
+        if (! $migrationService->restoreFromPrimaryToTarget($target)) {
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'فشل في مزامنة الملفات إلى المنصة المستهدفة.');
+        }
+
+        return redirect()->route('dashboard.documents.storage-connections')
+            ->with('success', 'تم الانتقال إلى المنصة بنجاح.');
     }
 
     public function connectGoogleDrive(Request $request)
@@ -398,7 +547,7 @@ class DocumentController extends Controller
             ->redirect();
     }
 
-    public function callbackGoogleDrive(Request $request, GoogleDriveService $driveService)
+    public function callbackGoogleDrive(Request $request, GoogleDriveService $driveService, StorageMigrationService $migrationService)
     {
         $this->ensureWebUser();
         $user = $request->user('web');
@@ -436,7 +585,23 @@ class DocumentController extends Controller
             ]
         );
 
-        // Sync files from Google Drive
+        if (session('storage_switch_migrate')) {
+            $deleteSource = session('storage_switch_delete_source', false);
+            session()->forget(['storage_switch_migrate', 'storage_switch_delete_source']);
+            $primary = StorageConnection::where('user_id', $user->id)->where('is_active', true)->where('is_primary', true)->first();
+            if ($primary && $primary->id !== $connection->id && $migrationService->migrate($primary, $connection, $deleteSource)) {
+                return redirect()->route('dashboard.documents.storage-connections')
+                    ->with('success', 'تم نقل ملفاتك إلى Google Drive بنجاح.');
+            }
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'فشل في نقل الملفات. تم الربط لكن يرجى التحقق من الملفات.');
+        }
+
+        $primaryExists = StorageConnection::where('user_id', $user->id)->where('is_active', true)->where('is_primary', true)->exists();
+        if (! $primaryExists) {
+            StorageConnection::setAsPrimary($connection);
+        }
+
         $this->syncGoogleDriveFiles($user, $connection, $driveService);
 
         return redirect()->route('dashboard.documents.storage-connections')
@@ -451,11 +616,12 @@ class DocumentController extends Controller
         $connection = StorageConnection::where('user_id', $user->id)
             ->where('provider', 'google_drive')
             ->where('is_active', true)
+            ->where('is_primary', true)
             ->first();
 
         if (! $connection) {
             return redirect()->route('dashboard.documents.storage-connections')
-                ->with('error', 'لم يتم العثور على اتصال Google Drive.');
+                ->with('error', 'لم يتم العثور على اتصال Google Drive النشط.');
         }
 
         $this->syncGoogleDriveFiles($user, $connection, $driveService);
@@ -526,7 +692,7 @@ class DocumentController extends Controller
         return view('dashboard.documents.wasabi-connect');
     }
 
-    public function storeWasabi(Request $request, WasabiService $wasabiService)
+    public function storeWasabi(Request $request, WasabiService $wasabiService, StorageMigrationService $migrationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -569,6 +735,23 @@ class DocumentController extends Controller
             ]
         );
 
+        if (session('storage_switch_migrate')) {
+            $deleteSource = session('storage_switch_delete_source', false);
+            session()->forget(['storage_switch_migrate', 'storage_switch_delete_source']);
+            $primary = StorageConnection::where('user_id', $user->id)->where('is_active', true)->where('is_primary', true)->first();
+            if ($primary && $primary->id !== $connection->id && $migrationService->migrate($primary, $connection, $deleteSource)) {
+                return redirect()->route('dashboard.documents.storage-connections')
+                    ->with('success', 'تم نقل ملفاتك إلى Wasabi بنجاح.');
+            }
+            return redirect()->route('dashboard.documents.storage-connections')
+                ->with('error', 'فشل في نقل الملفات. تم الربط لكن يرجى التحقق من الملفات.');
+        }
+
+        $primaryExists = StorageConnection::where('user_id', $user->id)->where('is_active', true)->where('is_primary', true)->exists();
+        if (! $primaryExists) {
+            StorageConnection::setAsPrimary($connection);
+        }
+
         $this->syncWasabiFiles($user, $connection, $wasabiService);
 
         return redirect()->route('dashboard.documents.storage-connections')
@@ -583,11 +766,12 @@ class DocumentController extends Controller
         $connection = StorageConnection::where('user_id', $user->id)
             ->where('provider', 'wasabi')
             ->where('is_active', true)
+            ->where('is_primary', true)
             ->first();
 
         if (! $connection) {
             return redirect()->route('dashboard.documents.storage-connections')
-                ->with('error', 'لم يتم العثور على اتصال Wasabi.');
+                ->with('error', 'لم يتم العثور على اتصال Wasabi النشط.');
         }
 
         $this->syncWasabiFiles($user, $connection, $wasabiService);

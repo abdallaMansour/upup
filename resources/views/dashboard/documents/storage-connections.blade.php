@@ -29,6 +29,13 @@
             </div>
         @endif
 
+        @if ($primaryConnection ?? null)
+            <div class="alert alert-info mb-4" role="alert">
+                <strong>المنصة النشطة:</strong> {{ \App\Models\StorageConnection::PROVIDERS[$primaryConnection->provider] ?? $primaryConnection->provider }}
+                <span class="text-body-secondary">— {{ $primaryConnection->name }}</span>
+            </div>
+        @endif
+
         {{-- منصات متاحة للربط --}}
         <div class="row mb-4">
             <div class="col-12">
@@ -37,6 +44,9 @@
             @foreach ($storagePlatforms ?? [] as $platform)
                 @php
                     $connected = in_array($platform->provider, $connectedProviderKeys ?? []);
+                    $isPrimary = ($primaryConnection ?? null) && $primaryConnection->provider === $platform->provider;
+                    $isNonPrimaryConnected = $connected && !$isPrimary;
+                    $restoreConnection = $connectionsForRestore[$platform->provider] ?? null;
                     $isActive = $platform->is_active;
                     $platformIcon = match($platform->provider) {
                         'google_drive' => 'bx bxl-google',
@@ -69,34 +79,36 @@
                                 </div>
                             </div>
                             <div class="d-flex flex-wrap gap-2">
-                                @if ($connected)
-                                    @if ($platform->provider === 'google_drive' && $isActive)
-                                        <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط (مطلوب لإضافة/حذف الملفات)">
-                                            <i class="bx bx-link-alt me-1"></i> إعادة الربط
-                                        </a>
-                                        <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-outline-primary" title="مزامنة الملفات">
-                                                <i class="bx bx-refresh me-1"></i> مزامنة
-                                            </button>
-                                        </form>
-                                    @elseif ($platform->provider === 'wasabi' && $isActive)
-                                        <a href="{{ route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط">
-                                            <i class="bx bx-link-alt me-1"></i> إعادة الربط
-                                        </a>
-                                        <form action="{{ route('dashboard.documents.wasabi.sync') }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-outline-primary" title="مزامنة الملفات">
-                                                <i class="bx bx-refresh me-1"></i> مزامنة
-                                            </button>
-                                        </form>
-                                    @endif
-                                @elseif ($platform->provider === 'google_drive' && $isActive)
-                                    <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-primary">
+                                @if ($isNonPrimaryConnected && $restoreConnection && $isActive)
+                                    <a href="{{ route('dashboard.documents.switch-storage.confirm-restore', ['connection_id' => $restoreConnection->id]) }}" class="btn btn-sm btn-primary" title="الانتقال إلى هذه المنصة">
+                                        <i class="bx bx-transfer me-1"></i> الانتقال إلى هذه المنصة
+                                    </a>
+                                @elseif ($isPrimary && $platform->provider === 'google_drive' && $isActive)
+                                    <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط (مطلوب لإضافة/حذف الملفات)">
+                                        <i class="bx bx-link-alt me-1"></i> إعادة الربط
+                                    </a>
+                                    <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-primary" title="مزامنة الملفات">
+                                            <i class="bx bx-refresh me-1"></i> مزامنة
+                                        </button>
+                                    </form>
+                                @elseif ($isPrimary && $platform->provider === 'wasabi' && $isActive)
+                                    <a href="{{ route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط">
+                                        <i class="bx bx-link-alt me-1"></i> إعادة الربط
+                                    </a>
+                                    <form action="{{ route('dashboard.documents.wasabi.sync') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-primary" title="مزامنة الملفات">
+                                            <i class="bx bx-refresh me-1"></i> مزامنة
+                                        </button>
+                                    </form>
+                                @elseif (!$connected && $platform->provider === 'google_drive' && $isActive)
+                                    <a href="{{ ($hasPrimaryConnection ?? false) ? route('dashboard.documents.switch-storage.confirm', ['to' => 'google_drive']) : route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-primary">
                                         <i class="bx bx-link me-1"></i> ربط
                                     </a>
-                                @elseif ($platform->provider === 'wasabi' && $isActive)
-                                    <a href="{{ route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-primary">
+                                @elseif (!$connected && $platform->provider === 'wasabi' && $isActive)
+                                    <a href="{{ ($hasPrimaryConnection ?? false) ? route('dashboard.documents.switch-storage.confirm', ['to' => 'wasabi']) : route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-primary">
                                         <i class="bx bx-link me-1"></i> ربط
                                     </a>
                                 @elseif (!$isActive)

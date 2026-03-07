@@ -34,33 +34,31 @@
             </div>
         @endif
 
-        {{-- روابط سريعة للمنصات المتصلة --}}
-        @if ($storageConnections->isNotEmpty())
+        {{-- المنصة النشطة (واحدة فقط) --}}
+        @if ($primaryConnection ?? null)
             <div class="card mb-4">
                 <div class="card-body">
-                    <h6 class="card-title mb-3">منصات التخزين المتصلة</h6>
+                    <h6 class="card-title mb-3">المنصة النشطة</h6>
                     <div class="d-flex flex-wrap gap-2 align-items-center">
-                        @foreach ($storageConnections as $conn)
-                            <span class="badge bg-label-primary py-2 px-3">
-                                <i class="bx bx-cloud me-1"></i>
-                                {{ $conn->display_name }}
-                            </span>
-                            @if ($conn->provider === 'google_drive')
-                                <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-primary">
-                                        <i class="bx bx-refresh me-1"></i> مزامنة
-                                    </button>
-                                </form>
-                            @elseif ($conn->provider === 'wasabi')
-                                <form action="{{ route('dashboard.documents.wasabi.sync') }}" method="POST" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-primary">
-                                        <i class="bx bx-refresh me-1"></i> مزامنة
-                                    </button>
-                                </form>
-                            @endif
-                        @endforeach
+                        <span class="badge bg-label-primary py-2 px-3">
+                            <i class="bx bx-cloud me-1"></i>
+                            {{ $primaryConnection->display_name }}
+                        </span>
+                        @if ($primaryConnection->provider === 'google_drive')
+                            <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    <i class="bx bx-refresh me-1"></i> مزامنة
+                                </button>
+                            </form>
+                        @elseif ($primaryConnection->provider === 'wasabi')
+                            <form action="{{ route('dashboard.documents.wasabi.sync') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    <i class="bx bx-refresh me-1"></i> مزامنة
+                                </button>
+                            </form>
+                        @endif
                         <a href="{{ route('dashboard.documents.storage-connections') }}" class="badge bg-label-secondary py-2 px-3 text-decoration-none">
                             <i class="bx bx-cog me-1"></i> إدارة
                         </a>
@@ -92,7 +90,7 @@
                         </nav>
                     @endif
                 </div>
-                @if ($storageConnections->isNotEmpty())
+                @if ($primaryConnection ?? null)
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createFolderModal">
                             <i class="bx bx-folder-plus me-1"></i> مجلد جديد
@@ -173,7 +171,7 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="text-center py-5 text-body-secondary">
-                                    @if ($storageConnections->isEmpty())
+                                    @if (!($primaryConnection ?? null))
                                         لا توجد ملفات بعد. قم بربط منصة تخزين سحابي (مثل Google Drive أو Wasabi) لعرض ملفاتك هنا.
                                         <br>
                                         <a href="{{ route('dashboard.documents.storage-connections') }}" class="btn btn-primary btn-sm mt-3">
@@ -204,7 +202,7 @@
     </div>
 
     {{-- Modal: إنشاء مجلد --}}
-    @if ($storageConnections->isNotEmpty())
+    @if ($primaryConnection ?? null)
         <div class="modal fade" id="createFolderModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -290,7 +288,7 @@
 @endsection
 
 @section('page-js')
-    @if ($storageConnections->isNotEmpty() && isset($allFolders))
+    @if (($primaryConnection ?? null) && isset($allFolders))
         <script>
             document.querySelectorAll('.move-btn').forEach(btn => {
                 btn.addEventListener('click', function() {

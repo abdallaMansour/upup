@@ -164,6 +164,55 @@ class GoogleDriveService
         return $response->successful();
     }
 
+    public function downloadFileContent(string $accessToken, string $fileId): ?string
+    {
+        $response = Http::withToken($accessToken)
+            ->get("https://www.googleapis.com/drive/v3/files/{$fileId}", ['alt' => 'media']);
+
+        if (! $response->successful()) {
+            $this->lastError = $response->json('error.message') ?? "HTTP {$response->status()}";
+            return null;
+        }
+
+        return $response->body();
+    }
+
+    public function uploadFromContent(string $accessToken, string $content, string $fileName, string $mimeType, ?string $parentId = null): ?array
+    {
+        $parentId = $parentId ?: 'root';
+        $metadata = [
+            'name' => $fileName,
+            'parents' => [$parentId],
+        ];
+
+        $boundary = 'upup_' . bin2hex(random_bytes(8));
+        $delimiter = "--{$boundary}\r\n";
+        $closeDelimiter = "\r\n--{$boundary}--\r\n";
+
+        $metadataPart = "Content-Type: application/json; charset=UTF-8\r\n\r\n" . json_encode($metadata);
+        $mimeType = $mimeType ?: 'application/octet-stream';
+        $filePart = "Content-Type: {$mimeType}\r\n\r\n";
+
+        $multipartBody = $delimiter . $metadataPart . "\r\n" . $delimiter . $filePart;
+        $multipartBody .= $content;
+        $multipartBody .= $closeDelimiter;
+
+        $response = Http::withToken($accessToken)
+            ->withHeaders([
+                'Content-Type' => "multipart/related; boundary={$boundary}",
+            ])
+            ->withBody($multipartBody, "multipart/related; boundary={$boundary}")
+            ->post('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart');
+
+        if (! $response->successful()) {
+            $body = $response->json();
+            $this->lastError = $body['error']['message'] ?? "HTTP {$response->status()}";
+            return null;
+        }
+
+        return $response->json();
+    }
+
     public function getAccessTokenFromRefreshToken(string $refreshToken): ?string
     {
         $clientId = config('services.google.client_id');

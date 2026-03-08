@@ -7,6 +7,8 @@ use App\Models\UserAchievement;
 use App\Models\UserAchievementMedia;
 use App\Models\UserChildhoodMedia;
 use App\Models\UserDrawing;
+use App\Models\UserInjury;
+use App\Models\UserOtherEvent;
 use App\Models\UserVisit;
 use App\Models\UserVoice;
 use App\Models\UserChildhoodStage;
@@ -399,6 +401,14 @@ class StorageMigrationService
                 ->update(['media_document_id' => $newId]);
 
             UserVisit::where('user_id', $userId)
+                ->where('media_document_id', $oldId)
+                ->update(['media_document_id' => $newId]);
+
+            UserInjury::where('user_id', $userId)
+                ->where('media_document_id', $oldId)
+                ->update(['media_document_id' => $newId]);
+
+            UserOtherEvent::where('user_id', $userId)
                 ->where('media_document_id', $oldId)
                 ->update(['media_document_id' => $newId]);
         }

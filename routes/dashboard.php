@@ -20,6 +20,8 @@ use App\Http\Controllers\Dashboard\AchievementController;
 use App\Http\Controllers\Dashboard\ChildhoodStageController;
 use App\Http\Controllers\Dashboard\DocumentController;
 use App\Http\Controllers\Dashboard\DrawingController;
+use App\Http\Controllers\Dashboard\InjuryController;
+use App\Http\Controllers\Dashboard\OtherEventController;
 use App\Http\Controllers\Dashboard\VisitController;
 use App\Http\Controllers\Dashboard\VoiceController;
 use App\Http\Controllers\Dashboard\HeightWeightController;
@@ -119,6 +121,20 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('visits/{visit}/edit', [VisitController::class, 'edit'])->name('visits.edit');
         Route::put('visits/{visit}', [VisitController::class, 'update'])->name('visits.update');
         Route::delete('visits/{visit}', [VisitController::class, 'destroy'])->name('visits.destroy');
+
+        Route::get('injuries', [InjuryController::class, 'index'])->name('injuries.index');
+        Route::get('injuries/create', [InjuryController::class, 'create'])->name('injuries.create');
+        Route::post('injuries', [InjuryController::class, 'store'])->name('injuries.store');
+        Route::get('injuries/{injury}/edit', [InjuryController::class, 'edit'])->name('injuries.edit');
+        Route::put('injuries/{injury}', [InjuryController::class, 'update'])->name('injuries.update');
+        Route::delete('injuries/{injury}', [InjuryController::class, 'destroy'])->name('injuries.destroy');
+
+        Route::get('other-events', [OtherEventController::class, 'index'])->name('other-events.index');
+        Route::get('other-events/create', [OtherEventController::class, 'create'])->name('other-events.create');
+        Route::post('other-events', [OtherEventController::class, 'store'])->name('other-events.store');
+        Route::get('other-events/{other_event}/edit', [OtherEventController::class, 'edit'])->name('other-events.edit');
+        Route::put('other-events/{other_event}', [OtherEventController::class, 'update'])->name('other-events.update');
+        Route::delete('other-events/{other_event}', [OtherEventController::class, 'destroy'])->name('other-events.destroy');
     });
 
     Route::middleware('auth:admin')->group(function () {

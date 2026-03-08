@@ -225,6 +225,18 @@
                                 <div>الزيارات</div>
                             </a>
                         </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.injuries.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-first-aid"></i>
+                                <div>الإصابات</div>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.other-events.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-calendar-event"></i>
+                                <div>أحداث أخرى</div>
+                            </a>
+                        </li>
                     @endif
 
                     {{-- Support Tickets (users + admins) --}}

@@ -213,6 +213,12 @@
                                 <div>الأصوات</div>
                             </a>
                         </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.drawings.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-palette"></i>
+                                <div>الرسم</div>
+                            </a>
+                        </li>
                     @endif
 
                     {{-- Support Tickets (users + admins) --}}

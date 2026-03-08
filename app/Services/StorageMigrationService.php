@@ -6,6 +6,7 @@ use App\Models\StorageConnection;
 use App\Models\UserAchievement;
 use App\Models\UserAchievementMedia;
 use App\Models\UserChildhoodMedia;
+use App\Models\UserDrawing;
 use App\Models\UserVoice;
 use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
@@ -391,6 +392,10 @@ class StorageMigrationService
             UserVoice::where('user_id', $userId)
                 ->where('audio_document_id', $oldId)
                 ->update(['audio_document_id' => $newId]);
+
+            UserDrawing::where('user_id', $userId)
+                ->where('media_document_id', $oldId)
+                ->update(['media_document_id' => $newId]);
         }
     }
 

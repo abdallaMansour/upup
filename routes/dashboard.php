@@ -19,6 +19,7 @@ use App\Http\Controllers\Dashboard\TechnicalSupportController;
 use App\Http\Controllers\Dashboard\AchievementController;
 use App\Http\Controllers\Dashboard\ChildhoodStageController;
 use App\Http\Controllers\Dashboard\DocumentController;
+use App\Http\Controllers\Dashboard\DrawingController;
 use App\Http\Controllers\Dashboard\VoiceController;
 use App\Http\Controllers\Dashboard\HeightWeightController;
 use App\Http\Controllers\Dashboard\StoragePlatformController;
@@ -103,6 +104,13 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('voices/{voice}/edit', [VoiceController::class, 'edit'])->name('voices.edit');
         Route::put('voices/{voice}', [VoiceController::class, 'update'])->name('voices.update');
         Route::delete('voices/{voice}', [VoiceController::class, 'destroy'])->name('voices.destroy');
+
+        Route::get('drawings', [DrawingController::class, 'index'])->name('drawings.index');
+        Route::get('drawings/create', [DrawingController::class, 'create'])->name('drawings.create');
+        Route::post('drawings', [DrawingController::class, 'store'])->name('drawings.store');
+        Route::get('drawings/{drawing}/edit', [DrawingController::class, 'edit'])->name('drawings.edit');
+        Route::put('drawings/{drawing}', [DrawingController::class, 'update'])->name('drawings.update');
+        Route::delete('drawings/{drawing}', [DrawingController::class, 'destroy'])->name('drawings.destroy');
     });
 
     Route::middleware('auth:admin')->group(function () {

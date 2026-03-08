@@ -207,7 +207,12 @@
                                 <div>الإنجازات</div>
                             </a>
                         </li>
-                        {{-- اصوات --}}
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.voices.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-music"></i>
+                                <div>الأصوات</div>
+                            </a>
+                        </li>
                     @endif
 
                     {{-- Support Tickets (users + admins) --}}

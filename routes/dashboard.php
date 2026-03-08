@@ -19,6 +19,7 @@ use App\Http\Controllers\Dashboard\TechnicalSupportController;
 use App\Http\Controllers\Dashboard\AchievementController;
 use App\Http\Controllers\Dashboard\ChildhoodStageController;
 use App\Http\Controllers\Dashboard\DocumentController;
+use App\Http\Controllers\Dashboard\VoiceController;
 use App\Http\Controllers\Dashboard\HeightWeightController;
 use App\Http\Controllers\Dashboard\StoragePlatformController;
 use App\Http\Controllers\Dashboard\SubscriptionController as DashboardSubscriptionController;
@@ -95,6 +96,13 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('achievements/{achievement}/edit', [AchievementController::class, 'edit'])->name('achievements.edit');
         Route::put('achievements/{achievement}', [AchievementController::class, 'update'])->name('achievements.update');
         Route::delete('achievements/{achievement}', [AchievementController::class, 'destroy'])->name('achievements.destroy');
+
+        Route::get('voices', [VoiceController::class, 'index'])->name('voices.index');
+        Route::get('voices/create', [VoiceController::class, 'create'])->name('voices.create');
+        Route::post('voices', [VoiceController::class, 'store'])->name('voices.store');
+        Route::get('voices/{voice}/edit', [VoiceController::class, 'edit'])->name('voices.edit');
+        Route::put('voices/{voice}', [VoiceController::class, 'update'])->name('voices.update');
+        Route::delete('voices/{voice}', [VoiceController::class, 'destroy'])->name('voices.destroy');
     });
 
     Route::middleware('auth:admin')->group(function () {

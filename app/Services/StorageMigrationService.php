@@ -6,6 +6,7 @@ use App\Models\StorageConnection;
 use App\Models\UserAchievement;
 use App\Models\UserAchievementMedia;
 use App\Models\UserChildhoodMedia;
+use App\Models\UserVoice;
 use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserHeightWeight;
@@ -386,6 +387,10 @@ class StorageMigrationService
             UserAchievementMedia::where('user_document_id', $oldId)
                 ->whereHas('achievement', fn ($q) => $q->where('user_id', $userId))
                 ->update(['user_document_id' => $newId]);
+
+            UserVoice::where('user_id', $userId)
+                ->where('audio_document_id', $oldId)
+                ->update(['audio_document_id' => $newId]);
         }
     }
 

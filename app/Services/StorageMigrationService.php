@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Models\StorageConnection;
+use App\Models\UserChildhoodMedia;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
+use App\Models\UserHeightWeight;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 
@@ -202,6 +205,8 @@ class StorageMigrationService
             }
         }
 
+        $this->updateDocumentReferences($user->id, $newDocsByOldId);
+
         if ($deleteFromSource) {
             foreach ($docs->reverse() as $doc) {
                 if ($doc->isFile()) {
@@ -317,6 +322,8 @@ class StorageMigrationService
             }
         }
 
+        $this->updateDocumentReferences($user->id, $newDocsByOldId);
+
         if ($deleteFromSource) {
             foreach ($docs as $doc) {
                 if ($doc->isFile()) {
@@ -333,6 +340,43 @@ class StorageMigrationService
         StorageConnection::setAsPrimary($to);
 
         return true;
+    }
+
+    /**
+     * Update document references in user_height_weights, user_childhood_stages, user_childhood_media
+     * after migration so they point to the new UserDocument IDs on the target platform.
+     */
+    private function updateDocumentReferences(int $userId, array $newDocsByOldId): void
+    {
+        foreach ($newDocsByOldId as $oldId => $newId) {
+            if ($oldId === $newId) {
+                continue;
+            }
+
+            UserHeightWeight::where('user_id', $userId)
+                ->where('image_document_id', $oldId)
+                ->update(['image_document_id' => $newId]);
+            UserHeightWeight::where('user_id', $userId)
+                ->where('video_document_id', $oldId)
+                ->update(['video_document_id' => $newId]);
+
+            UserChildhoodStage::where('user_id', $userId)
+                ->where('footprint_document_id', $oldId)
+                ->update(['footprint_document_id' => $newId]);
+            UserChildhoodStage::where('user_id', $userId)
+                ->where('first_photo_document_id', $oldId)
+                ->update(['first_photo_document_id' => $newId]);
+            UserChildhoodStage::where('user_id', $userId)
+                ->where('first_video_document_id', $oldId)
+                ->update(['first_video_document_id' => $newId]);
+            UserChildhoodStage::where('user_id', $userId)
+                ->where('first_gift_document_id', $oldId)
+                ->update(['first_gift_document_id' => $newId]);
+
+            UserChildhoodMedia::where('user_document_id', $oldId)
+                ->whereHas('childhoodStage', fn ($q) => $q->where('user_id', $userId))
+                ->update(['user_document_id' => $newId]);
+        }
     }
 
     private function getDriveAccessToken(StorageConnection $connection): ?string

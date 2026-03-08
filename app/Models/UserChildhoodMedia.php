@@ -20,7 +20,7 @@ class UserChildhoodMedia extends Model
 
     public function childhoodStage(): BelongsTo
     {
-        return $this->belongsTo(UserChildhoodStage::class);
+        return $this->belongsTo(UserChildhoodStage::class, 'user_childhood_stage_id');
     }
 
     public function userDocument(): BelongsTo

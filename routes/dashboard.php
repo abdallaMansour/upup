@@ -18,6 +18,7 @@ use App\Http\Controllers\Dashboard\MediaDepartmentController;
 use App\Http\Controllers\Dashboard\TechnicalSupportController;
 use App\Http\Controllers\Dashboard\ChildhoodStageController;
 use App\Http\Controllers\Dashboard\DocumentController;
+use App\Http\Controllers\Dashboard\HeightWeightController;
 use App\Http\Controllers\Dashboard\StoragePlatformController;
 use App\Http\Controllers\Dashboard\SubscriptionController as DashboardSubscriptionController;
 
@@ -79,6 +80,13 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('life-stages/childhood', [ChildhoodStageController::class, 'index'])->name('life-stages.childhood.index');
         Route::post('life-stages/childhood', [ChildhoodStageController::class, 'store'])->name('life-stages.childhood.store');
         Route::put('life-stages/childhood', [ChildhoodStageController::class, 'update'])->name('life-stages.childhood.update');
+
+        Route::get('height-weight', [HeightWeightController::class, 'index'])->name('height-weight.index');
+        Route::get('height-weight/create', [HeightWeightController::class, 'create'])->name('height-weight.create');
+        Route::post('height-weight', [HeightWeightController::class, 'store'])->name('height-weight.store');
+        Route::get('height-weight/{height_weight}/edit', [HeightWeightController::class, 'edit'])->name('height-weight.edit');
+        Route::put('height-weight/{height_weight}', [HeightWeightController::class, 'update'])->name('height-weight.update');
+        Route::delete('height-weight/{height_weight}', [HeightWeightController::class, 'destroy'])->name('height-weight.destroy');
     });
 
     Route::middleware('auth:admin')->group(function () {

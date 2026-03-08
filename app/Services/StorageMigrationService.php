@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\StorageConnection;
+use App\Models\UserAchievement;
+use App\Models\UserAchievementMedia;
 use App\Models\UserChildhoodMedia;
 use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
@@ -375,6 +377,14 @@ class StorageMigrationService
 
             UserChildhoodMedia::where('user_document_id', $oldId)
                 ->whereHas('childhoodStage', fn ($q) => $q->where('user_id', $userId))
+                ->update(['user_document_id' => $newId]);
+
+            UserAchievement::where('user_id', $userId)
+                ->where('certificate_image_document_id', $oldId)
+                ->update(['certificate_image_document_id' => $newId]);
+
+            UserAchievementMedia::where('user_document_id', $oldId)
+                ->whereHas('achievement', fn ($q) => $q->where('user_id', $userId))
                 ->update(['user_document_id' => $newId]);
         }
     }

@@ -16,6 +16,7 @@ use App\Http\Controllers\Dashboard\VerificationController;
 use App\Http\Controllers\Dashboard\SupportTicketController;
 use App\Http\Controllers\Dashboard\MediaDepartmentController;
 use App\Http\Controllers\Dashboard\TechnicalSupportController;
+use App\Http\Controllers\Dashboard\AchievementController;
 use App\Http\Controllers\Dashboard\ChildhoodStageController;
 use App\Http\Controllers\Dashboard\DocumentController;
 use App\Http\Controllers\Dashboard\HeightWeightController;
@@ -87,6 +88,13 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('height-weight/{height_weight}/edit', [HeightWeightController::class, 'edit'])->name('height-weight.edit');
         Route::put('height-weight/{height_weight}', [HeightWeightController::class, 'update'])->name('height-weight.update');
         Route::delete('height-weight/{height_weight}', [HeightWeightController::class, 'destroy'])->name('height-weight.destroy');
+
+        Route::get('achievements', [AchievementController::class, 'index'])->name('achievements.index');
+        Route::get('achievements/create', [AchievementController::class, 'create'])->name('achievements.create');
+        Route::post('achievements', [AchievementController::class, 'store'])->name('achievements.store');
+        Route::get('achievements/{achievement}/edit', [AchievementController::class, 'edit'])->name('achievements.edit');
+        Route::put('achievements/{achievement}', [AchievementController::class, 'update'])->name('achievements.update');
+        Route::delete('achievements/{achievement}', [AchievementController::class, 'destroy'])->name('achievements.destroy');
     });
 
     Route::middleware('auth:admin')->group(function () {

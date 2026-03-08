@@ -201,6 +201,13 @@
                                 <div>الطول والوزن</div>
                             </a>
                         </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.achievements.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-trophy"></i>
+                                <div>الإنجازات</div>
+                            </a>
+                        </li>
+                        {{-- اصوات --}}
                     @endif
 
                     {{-- Support Tickets (users + admins) --}}

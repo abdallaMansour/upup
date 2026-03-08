@@ -99,7 +99,7 @@ class DocumentController extends Controller
             if (! $accessToken) {
                 return redirect()->back()->with('error', 'فشل في الحصول على صلاحية الوصول.');
             }
-            $parentExternalId = $parentDocId ? UserDocument::where('user_id', $user->id)->findOrFail($parentDocId)->external_id : null;
+            $parentExternalId = $parentDocId ? UserDocument::where('user_id', $user->id)->findOrFail($parentDocId)->external_id : ($connection->root_folder_id ?? 'root');
             $result = $driveService->createFolder($accessToken, $validated['name'], $parentExternalId);
             if (! $result) {
                 return redirect()->back()->with('error', 'فشل في إنشاء المجلد على Google Drive. SYNC_FAILED');
@@ -163,7 +163,7 @@ class DocumentController extends Controller
             if (! $accessToken) {
                 return redirect()->back()->with('error', 'فشل في الحصول على صلاحية الوصول.');
             }
-            $parentExternalId = $parentDocId ? UserDocument::where('user_id', $user->id)->findOrFail($parentDocId)->external_id : null;
+            $parentExternalId = $parentDocId ? UserDocument::where('user_id', $user->id)->findOrFail($parentDocId)->external_id : ($connection->root_folder_id ?? 'root');
             $result = $driveService->uploadFile($accessToken, $validated['file'], $parentExternalId);
             if (! $result) {
                 return redirect()->back()->with('error', 'فشل في رفع الملف إلى Google Drive. SYNC_FAILED');
@@ -288,10 +288,10 @@ class DocumentController extends Controller
             if ($accessToken) {
                 $newParentExternalId = $newParentId
                     ? UserDocument::find($newParentId)->external_id
-                    : 'root';
+                    : ($connection->root_folder_id ?? 'root');
                 $oldParentExternalId = $document->parent_id
                     ? UserDocument::find($document->parent_id)->external_id
-                    : 'root';
+                    : ($connection->root_folder_id ?? 'root');
                 $driveService->moveFile($accessToken, $document->external_id, $newParentExternalId, $oldParentExternalId);
             }
         } elseif ($connection->provider === 'wasabi' && ! $document->isFolder()) {
@@ -570,6 +570,11 @@ class DocumentController extends Controller
             'expires_in' => $googleUser->expiresIn,
         ];
 
+        $accessToken = $driveService->getAccessTokenFromRefreshToken($credentials['refresh_token'] ?? '')
+            ?? $credentials['access_token'] ?? null;
+        $upupFolder = $accessToken ? $driveService->findOrCreateUpupWebsiteFolder($accessToken) : null;
+        $rootFolderId = $upupFolder['id'] ?? null;
+
         $connection = StorageConnection::updateOrCreate(
             [
                 'user_id' => $user->id,
@@ -581,7 +586,7 @@ class DocumentController extends Controller
                 'name' => $googleUser->email,
                 'is_active' => true,
                 'credentials' => ['encrypted' => Crypt::encryptString(json_encode($credentials))],
-                'root_folder_id' => null,
+                'root_folder_id' => $rootFolderId,
             ]
         );
 
@@ -637,10 +642,22 @@ class DocumentController extends Controller
             return;
         }
 
-        $files = $driveService->listAllFilesAndFolders($accessToken);
+        $rootFolderId = $connection->root_folder_id;
+        if (! $rootFolderId) {
+            $upupFolder = $driveService->findOrCreateUpupWebsiteFolder($accessToken);
+            if ($upupFolder) {
+                $connection->update(['root_folder_id' => $upupFolder['id']]);
+                $rootFolderId = $upupFolder['id'];
+            }
+        }
 
+        $files = $driveService->listAllFilesAndFolders($accessToken, $rootFolderId);
+
+        $externalIds = [];
         $externalToId = [];
         foreach ($files as $file) {
+            $fileId = $file['id'];
+            $externalIds[] = $fileId;
             $parentExternalId = $file['parents'][0] ?? null;
             $isFolder = ($file['mimeType'] ?? '') === 'application/vnd.google-apps.folder';
 
@@ -648,7 +665,7 @@ class DocumentController extends Controller
                 [
                     'user_id' => $user->id,
                     'storage_connection_id' => $connection->id,
-                    'external_id' => $file['id'],
+                    'external_id' => $fileId,
                 ],
                 [
                     'user_id' => $user->id,
@@ -656,15 +673,15 @@ class DocumentController extends Controller
                     'parent_id' => null,
                     'name' => $file['name'],
                     'original_name' => $file['name'],
-                    'path' => $file['id'],
-                    'external_id' => $file['id'],
+                    'path' => $fileId,
+                    'external_id' => $fileId,
                     'mime_type' => $file['mimeType'] ?? null,
                     'size' => (int) ($file['size'] ?? 0),
                     'provider' => 'google_drive',
                     'type' => $isFolder ? 'folder' : 'file',
                 ]
             );
-            $externalToId[$file['id']] = ['doc_id' => $doc->id, 'parent_external' => $parentExternalId];
+            $externalToId[$fileId] = ['doc_id' => $doc->id, 'parent_external' => $parentExternalId];
         }
 
         foreach ($externalToId as $externalId => $info) {
@@ -676,6 +693,14 @@ class DocumentController extends Controller
             if ($parentDocId) {
                 UserDocument::where('id', $info['doc_id'])->update(['parent_id' => $parentDocId]);
             }
+        }
+
+        $query = UserDocument::where('user_id', $user->id)
+            ->where('storage_connection_id', $connection->id);
+        if (empty($externalIds)) {
+            $query->delete();
+        } else {
+            $query->whereNotIn('external_id', $externalIds)->delete();
         }
     }
 
@@ -706,12 +731,13 @@ class DocumentController extends Controller
             'name' => ['nullable', 'string', 'max:255'],
         ]);
 
+        $basePrefix = isset($validated['prefix']) && $validated['prefix'] !== '' ? rtrim($validated['prefix'], '/') . '/' : '';
         $credentials = [
             'access_key' => $validated['access_key'],
             'secret_key' => $validated['secret_key'],
             'bucket' => $validated['bucket'],
             'region' => $validated['region'],
-            'prefix' => isset($validated['prefix']) && $validated['prefix'] !== '' ? rtrim($validated['prefix'], '/') . '/' : '',
+            'prefix' => $basePrefix . GoogleDriveService::UPUP_WEBSITE_FOLDER . '/',
         ];
 
         if (! $wasabiService->testConnection($credentials)) {
@@ -789,8 +815,11 @@ class DocumentController extends Controller
 
         $files = $wasabiService->listAllObjectsRecursive($credentials);
 
+        $externalKeys = [];
         $keyToDocId = [];
         foreach ($files as $file) {
+            $key = $file['key'];
+            $externalKeys[] = $key;
             $parentKey = $file['parents'][0] ?? null;
             $isFolder = $file['isFolder'] ?? false;
 
@@ -798,7 +827,7 @@ class DocumentController extends Controller
                 [
                     'user_id' => $user->id,
                     'storage_connection_id' => $connection->id,
-                    'external_id' => $file['key'],
+                    'external_id' => $key,
                 ],
                 [
                     'user_id' => $user->id,
@@ -806,15 +835,15 @@ class DocumentController extends Controller
                     'parent_id' => null,
                     'name' => $file['name'],
                     'original_name' => $file['name'],
-                    'path' => $file['key'],
-                    'external_id' => $file['key'],
+                    'path' => $key,
+                    'external_id' => $key,
                     'mime_type' => $isFolder ? 'application/x-wasabi-folder' : null,
                     'size' => (int) ($file['size'] ?? 0),
                     'provider' => 'wasabi',
                     'type' => $isFolder ? 'folder' : 'file',
                 ]
             );
-            $keyToDocId[$file['key']] = ['doc_id' => $doc->id, 'parent_key' => $parentKey];
+            $keyToDocId[$key] = ['doc_id' => $doc->id, 'parent_key' => $parentKey];
         }
 
         $rootPrefix = $credentials['prefix'] ?? '';
@@ -828,6 +857,14 @@ class DocumentController extends Controller
             if ($parentDocId) {
                 UserDocument::where('id', $info['doc_id'])->update(['parent_id' => $parentDocId]);
             }
+        }
+
+        $query = UserDocument::where('user_id', $user->id)
+            ->where('storage_connection_id', $connection->id);
+        if (empty($externalKeys)) {
+            $query->delete();
+        } else {
+            $query->whereNotIn('external_id', $externalKeys)->delete();
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\StorageConnection;
 use App\Models\UserDocument;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class StorageMigrationService
 {
@@ -20,6 +21,9 @@ class StorageMigrationService
             return false;
         }
 
+        $this->ensureTargetHasUpupWebsiteFolder($to);
+        $this->deleteAllFromTarget($to);
+
         if ($from->provider === 'google_drive' && $to->provider === 'wasabi') {
             return $this->copyDriveToWasabi($user, $from, $to, $deleteFromSource);
         }
@@ -28,6 +32,58 @@ class StorageMigrationService
         }
 
         return false;
+    }
+
+    /**
+     * Ensure target has UPUP_WEBSITE folder. For Drive: create if needed, set root_folder_id. For Wasabi: ensure prefix includes UPUP_WEBSITE.
+     */
+    private function ensureTargetHasUpupWebsiteFolder(StorageConnection $target): void
+    {
+        if ($target->provider === 'google_drive' && ! $target->root_folder_id) {
+            $accessToken = $this->getDriveAccessToken($target);
+            if ($accessToken) {
+                $folder = $this->driveService->findOrCreateUpupWebsiteFolder($accessToken);
+                if ($folder) {
+                    $target->update(['root_folder_id' => $folder['id']]);
+                }
+            }
+        } elseif ($target->provider === 'wasabi') {
+            $creds = $this->getWasabiCredentials($target);
+            if ($creds && ! str_ends_with(rtrim($creds['prefix'] ?? '', '/'), GoogleDriveService::UPUP_WEBSITE_FOLDER)) {
+                $basePrefix = rtrim($creds['prefix'] ?? '', '/');
+                $creds['prefix'] = ($basePrefix ? $basePrefix . '/' : '') . GoogleDriveService::UPUP_WEBSITE_FOLDER . '/';
+                $target->update([
+                    'credentials' => ['encrypted' => Crypt::encryptString(json_encode($creds))],
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Delete all files and folders from UPUP_WEBSITE on the target platform before migration.
+     */
+    private function deleteAllFromTarget(StorageConnection $target): void
+    {
+        if ($target->provider === 'wasabi') {
+            $creds = $this->getWasabiCredentials($target);
+            if ($creds) {
+                $prefix = rtrim($creds['prefix'] ?? '', '/') . '/';
+                if ($prefix !== '/') {
+                    $this->wasabiService->deleteObjectRecursive($creds, $prefix);
+                }
+            }
+        } elseif ($target->provider === 'google_drive') {
+            $accessToken = $this->getDriveAccessToken($target);
+            $rootFolderId = $target->root_folder_id;
+            if ($accessToken && $rootFolderId) {
+                $files = $this->driveService->listAllFilesAndFolders($accessToken, $rootFolderId);
+                foreach (array_reverse($files) as $file) {
+                    $this->driveService->deleteFile($accessToken, $file['id']);
+                }
+            }
+        }
+
+        UserDocument::where('storage_connection_id', $target->id)->where('user_id', $target->user_id)->delete();
     }
 
     /**
@@ -45,32 +101,6 @@ class StorageMigrationService
         if (! $primary || $primary->id === $target->id) {
             return false;
         }
-
-        $targetDocs = UserDocument::where('user_id', $user->id)
-            ->where('storage_connection_id', $target->id)
-            ->get();
-
-        if ($target->provider === 'wasabi') {
-            $creds = $this->getWasabiCredentials($target);
-            if ($creds) {
-                foreach ($targetDocs as $doc) {
-                    if ($doc->isFile()) {
-                        $this->wasabiService->deleteObject($creds, $doc->external_id);
-                    } elseif ($doc->isFolder()) {
-                        $this->wasabiService->deleteObjectRecursive($creds, $doc->external_id);
-                    }
-                }
-            }
-        } elseif ($target->provider === 'google_drive') {
-            $accessToken = $this->getDriveAccessToken($target);
-            if ($accessToken) {
-                foreach ($targetDocs->reverse() as $doc) {
-                    $this->driveService->deleteFile($accessToken, $doc->external_id);
-                }
-            }
-        }
-
-        UserDocument::where('storage_connection_id', $target->id)->where('user_id', $user->id)->delete();
 
         return $this->migrate($primary, $target, false);
     }
@@ -90,6 +120,7 @@ class StorageMigrationService
             ->get();
 
         $oldIdToNew = [];
+        $fileSizes = [];
         $prefix = $wasabiCreds['prefix'] ?? '';
 
         foreach ($docs as $doc) {
@@ -104,20 +135,35 @@ class StorageMigrationService
 
         foreach ($docs as $doc) {
             if ($doc->isFile()) {
-                $content = $this->driveService->downloadFileContent($accessToken, $doc->external_id);
+                $content = $this->driveService->downloadFileContent($accessToken, $doc->external_id, $doc->mime_type);
                 if ($content === null) {
+                    Log::warning('Storage migration: file download failed', [
+                        'doc_id' => $doc->id,
+                        'name' => $doc->name,
+                        'error' => $this->driveService->getLastError(),
+                    ]);
                     continue;
                 }
+                $exportInfo = $this->driveService->getExportFileNameAndMimeType($doc->name, $doc->mime_type);
+                $uploadName = $exportInfo['name'];
+                $uploadMimeType = $exportInfo['mimeType'];
                 $parentPrefix = $doc->parent_id ? ($oldIdToNew[$doc->parent_id] ?? ($prefix ?: null)) : ($prefix ?: null);
                 $result = $this->wasabiService->uploadFromContent(
                     $wasabiCreds,
                     $content,
-                    $doc->name,
-                    $doc->mime_type ?? 'application/octet-stream',
+                    $uploadName,
+                    $uploadMimeType,
                     $parentPrefix
                 );
                 if ($result) {
                     $oldIdToNew[$doc->id] = $result['key'];
+                    $fileSizes[$doc->id] = $result['size'] ?? strlen($content);
+                } else {
+                    Log::warning('Storage migration: file upload to Wasabi failed', [
+                        'doc_id' => $doc->id,
+                        'name' => $uploadName,
+                        'error' => $this->wasabiService->getLastError(),
+                    ]);
                 }
             }
         }
@@ -129,16 +175,20 @@ class StorageMigrationService
                 continue;
             }
 
+            $exportInfo = $doc->isFile()
+                ? $this->driveService->getExportFileNameAndMimeType($doc->name, $doc->mime_type)
+                : ['name' => $doc->name, 'mimeType' => $doc->mime_type ?? 'application/octet-stream'];
+
             $newDoc = UserDocument::create([
                 'user_id' => $user->id,
                 'storage_connection_id' => $to->id,
                 'parent_id' => null,
-                'name' => $doc->name,
+                'name' => $exportInfo['name'],
                 'original_name' => $doc->original_name,
                 'path' => $newKey,
                 'external_id' => $newKey,
-                'mime_type' => $doc->mime_type,
-                'size' => $doc->size,
+                'mime_type' => $exportInfo['mimeType'],
+                'size' => $doc->isFile() ? ($fileSizes[$doc->id] ?? $doc->size) : $doc->size,
                 'provider' => $to->provider,
                 'type' => $doc->type,
             ]);
@@ -189,11 +239,13 @@ class StorageMigrationService
 
         $oldIdToNew = [];
 
+        $driveRootFolderId = $to->root_folder_id;
+
         foreach ($docs as $doc) {
             if ($doc->isFolder()) {
                 $parentId = $doc->parent_id && isset($oldIdToNew[$doc->parent_id])
                     ? $oldIdToNew[$doc->parent_id]
-                    : null;
+                    : $driveRootFolderId;
                 $result = $this->driveService->createFolder($accessToken, $doc->name, $parentId);
                 if ($result) {
                     $oldIdToNew[$doc->id] = $result['id'];
@@ -206,11 +258,16 @@ class StorageMigrationService
             if ($doc->isFile()) {
                 $content = $this->wasabiService->downloadFileContent($wasabiCreds, $doc->external_id);
                 if ($content === null) {
+                    Log::warning('Storage migration: Wasabi file download failed', [
+                        'doc_id' => $doc->id,
+                        'name' => $doc->name,
+                        'error' => $this->wasabiService->getLastError(),
+                    ]);
                     continue;
                 }
                 $parentId = $doc->parent_id && isset($oldIdToNew[$doc->parent_id])
                     ? $oldIdToNew[$doc->parent_id]
-                    : null;
+                    : $driveRootFolderId;
                 $result = $this->driveService->uploadFromContent(
                     $accessToken,
                     $content,
@@ -220,6 +277,12 @@ class StorageMigrationService
                 );
                 if ($result) {
                     $oldIdToNew[$doc->id] = $result['id'];
+                } else {
+                    Log::warning('Storage migration: file upload to Drive failed', [
+                        'doc_id' => $doc->id,
+                        'name' => $doc->name,
+                        'error' => $this->driveService->getLastError(),
+                    ]);
                 }
             }
         }

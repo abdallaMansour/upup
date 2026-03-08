@@ -184,6 +184,19 @@
                     @endif
                     {{-- إدارة منصات التخزين (للأدمن فقط) --}}
 
+                    {{-- صفحات المستخدمين (للمستخدمين فقط) --}}
+                    @if (auth('web')->check())
+                        <li class="menu-header small">
+                            <span class="menu-header-text">مراحل الحياة</span>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.life-stages.childhood.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-baby-carriage"></i>
+                                <div>مرحلة الطفولة</div>
+                            </a>
+                        </li>
+                    @endif
+
                     {{-- Support Tickets (users + admins) --}}
                     <li class="menu-header small">
                         <span class="menu-header-text" data-i18n="Support">الدعم الفني</span>

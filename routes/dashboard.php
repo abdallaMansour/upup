@@ -16,6 +16,7 @@ use App\Http\Controllers\Dashboard\VerificationController;
 use App\Http\Controllers\Dashboard\SupportTicketController;
 use App\Http\Controllers\Dashboard\MediaDepartmentController;
 use App\Http\Controllers\Dashboard\TechnicalSupportController;
+use App\Http\Controllers\Dashboard\ChildhoodStageController;
 use App\Http\Controllers\Dashboard\DocumentController;
 use App\Http\Controllers\Dashboard\StoragePlatformController;
 use App\Http\Controllers\Dashboard\SubscriptionController as DashboardSubscriptionController;
@@ -74,6 +75,10 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('documents/switch-storage/confirm-restore', [DocumentController::class, 'switchStorageConfirmRestore'])->name('documents.switch-storage.confirm-restore');
         Route::post('documents/switch-storage/proceed', [DocumentController::class, 'switchStorageProceed'])->name('documents.switch-storage.proceed');
         Route::post('documents/switch-storage/restore', [DocumentController::class, 'switchStorageRestore'])->name('documents.switch-storage.restore');
+
+        Route::get('life-stages/childhood', [ChildhoodStageController::class, 'index'])->name('life-stages.childhood.index');
+        Route::post('life-stages/childhood', [ChildhoodStageController::class, 'store'])->name('life-stages.childhood.store');
+        Route::put('life-stages/childhood', [ChildhoodStageController::class, 'update'])->name('life-stages.childhood.update');
     });
 
     Route::middleware('auth:admin')->group(function () {

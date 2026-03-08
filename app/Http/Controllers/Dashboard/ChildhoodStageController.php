@@ -1,0 +1,178 @@
+<?php
+
+namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\Controller;
+use App\Models\UserChildhoodMedia;
+use App\Models\UserChildhoodStage;
+use App\Models\UserDocument;
+use App\Services\ChildhoodStageService;
+use App\Services\GoogleDriveService;
+use App\Services\WasabiService;
+use Illuminate\Http\Request;
+
+class ChildhoodStageController extends Controller
+{
+    private function ensureWebUser(): void
+    {
+        if (! auth('web')->check()) {
+            abort(403, 'هذه الصفحة متاحة للمستخدمين فقط.');
+        }
+    }
+
+    public function index(Request $request, ChildhoodStageService $childhoodService)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        $stage = UserChildhoodStage::forUser($user->id)->first();
+        $primaryConnection = $childhoodService->resolveStorageConnection($user);
+
+        return view('dashboard.life-stages.childhood', [
+            'stage' => $stage,
+            'primaryConnection' => $primaryConnection,
+        ]);
+    }
+
+    public function store(Request $request, ChildhoodStageService $childhoodService, GoogleDriveService $driveService, WasabiService $wasabiService)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+
+        $connection = $childhoodService->resolveStorageConnection($user);
+        $hasFiles = $request->hasFile('footprint') || $request->hasFile('first_photo') || $request->hasFile('first_video')
+            || $request->hasFile('first_gift') || $request->hasFile('other_photos') || $request->hasFile('other_videos');
+
+        if ($hasFiles && ! $connection) {
+            return redirect()->back()->with('error', 'لم يتم العثور على اتصال تخزين. يرجى ربط Google Drive أو Wasabi أولاً لرفع الملفات.');
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'mother_name' => ['required', 'string', 'max:255'],
+            'father_name' => ['required', 'string', 'max:255'],
+            'naming_reason' => ['nullable', 'string', 'max:1000'],
+            'birth_date' => ['nullable', 'date'],
+            'birth_time' => ['nullable', 'date_format:H:i'],
+            'gender' => ['nullable', 'in:male,female'],
+            'height' => ['nullable', 'numeric', 'min:0', 'max:200'],
+            'weight' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'blood_type' => ['nullable', 'string', 'max:50'],
+            'doctor' => ['nullable', 'string', 'max:255'],
+            'birth_place' => ['nullable', 'string', 'max:255'],
+            'footprint' => ['nullable', 'file', 'image', 'max:10240'],
+            'first_photo' => ['nullable', 'file', 'image', 'max:10240'],
+            'first_video' => ['nullable', 'file', 'mimetypes:video/*', 'max:51200'],
+            'first_gift' => ['nullable', 'file', 'max:51200'],
+            'other_photos' => ['nullable', 'array'],
+            'other_photos.*' => ['file', 'image', 'max:10240'],
+            'other_videos' => ['nullable', 'array'],
+            'other_videos.*' => ['file', 'mimetypes:video/*', 'max:51200'],
+        ]);
+
+        $subfolders = [];
+        if ($connection) {
+            $childhoodFolder = $childhoodService->getOrCreateChildhoodFolder($user, $connection);
+            if (! $childhoodFolder) {
+                return redirect()->back()->with('error', 'فشل في إنشاء مجلد مرحلة الطفولة.');
+            }
+            $subfolders = $this->getOrCreateSubfolders($childhoodService, $user, $connection, $childhoodFolder);
+        }
+
+        $stage = UserChildhoodStage::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'name' => $validated['name'],
+                'mother_name' => $validated['mother_name'],
+                'father_name' => $validated['father_name'],
+                'naming_reason' => $validated['naming_reason'] ?? null,
+                'birth_date' => $validated['birth_date'] ?? null,
+                'birth_time' => $validated['birth_time'] ?? null,
+                'gender' => $validated['gender'] ?? null,
+                'height' => $validated['height'] ?? null,
+                'weight' => $validated['weight'] ?? null,
+                'blood_type' => $validated['blood_type'] ?? null,
+                'doctor' => $validated['doctor'] ?? null,
+                'birth_place' => $validated['birth_place'] ?? null,
+            ]
+        );
+
+        if ($connection && ! empty($subfolders)) {
+            if ($request->hasFile('footprint')) {
+                $this->handleSingleFile($request->file('footprint'), 'footprint_document_id', $stage, $subfolders['footprint'], $childhoodService, $user, $connection);
+            }
+            if ($request->hasFile('first_photo')) {
+                $this->handleSingleFile($request->file('first_photo'), 'first_photo_document_id', $stage, $subfolders['first_photo'], $childhoodService, $user, $connection);
+            }
+            if ($request->hasFile('first_video')) {
+                $this->handleSingleFile($request->file('first_video'), 'first_video_document_id', $stage, $subfolders['first_video'], $childhoodService, $user, $connection);
+            }
+            if ($request->hasFile('first_gift')) {
+                $this->handleSingleFile($request->file('first_gift'), 'first_gift_document_id', $stage, $subfolders['first_gift'], $childhoodService, $user, $connection);
+            }
+
+            if ($request->hasFile('other_photos')) {
+                foreach ($request->file('other_photos') as $file) {
+                    $doc = $childhoodService->uploadFile($file, $subfolders['other_photos'], $user, $connection);
+                    if ($doc) {
+                        UserChildhoodMedia::create([
+                            'user_childhood_stage_id' => $stage->id,
+                            'user_document_id' => $doc->id,
+                            'media_type' => 'other_photo',
+                            'sort_order' => $stage->otherPhotos()->count(),
+                        ]);
+                    }
+                }
+            }
+            if ($request->hasFile('other_videos')) {
+                foreach ($request->file('other_videos') as $file) {
+                    $doc = $childhoodService->uploadFile($file, $subfolders['other_videos'], $user, $connection);
+                    if ($doc) {
+                        UserChildhoodMedia::create([
+                            'user_childhood_stage_id' => $stage->id,
+                            'user_document_id' => $doc->id,
+                            'media_type' => 'other_video',
+                            'sort_order' => $stage->otherVideos()->count(),
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('dashboard.life-stages.childhood.index')->with('success', 'تم حفظ بيانات مرحلة الطفولة بنجاح.');
+    }
+
+    public function update(Request $request, ChildhoodStageService $childhoodService)
+    {
+        return $this->store($request, $childhoodService, app(GoogleDriveService::class), app(WasabiService::class));
+    }
+
+    private function getOrCreateSubfolders(ChildhoodStageService $childhoodService, $user, $connection, $childhoodFolder): array
+    {
+        $names = ['footprint', 'first_photo', 'first_video', 'first_gift', 'other_photos', 'other_videos'];
+        $folders = [];
+        foreach ($names as $name) {
+            $folders[$name] = $childhoodService->getOrCreateSubfolder($user, $connection, $childhoodFolder, $name);
+        }
+
+        return $folders;
+    }
+
+    private function handleSingleFile($file, string $column, UserChildhoodStage $stage, $subfolder, ChildhoodStageService $childhoodService, $user, $connection): void
+    {
+        if (! $subfolder) {
+            return;
+        }
+        $oldDocId = $stage->{$column};
+        if ($oldDocId) {
+            $oldDoc = UserDocument::find($oldDocId);
+            if ($oldDoc && $oldDoc->user_id === $user->id) {
+                $childhoodService->deleteDocument($oldDoc, $connection);
+            }
+        }
+        $doc = $childhoodService->uploadFile($file, $subfolder, $user, $connection);
+        if ($doc) {
+            $stage->update([$column => $doc->id]);
+        }
+    }
+}

@@ -219,6 +219,12 @@
                                 <div>الرسم</div>
                             </a>
                         </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.visits.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-map-alt"></i>
+                                <div>الزيارات</div>
+                            </a>
+                        </li>
                     @endif
 
                     {{-- Support Tickets (users + admins) --}}

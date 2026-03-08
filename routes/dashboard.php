@@ -20,6 +20,7 @@ use App\Http\Controllers\Dashboard\AchievementController;
 use App\Http\Controllers\Dashboard\ChildhoodStageController;
 use App\Http\Controllers\Dashboard\DocumentController;
 use App\Http\Controllers\Dashboard\DrawingController;
+use App\Http\Controllers\Dashboard\VisitController;
 use App\Http\Controllers\Dashboard\VoiceController;
 use App\Http\Controllers\Dashboard\HeightWeightController;
 use App\Http\Controllers\Dashboard\StoragePlatformController;
@@ -111,6 +112,13 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('drawings/{drawing}/edit', [DrawingController::class, 'edit'])->name('drawings.edit');
         Route::put('drawings/{drawing}', [DrawingController::class, 'update'])->name('drawings.update');
         Route::delete('drawings/{drawing}', [DrawingController::class, 'destroy'])->name('drawings.destroy');
+
+        Route::get('visits', [VisitController::class, 'index'])->name('visits.index');
+        Route::get('visits/create', [VisitController::class, 'create'])->name('visits.create');
+        Route::post('visits', [VisitController::class, 'store'])->name('visits.store');
+        Route::get('visits/{visit}/edit', [VisitController::class, 'edit'])->name('visits.edit');
+        Route::put('visits/{visit}', [VisitController::class, 'update'])->name('visits.update');
+        Route::delete('visits/{visit}', [VisitController::class, 'destroy'])->name('visits.destroy');
     });
 
     Route::middleware('auth:admin')->group(function () {

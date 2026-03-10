@@ -602,8 +602,7 @@
                                                 <img src="{{ asset('assets/img/avatars/1.png') }}" alt="Avatar" class="rounded-circle" />
                                             </div>
                                             <div>
-                                                <p class="mb-0 small fw-medium">Lester McCarthy (Client)</p>
-                                                <small>CEO of ThemeSelection</small>
+                                                <small>EVORQ Technologies</small>
                                             </div>
                                         </div>
                                     </div>

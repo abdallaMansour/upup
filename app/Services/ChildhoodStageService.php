@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\StorageConnection;
 use App\Models\User;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
@@ -97,6 +98,18 @@ class ChildhoodStageService
             'provider' => $connection->provider,
             'type' => 'folder',
         ]);
+    }
+
+    public function getOrCreateChildhoodFolderForStage(User $user, StorageConnection $connection, UserChildhoodStage $stage): ?UserDocument
+    {
+        $mainFolder = $this->getOrCreateChildhoodFolder($user, $connection);
+        if (! $mainFolder) {
+            return null;
+        }
+
+        $stageFolderName = 'stage_'.$stage->id;
+
+        return $this->getOrCreateSubfolder($user, $connection, $mainFolder, $stageFolderName);
     }
 
     public function getOrCreateSubfolder(User $user, StorageConnection $connection, UserDocument $parentFolder, string $subfolderName): ?UserDocument

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserDrawing;
 use App\Services\DrawingService;
@@ -22,24 +23,29 @@ class DrawingController extends Controller
         $this->ensureWebUser();
         $user = $request->user();
 
-        $drawings = UserDrawing::forUser($user->id)
-            ->with('mediaDocument')
+        $stageId = $request->query('stage');
+        $query = UserDrawing::forUser($user->id)->forStage($stageId ? (int) $stageId : null);
+        $drawings = $query->with('mediaDocument')
             ->orderByDesc('record_date')
             ->orderByDesc('record_time')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $primaryConnection = $drawingService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.drawings.index', compact('drawings', 'primaryConnection'));
+        return view('dashboard.drawings.index', compact('drawings', 'primaryConnection', 'stage'));
     }
 
-    public function create(DrawingService $drawingService)
+    public function create(Request $request, DrawingService $drawingService)
     {
         $this->ensureWebUser();
-        $user = request()->user();
+        $user = $request->user();
+        $stageId = $request->query('stage');
         $primaryConnection = $drawingService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.drawings.create', compact('primaryConnection'));
+        return view('dashboard.drawings.create', compact('primaryConnection', 'stage'));
     }
 
     public function store(Request $request, DrawingService $drawingService)
@@ -65,8 +71,12 @@ class DrawingController extends Controller
             ],
         ]);
 
+        $stageId = $request->query('stage');
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
+
         $drawing = UserDrawing::create([
             'user_id' => $user->id,
+            'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'title' => $validated['title'],
@@ -83,7 +93,8 @@ class DrawingController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.drawings.index')->with('success', 'تم إضافة الرسم بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.drawings.index', ['stage' => $stage->id]) : redirect()->route('dashboard.drawings.index');
+        return $redirect->with('success', 'تم إضافة الرسم بنجاح.');
     }
 
     public function edit(UserDrawing $drawing, DrawingService $drawingService)
@@ -146,7 +157,9 @@ class DrawingController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.drawings.index')->with('success', 'تم تحديث الرسم بنجاح.');
+        $stage = $drawing->childhoodStage;
+        $redirect = $stage ? redirect()->route('dashboard.drawings.index', ['stage' => $stage->id]) : redirect()->route('dashboard.drawings.index');
+        return $redirect->with('success', 'تم تحديث الرسم بنجاح.');
     }
 
     public function destroy(Request $request, UserDrawing $drawing, DrawingService $drawingService)
@@ -165,8 +178,9 @@ class DrawingController extends Controller
             }
         }
 
+        $stage = $drawing->childhoodStage;
         $drawing->delete();
-
-        return redirect()->route('dashboard.drawings.index')->with('success', 'تم حذف الرسم بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.drawings.index', ['stage' => $stage->id]) : redirect()->route('dashboard.drawings.index');
+        return $redirect->with('success', 'تم حذف الرسم بنجاح.');
     }
 }

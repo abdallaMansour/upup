@@ -2,9 +2,14 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
+    @if (isset($stage) && $stage)
+        <a href="{{ route('dashboard.my-pages.documents', $stage) }}" class="btn btn-label-secondary mb-3">
+            <i class="bx bx-arrow-back me-1"></i> رجوع إلى وثق
+        </a>
+    @endif
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h4 class="mb-0">الأصوات</h4>
-        <a href="{{ route('dashboard.voices.create') }}" class="btn btn-primary">
+        <a href="{{ route('dashboard.voices.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}" class="btn btn-primary">
             <i class="bx bx-plus me-1"></i> إضافة صوت
         </a>
     </div>
@@ -34,7 +39,7 @@
             @if ($voices->isEmpty())
                 <div class="text-center py-5 text-muted">
                     <i class="bx bx-music bx-lg mb-3"></i>
-                    <p class="mb-0">لا توجد أصوات. <a href="{{ route('dashboard.voices.create') }}">أضف أول صوت</a></p>
+                    <p class="mb-0">لا توجد أصوات. <a href="{{ route('dashboard.voices.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}">أضف أول صوت</a></p>
                 </div>
             @else
                 <div class="table-responsive">

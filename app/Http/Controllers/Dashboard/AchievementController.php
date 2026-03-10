@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\UserAchievement;
 use App\Models\UserAchievementMedia;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Services\AchievementService;
 use Illuminate\Http\Request;
@@ -23,24 +24,29 @@ class AchievementController extends Controller
         $this->ensureWebUser();
         $user = $request->user();
 
-        $achievements = UserAchievement::forUser($user->id)
-            ->with(['certificateImageDocument', 'photos.userDocument', 'videos.userDocument'])
+        $stageId = $request->query('stage');
+        $query = UserAchievement::forUser($user->id)->forStage($stageId ? (int) $stageId : null);
+        $achievements = $query->with(['certificateImageDocument', 'photos.userDocument', 'videos.userDocument'])
             ->orderByDesc('record_date')
             ->orderByDesc('record_time')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $primaryConnection = $achievementService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.achievements.index', compact('achievements', 'primaryConnection'));
+        return view('dashboard.achievements.index', compact('achievements', 'primaryConnection', 'stage'));
     }
 
-    public function create(AchievementService $achievementService)
+    public function create(Request $request, AchievementService $achievementService)
     {
         $this->ensureWebUser();
-        $user = request()->user();
+        $user = $request->user();
+        $stageId = $request->query('stage');
         $primaryConnection = $achievementService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.achievements.create', compact('primaryConnection'));
+        return view('dashboard.achievements.create', compact('primaryConnection', 'stage'));
     }
 
     public function store(Request $request, AchievementService $achievementService)
@@ -70,8 +76,12 @@ class AchievementController extends Controller
             'videos.*' => ['file', 'mimetypes:video/*', 'max:51200'],
         ]);
 
+        $stageId = $request->query('stage');
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
+
         $achievement = UserAchievement::create([
             'user_id' => $user->id,
+            'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'type' => $validated['type'],
@@ -123,7 +133,8 @@ class AchievementController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.achievements.index')->with('success', 'تم إضافة الإنجاز بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.achievements.index', ['stage' => $stage->id]) : redirect()->route('dashboard.achievements.index');
+        return $redirect->with('success', 'تم إضافة الإنجاز بنجاح.');
     }
 
     public function edit(UserAchievement $achievement, AchievementService $achievementService)
@@ -225,7 +236,9 @@ class AchievementController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.achievements.index')->with('success', 'تم تحديث الإنجاز بنجاح.');
+        $stage = $achievement->childhoodStage;
+        $redirect = $stage ? redirect()->route('dashboard.achievements.index', ['stage' => $stage->id]) : redirect()->route('dashboard.achievements.index');
+        return $redirect->with('success', 'تم تحديث الإنجاز بنجاح.');
     }
 
     public function destroy(Request $request, UserAchievement $achievement, AchievementService $achievementService)
@@ -254,6 +267,8 @@ class AchievementController extends Controller
 
         $achievement->delete();
 
-        return redirect()->route('dashboard.achievements.index')->with('success', 'تم حذف الإنجاز بنجاح.');
+        $stage = $achievement->childhoodStage;
+        $redirect = $stage ? redirect()->route('dashboard.achievements.index', ['stage' => $stage->id]) : redirect()->route('dashboard.achievements.index');
+        return $redirect->with('success', 'تم حذف الإنجاز بنجاح.');
     }
 }

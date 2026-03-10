@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserHeightWeight;
 use App\Services\HeightWeightService;
@@ -21,25 +22,30 @@ class HeightWeightController extends Controller
     {
         $this->ensureWebUser();
         $user = $request->user();
+        $stageId = $request->query('stage');
 
-        $records = UserHeightWeight::forUser($user->id)
-            ->with(['imageDocument', 'videoDocument'])
+        $query = UserHeightWeight::forUser($user->id)->forStage($stageId ? (int) $stageId : null);
+        $records = $query->with(['imageDocument', 'videoDocument'])
             ->orderByDesc('record_date')
             ->orderByDesc('record_time')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $primaryConnection = $hwService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.height-weight.index', compact('records', 'primaryConnection'));
+        return view('dashboard.height-weight.index', compact('records', 'primaryConnection', 'stage'));
     }
 
-    public function create(HeightWeightService $hwService)
+    public function create(Request $request, HeightWeightService $hwService)
     {
         $this->ensureWebUser();
-        $user = request()->user();
+        $user = $request->user();
+        $stageId = $request->query('stage');
         $primaryConnection = $hwService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.height-weight.create', compact('primaryConnection'));
+        return view('dashboard.height-weight.create', compact('primaryConnection', 'stage'));
     }
 
     public function store(Request $request, HeightWeightService $hwService)
@@ -63,8 +69,12 @@ class HeightWeightController extends Controller
             'video' => ['nullable', 'file', 'mimetypes:video/*', 'max:51200'],
         ]);
 
+        $stageId = $request->query('stage');
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
+
         $record = UserHeightWeight::create([
             'user_id' => $user->id,
+            'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'height' => $validated['height'] ?? null,
@@ -92,7 +102,11 @@ class HeightWeightController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.height-weight.index')->with('success', 'تم إضافة السجل بنجاح.');
+        $redirect = $stage
+            ? redirect()->route('dashboard.height-weight.index', ['stage' => $stage->id])
+            : redirect()->route('dashboard.height-weight.index');
+
+        return $redirect->with('success', 'تم إضافة السجل بنجاح.');
     }
 
     public function edit(UserHeightWeight $heightWeight, HeightWeightService $hwService)
@@ -199,6 +213,11 @@ class HeightWeightController extends Controller
 
         $heightWeight->delete();
 
-        return redirect()->route('dashboard.height-weight.index')->with('success', 'تم حذف السجل بنجاح.');
+        $stage = $heightWeight->childhoodStage;
+        $redirect = $stage
+            ? redirect()->route('dashboard.height-weight.index', ['stage' => $stage->id])
+            : redirect()->route('dashboard.height-weight.index');
+
+        return $redirect->with('success', 'تم حذف السجل بنجاح.');
     }
 }

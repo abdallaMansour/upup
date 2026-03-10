@@ -10,6 +10,7 @@ class UserChildhoodStage extends Model
 {
     protected $fillable = [
         'user_id',
+        'is_public',
         'footprint_document_id',
         'name',
         'mother_name',
@@ -26,9 +27,11 @@ class UserChildhoodStage extends Model
         'first_photo_document_id',
         'first_video_document_id',
         'first_gift_document_id',
+        'cover_image_document_id',
     ];
 
     protected $casts = [
+        'is_public' => 'boolean',
         'birth_date' => 'date',
         'birth_time' => 'string',
         'height' => 'decimal:2',
@@ -60,6 +63,11 @@ class UserChildhoodStage extends Model
         return $this->belongsTo(UserDocument::class, 'first_gift_document_id');
     }
 
+    public function coverImageDocument(): BelongsTo
+    {
+        return $this->belongsTo(UserDocument::class, 'cover_image_document_id');
+    }
+
     public function mediaItems(): HasMany
     {
         return $this->hasMany(UserChildhoodMedia::class);
@@ -73,6 +81,41 @@ class UserChildhoodStage extends Model
     public function otherVideos(): HasMany
     {
         return $this->mediaItems()->where('media_type', 'other_video')->orderBy('sort_order');
+    }
+
+    public function heightWeights(): HasMany
+    {
+        return $this->hasMany(UserHeightWeight::class, 'user_childhood_stage_id');
+    }
+
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(UserAchievement::class, 'user_childhood_stage_id');
+    }
+
+    public function voices(): HasMany
+    {
+        return $this->hasMany(UserVoice::class, 'user_childhood_stage_id');
+    }
+
+    public function drawings(): HasMany
+    {
+        return $this->hasMany(UserDrawing::class, 'user_childhood_stage_id');
+    }
+
+    public function visits(): HasMany
+    {
+        return $this->hasMany(UserVisit::class, 'user_childhood_stage_id');
+    }
+
+    public function injuries(): HasMany
+    {
+        return $this->hasMany(UserInjury::class, 'user_childhood_stage_id');
+    }
+
+    public function otherEvents(): HasMany
+    {
+        return $this->hasMany(UserOtherEvent::class, 'user_childhood_stage_id');
     }
 
     public function scopeForUser($query, int $userId)

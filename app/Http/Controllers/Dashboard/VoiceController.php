@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserVoice;
 use App\Services\VoiceService;
@@ -22,24 +23,29 @@ class VoiceController extends Controller
         $this->ensureWebUser();
         $user = $request->user();
 
-        $voices = UserVoice::forUser($user->id)
-            ->with('audioDocument')
+        $stageId = $request->query('stage');
+        $query = UserVoice::forUser($user->id)->forStage($stageId ? (int) $stageId : null);
+        $voices = $query->with('audioDocument')
             ->orderByDesc('record_date')
             ->orderByDesc('record_time')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $primaryConnection = $voiceService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.voices.index', compact('voices', 'primaryConnection'));
+        return view('dashboard.voices.index', compact('voices', 'primaryConnection', 'stage'));
     }
 
-    public function create(VoiceService $voiceService)
+    public function create(Request $request, VoiceService $voiceService)
     {
         $this->ensureWebUser();
-        $user = request()->user();
+        $user = $request->user();
+        $stageId = $request->query('stage');
         $primaryConnection = $voiceService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.voices.create', compact('primaryConnection'));
+        return view('dashboard.voices.create', compact('primaryConnection', 'stage'));
     }
 
     public function store(Request $request, VoiceService $voiceService)
@@ -60,8 +66,12 @@ class VoiceController extends Controller
             'audio' => ['nullable', 'file', 'mimetypes:audio/mpeg,audio/wav,audio/ogg,audio/m4a,audio/x-m4a,audio/webm', 'max:51200'],
         ]);
 
+        $stageId = $request->query('stage');
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
+
         $voice = UserVoice::create([
             'user_id' => $user->id,
+            'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'title' => $validated['title'],
@@ -78,7 +88,8 @@ class VoiceController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.voices.index')->with('success', 'تم إضافة الصوت بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.voices.index', ['stage' => $stage->id]) : redirect()->route('dashboard.voices.index');
+        return $redirect->with('success', 'تم إضافة الصوت بنجاح.');
     }
 
     public function edit(UserVoice $voice, VoiceService $voiceService)
@@ -136,7 +147,9 @@ class VoiceController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.voices.index')->with('success', 'تم تحديث الصوت بنجاح.');
+        $stage = $voice->childhoodStage;
+        $redirect = $stage ? redirect()->route('dashboard.voices.index', ['stage' => $stage->id]) : redirect()->route('dashboard.voices.index');
+        return $redirect->with('success', 'تم تحديث الصوت بنجاح.');
     }
 
     public function destroy(Request $request, UserVoice $voice, VoiceService $voiceService)
@@ -157,6 +170,8 @@ class VoiceController extends Controller
 
         $voice->delete();
 
-        return redirect()->route('dashboard.voices.index')->with('success', 'تم حذف الصوت بنجاح.');
+        $stage = $voice->childhoodStage;
+        $redirect = $stage ? redirect()->route('dashboard.voices.index', ['stage' => $stage->id]) : redirect()->route('dashboard.voices.index');
+        return $redirect->with('success', 'تم حذف الصوت بنجاح.');
     }
 }

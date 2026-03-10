@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserInjury;
 use App\Services\InjuryService;
@@ -22,24 +23,29 @@ class InjuryController extends Controller
         $this->ensureWebUser();
         $user = $request->user();
 
-        $injuries = UserInjury::forUser($user->id)
-            ->with('mediaDocument')
+        $stageId = $request->query('stage');
+        $query = UserInjury::forUser($user->id)->forStage($stageId ? (int) $stageId : null);
+        $injuries = $query->with('mediaDocument')
             ->orderByDesc('record_date')
             ->orderByDesc('record_time')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $primaryConnection = $injuryService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.injuries.index', compact('injuries', 'primaryConnection'));
+        return view('dashboard.injuries.index', compact('injuries', 'primaryConnection', 'stage'));
     }
 
-    public function create(InjuryService $injuryService)
+    public function create(Request $request, InjuryService $injuryService)
     {
         $this->ensureWebUser();
-        $user = request()->user();
+        $user = $request->user();
+        $stageId = $request->query('stage');
         $primaryConnection = $injuryService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.injuries.create', compact('primaryConnection'));
+        return view('dashboard.injuries.create', compact('primaryConnection', 'stage'));
     }
 
     public function store(Request $request, InjuryService $injuryService)
@@ -65,8 +71,12 @@ class InjuryController extends Controller
             ],
         ]);
 
+        $stageId = $request->query('stage');
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
+
         $injury = UserInjury::create([
             'user_id' => $user->id,
+            'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'title' => $validated['title'],
@@ -83,7 +93,8 @@ class InjuryController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.injuries.index')->with('success', 'تم إضافة الإصابة بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.injuries.index', ['stage' => $stage->id]) : redirect()->route('dashboard.injuries.index');
+        return $redirect->with('success', 'تم إضافة الإصابة بنجاح.');
     }
 
     public function edit(UserInjury $injury, InjuryService $injuryService)
@@ -146,7 +157,9 @@ class InjuryController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.injuries.index')->with('success', 'تم تحديث الإصابة بنجاح.');
+        $stage = $injury->childhoodStage;
+        $redirect = $stage ? redirect()->route('dashboard.injuries.index', ['stage' => $stage->id]) : redirect()->route('dashboard.injuries.index');
+        return $redirect->with('success', 'تم تحديث الإصابة بنجاح.');
     }
 
     public function destroy(Request $request, UserInjury $injury, InjuryService $injuryService)
@@ -165,8 +178,10 @@ class InjuryController extends Controller
             }
         }
 
+        $stage = $injury->childhoodStage;
         $injury->delete();
 
-        return redirect()->route('dashboard.injuries.index')->with('success', 'تم حذف الإصابة بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.injuries.index', ['stage' => $stage->id]) : redirect()->route('dashboard.injuries.index');
+        return $redirect->with('success', 'تم حذف الإصابة بنجاح.');
     }
 }

@@ -19,6 +19,7 @@ use App\Http\Controllers\Dashboard\TechnicalSupportController;
 use App\Http\Controllers\Dashboard\AchievementController;
 use App\Http\Controllers\Dashboard\ChildhoodStageController;
 use App\Http\Controllers\Dashboard\DocumentController;
+use App\Http\Controllers\Dashboard\MyPagesController;
 use App\Http\Controllers\Dashboard\DrawingController;
 use App\Http\Controllers\Dashboard\InjuryController;
 use App\Http\Controllers\Dashboard\OtherEventController;
@@ -86,6 +87,14 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('life-stages/childhood', [ChildhoodStageController::class, 'index'])->name('life-stages.childhood.index');
         Route::post('life-stages/childhood', [ChildhoodStageController::class, 'store'])->name('life-stages.childhood.store');
         Route::put('life-stages/childhood', [ChildhoodStageController::class, 'update'])->name('life-stages.childhood.update');
+
+        Route::get('my-pages', [MyPagesController::class, 'index'])->name('my-pages.index');
+        Route::get('my-pages/create', [MyPagesController::class, 'create'])->name('my-pages.create');
+        Route::post('my-pages', [MyPagesController::class, 'store'])->name('my-pages.store');
+        Route::get('my-pages/{stage}/edit', [MyPagesController::class, 'edit'])->name('my-pages.edit');
+        Route::put('my-pages/{stage}', [MyPagesController::class, 'update'])->name('my-pages.update');
+        Route::get('my-pages/{stage}/documents', [MyPagesController::class, 'documents'])->name('my-pages.documents');
+        Route::delete('my-pages/{stage}', [MyPagesController::class, 'destroy'])->name('my-pages.destroy');
 
         Route::get('height-weight', [HeightWeightController::class, 'index'])->name('height-weight.index');
         Route::get('height-weight/create', [HeightWeightController::class, 'create'])->name('height-weight.create');

@@ -9,6 +9,7 @@ class UserDrawing extends Model
 {
     protected $fillable = [
         'user_id',
+        'user_childhood_stage_id',
         'record_date',
         'record_time',
         'media_document_id',
@@ -34,6 +35,15 @@ class UserDrawing extends Model
     public function scopeForUser($query, int $userId)
     {
         return $query->where('user_id', $userId);
+    }
+
+    public function scopeForStage($query, ?int $stageId)
+    {
+        if ($stageId === null) {
+            return $query->whereNull('user_childhood_stage_id');
+        }
+
+        return $query->where('user_childhood_stage_id', $stageId);
     }
 
     public function getRecordTimeFormattedAttribute(): ?string

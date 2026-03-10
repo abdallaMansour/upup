@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserVisit;
 use App\Services\VisitService;
@@ -22,24 +23,29 @@ class VisitController extends Controller
         $this->ensureWebUser();
         $user = $request->user();
 
-        $visits = UserVisit::forUser($user->id)
-            ->with('mediaDocument')
+        $stageId = $request->query('stage');
+        $query = UserVisit::forUser($user->id)->forStage($stageId ? (int) $stageId : null);
+        $visits = $query->with('mediaDocument')
             ->orderByDesc('record_date')
             ->orderByDesc('record_time')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $primaryConnection = $visitService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.visits.index', compact('visits', 'primaryConnection'));
+        return view('dashboard.visits.index', compact('visits', 'primaryConnection', 'stage'));
     }
 
-    public function create(VisitService $visitService)
+    public function create(Request $request, VisitService $visitService)
     {
         $this->ensureWebUser();
-        $user = request()->user();
+        $user = $request->user();
+        $stageId = $request->query('stage');
         $primaryConnection = $visitService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.visits.create', compact('primaryConnection'));
+        return view('dashboard.visits.create', compact('primaryConnection', 'stage'));
     }
 
     public function store(Request $request, VisitService $visitService)
@@ -65,8 +71,12 @@ class VisitController extends Controller
             ],
         ]);
 
+        $stageId = $request->query('stage');
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
+
         $visit = UserVisit::create([
             'user_id' => $user->id,
+            'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'title' => $validated['title'],
@@ -83,7 +93,8 @@ class VisitController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.visits.index')->with('success', 'تم إضافة الزيارة بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.visits.index', ['stage' => $stage->id]) : redirect()->route('dashboard.visits.index');
+        return $redirect->with('success', 'تم إضافة الزيارة بنجاح.');
     }
 
     public function edit(UserVisit $visit, VisitService $visitService)
@@ -146,7 +157,9 @@ class VisitController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.visits.index')->with('success', 'تم تحديث الزيارة بنجاح.');
+        $stage = $visit->childhoodStage;
+        $redirect = $stage ? redirect()->route('dashboard.visits.index', ['stage' => $stage->id]) : redirect()->route('dashboard.visits.index');
+        return $redirect->with('success', 'تم تحديث الزيارة بنجاح.');
     }
 
     public function destroy(Request $request, UserVisit $visit, VisitService $visitService)
@@ -165,8 +178,10 @@ class VisitController extends Controller
             }
         }
 
+        $stage = $visit->childhoodStage;
         $visit->delete();
 
-        return redirect()->route('dashboard.visits.index')->with('success', 'تم حذف الزيارة بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.visits.index', ['stage' => $stage->id]) : redirect()->route('dashboard.visits.index');
+        return $redirect->with('success', 'تم حذف الزيارة بنجاح.');
     }
 }

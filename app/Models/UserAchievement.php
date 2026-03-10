@@ -19,6 +19,7 @@ class UserAchievement extends Model
 
     protected $fillable = [
         'user_id',
+        'user_childhood_stage_id',
         'record_date',
         'record_time',
         'type',
@@ -37,6 +38,11 @@ class UserAchievement extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function childhoodStage(): BelongsTo
+    {
+        return $this->belongsTo(UserChildhoodStage::class, 'user_childhood_stage_id');
     }
 
     public function certificateImageDocument(): BelongsTo
@@ -62,6 +68,15 @@ class UserAchievement extends Model
     public function scopeForUser($query, int $userId)
     {
         return $query->where('user_id', $userId);
+    }
+
+    public function scopeForStage($query, ?int $stageId)
+    {
+        if ($stageId === null) {
+            return $query->whereNull('user_childhood_stage_id');
+        }
+
+        return $query->where('user_childhood_stage_id', $stageId);
     }
 
     public function getTypeLabelAttribute(): string

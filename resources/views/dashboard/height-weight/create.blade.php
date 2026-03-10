@@ -4,7 +4,7 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h4 class="mb-0">إضافة سجل طول ووزن</h4>
-        <a href="{{ route('dashboard.height-weight.index') }}" class="btn btn-label-secondary">
+        <a href="{{ ($stage ?? null) ? route('dashboard.my-pages.documents', $stage) : route('dashboard.height-weight.index') }}" class="btn btn-label-secondary">
             <i class="bx bx-arrow-back me-1"></i> رجوع
         </a>
     </div>
@@ -25,7 +25,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('dashboard.height-weight.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('dashboard.height-weight.store', ($stage ?? null) ? ['stage' => $stage->id] : []) }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="row g-3 mb-4">

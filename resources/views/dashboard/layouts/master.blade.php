@@ -193,51 +193,9 @@
                                 <span class="menu-header-text">صفحات المستخدمين</span>
                             </li>
                             <li class="menu-item">
-                                <a href="{{ route('dashboard.life-stages.childhood.index') }}" class="menu-link">
+                                <a href="{{ route('dashboard.my-pages.index') }}" class="menu-link">
                                     <i class="menu-icon icon-base bx bx-child"></i>
-                                    <div>مرحلة الطفولة</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.height-weight.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-ruler"></i>
-                                    <div>الطول والوزن</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.achievements.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-trophy"></i>
-                                    <div>الإنجازات</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.voices.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-music"></i>
-                                    <div>الأصوات</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.drawings.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-palette"></i>
-                                    <div>الرسم</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.visits.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-map-alt"></i>
-                                    <div>الزيارات</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.injuries.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-first-aid"></i>
-                                    <div>الإصابات</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.other-events.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-calendar-event"></i>
-                                    <div>أحداث أخرى</div>
+                                    <div>صفحاتي</div>
                                 </a>
                             </li>
                         @endif

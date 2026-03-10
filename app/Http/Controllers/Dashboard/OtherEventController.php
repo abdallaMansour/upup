@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserOtherEvent;
 use App\Services\OtherEventService;
@@ -22,24 +23,29 @@ class OtherEventController extends Controller
         $this->ensureWebUser();
         $user = $request->user();
 
-        $otherEvents = UserOtherEvent::forUser($user->id)
-            ->with('mediaDocument')
+        $stageId = $request->query('stage');
+        $query = UserOtherEvent::forUser($user->id)->forStage($stageId ? (int) $stageId : null);
+        $otherEvents = $query->with('mediaDocument')
             ->orderByDesc('record_date')
             ->orderByDesc('record_time')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $primaryConnection = $otherEventService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.other-events.index', compact('otherEvents', 'primaryConnection'));
+        return view('dashboard.other-events.index', compact('otherEvents', 'primaryConnection', 'stage'));
     }
 
-    public function create(OtherEventService $otherEventService)
+    public function create(Request $request, OtherEventService $otherEventService)
     {
         $this->ensureWebUser();
-        $user = request()->user();
+        $user = $request->user();
+        $stageId = $request->query('stage');
         $primaryConnection = $otherEventService->resolveStorageConnection($user);
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        return view('dashboard.other-events.create', compact('primaryConnection'));
+        return view('dashboard.other-events.create', compact('primaryConnection', 'stage'));
     }
 
     public function store(Request $request, OtherEventService $otherEventService)
@@ -65,8 +71,12 @@ class OtherEventController extends Controller
             ],
         ]);
 
+        $stageId = $request->query('stage');
+        $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
+
         $otherEvent = UserOtherEvent::create([
             'user_id' => $user->id,
+            'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'title' => $validated['title'],
@@ -83,7 +93,8 @@ class OtherEventController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.other-events.index')->with('success', 'تم إضافة الحدث بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.other-events.index', ['stage' => $stage->id]) : redirect()->route('dashboard.other-events.index');
+        return $redirect->with('success', 'تم إضافة الحدث بنجاح.');
     }
 
     public function edit(UserOtherEvent $other_event, OtherEventService $otherEventService)
@@ -146,7 +157,9 @@ class OtherEventController extends Controller
             }
         }
 
-        return redirect()->route('dashboard.other-events.index')->with('success', 'تم تحديث الحدث بنجاح.');
+        $stage = $other_event->childhoodStage;
+        $redirect = $stage ? redirect()->route('dashboard.other-events.index', ['stage' => $stage->id]) : redirect()->route('dashboard.other-events.index');
+        return $redirect->with('success', 'تم تحديث الحدث بنجاح.');
     }
 
     public function destroy(Request $request, UserOtherEvent $other_event, OtherEventService $otherEventService)
@@ -165,8 +178,10 @@ class OtherEventController extends Controller
             }
         }
 
+        $stage = $other_event->childhoodStage;
         $other_event->delete();
 
-        return redirect()->route('dashboard.other-events.index')->with('success', 'تم حذف الحدث بنجاح.');
+        $redirect = $stage ? redirect()->route('dashboard.other-events.index', ['stage' => $stage->id]) : redirect()->route('dashboard.other-events.index');
+        return $redirect->with('success', 'تم حذف الحدث بنجاح.');
     }
 }

@@ -9,6 +9,7 @@ class UserVoice extends Model
 {
     protected $fillable = [
         'user_id',
+        'user_childhood_stage_id',
         'record_date',
         'record_time',
         'audio_document_id',
@@ -26,6 +27,11 @@ class UserVoice extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function childhoodStage(): BelongsTo
+    {
+        return $this->belongsTo(UserChildhoodStage::class, 'user_childhood_stage_id');
+    }
+
     public function audioDocument(): BelongsTo
     {
         return $this->belongsTo(UserDocument::class, 'audio_document_id');
@@ -34,6 +40,15 @@ class UserVoice extends Model
     public function scopeForUser($query, int $userId)
     {
         return $query->where('user_id', $userId);
+    }
+
+    public function scopeForStage($query, ?int $stageId)
+    {
+        if ($stageId === null) {
+            return $query->whereNull('user_childhood_stage_id');
+        }
+
+        return $query->where('user_childhood_stage_id', $stageId);
     }
 
     public function getRecordTimeFormattedAttribute(): ?string

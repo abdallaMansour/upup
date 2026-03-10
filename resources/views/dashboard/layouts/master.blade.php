@@ -54,260 +54,264 @@
 </head>
 
 <body>
+    @php
+        $isUserDashboard = auth('web')->check();
+    @endphp
     <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-wrapper layout-content-navbar {{ $isUserDashboard ? 'layout-without-menu' : '' }}">
         <div class="layout-container">
-            <!-- Menu -->
-
-            <aside id="layout-menu" class="layout-menu menu-vertical menu">
-                <div class="app-brand demo my-5">
-                    <a href="{{ route('website.landing-page') }}" class="app-brand-link">
-                        <span class="app-brand-logo demo">
-                            <span class="text-primary">
-                                <img width="100" src="{{ asset('assets/svg/icons/upup_logo_dark.svg') }}" alt="Upup" class="img-fluid">
+            <!-- Menu (للأدمن فقط) -->
+            @unless ($isUserDashboard)
+                <aside id="layout-menu" class="layout-menu menu-vertical menu">
+                    <div class="app-brand demo my-5">
+                        <a href="{{ route('website.landing-page') }}" class="app-brand-link">
+                            <span class="app-brand-logo demo">
+                                <span class="text-primary">
+                                    <img width="100" src="{{ asset('assets/svg/icons/upup_logo_dark.svg') }}" alt="Upup" class="img-fluid">
+                                </span>
                             </span>
-                        </span>
-                    </a>
+                        </a>
 
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-                        <i class="icon-base bx bx-chevron-left"></i>
+                        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+                            <i class="icon-base bx bx-chevron-left"></i>
+                        </a>
+                    </div>
+
+                    <div class="menu-inner-shadow" style="background: #00000000;"></div>
+
+                    <ul class="menu-inner py-1">
+
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-home-smile"></i>
+                                <div data-i18n="Dashboard">لوحة التحكم</div>
+                            </a>
+                        </li>
+
+
+                        <!-- Apps & Pages -->
+                        <li class="menu-header small">
+                            <span class="menu-header-text" data-i18n="Settings">الإعدادات</span>
+                        </li>
+                        @auth('admin')
+                            @if (auth('admin')->user()->canAccess('users.view'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.users.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-user"></i>
+                                        <div data-i18n="Users">المستخدمين</div>
+                                    </a>
+                                </li>
+                            @endif
+                        @endauth
+                        @if (auth('web')->check() || (auth('admin')->check() && auth('admin')->user()->hasPermission('packages.view')))
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.packages.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-package"></i>
+                                    <div data-i18n="Packages">الباقات</div>
+                                </a>
+                            </li>
+                        @endif
+                        @auth('admin')
+                            @if (auth('admin')->user()->canAccess('faq.view') || auth('admin')->user()->canAccess('faq.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.faq.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-help-circle"></i>
+                                        <div data-i18n="FAQ">الأسئلة الشائعة</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth('admin')->user()->canAccess('features.view') || auth('admin')->user()->canAccess('features.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.features.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-star"></i>
+                                        <div data-i18n="Features">المميزات</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth('admin')->user()->canAccess('media-department.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.media-department.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-news"></i>
+                                        <div data-i18n="Media Department">القسم الإعلامي</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth('admin')->user()->canAccess('site-settings.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.privacy-policy.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-shield-quarter"></i>
+                                        <div data-i18n="Privacy Policy">سياسة الخصوصيه</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth('admin')->user()->canAccess('site-settings.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.terms-and-conditions.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-file-blank"></i>
+                                        <div data-i18n="Terms and Conditions">الشروط و الأحكام</div>
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- Subscriptions --}}
+                            @if (auth('admin')->user()->canAccess('subscriptions.view') || auth('admin')->user()->canAccess('subscriptions.manage'))
+                                <li class="menu-header small">
+                                    <span class="menu-header-text" data-i18n="Subscriptions">الإشتراكات</span>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.subscriptions.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-credit-card"></i>
+                                        <div data-i18n="Subscriptions">الإشتراكات</div>
+                                    </a>
+                                </li>
+                            @endif
+                        @endauth
+
+                        {{-- إدارة الوثائق (للمستخدمين فقط) --}}
+                        @if (auth('web')->check())
+                            <li class="menu-header small">
+                                <span class="menu-header-text" data-i18n="Documents">إدارة الوثائق</span>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.documents.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-file-blank"></i>
+                                    <div data-i18n="My Documents">وثائقي وملفاتي</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.documents.storage-connections') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-cloud"></i>
+                                    <div data-i18n="Storage Connections">ربط منصات التخزين</div>
+                                </a>
+                            </li>
+                        @endif
+                        {{-- إدارة منصات التخزين (للأدمن فقط) --}}
+
+                        {{-- صفحات المستخدمين (للمستخدمين فقط) --}}
+                        @if (auth('web')->check())
+                            <li class="menu-header small">
+                                <span class="menu-header-text">صفحات المستخدمين</span>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.life-stages.childhood.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-child"></i>
+                                    <div>مرحلة الطفولة</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.height-weight.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-ruler"></i>
+                                    <div>الطول والوزن</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.achievements.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-trophy"></i>
+                                    <div>الإنجازات</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.voices.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-music"></i>
+                                    <div>الأصوات</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.drawings.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-palette"></i>
+                                    <div>الرسم</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.visits.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-map-alt"></i>
+                                    <div>الزيارات</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.injuries.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-first-aid"></i>
+                                    <div>الإصابات</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="{{ route('dashboard.other-events.index') }}" class="menu-link">
+                                    <i class="menu-icon icon-base bx bx-calendar-event"></i>
+                                    <div>أحداث أخرى</div>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Support Tickets (users + admins) --}}
+                        <li class="menu-header small">
+                            <span class="menu-header-text" data-i18n="Support">الدعم الفني</span>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('dashboard.support-tickets.index') }}" class="menu-link">
+                                <i class="menu-icon icon-base bx bx-support"></i>
+                                <div data-i18n="Support Tickets">تذاكر الدعم الفني</div>
+                            </a>
+                        </li>
+                        @auth('admin')
+                            @if (auth('admin')->user()->canAccess('technical-support.view') || auth('admin')->user()->canAccess('technical-support.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.technical-support.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-envelope"></i>
+                                        <div data-i18n="Messages">المراسلات</div>
+                                    </a>
+                                </li>
+                            @endif
+                        @endauth
+
+
+                        @if (auth('admin')->check() && auth('admin')->user()->canAccessAdminManagement())
+                            <li class="menu-header small">
+                                <span class="menu-header-text">إدارة الأدمن</span>
+                            </li>
+                            @if (auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->roles->isEmpty() || auth('admin')->user()->hasPermission('admins.view'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.admins.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-user-circle"></i>
+                                        <div data-i18n="Admins">الأدمن</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->roles->isEmpty() || auth('admin')->user()->hasPermission('roles.view'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.roles.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-id-card"></i>
+                                        <div data-i18n="Roles">الأدوار</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->roles->isEmpty() || auth('admin')->user()->hasPermission('permissions.view'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.permissions.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-lock-alt"></i>
+                                        <div data-i18n="Permissions">الصلاحيات</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth('admin')->user()->canAccess('storage-platforms.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.storage-platforms.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-cloud"></i>
+                                        <div data-i18n="Storage Platforms">إدارة منصات التخزين</div>
+                                    </a>
+                                </li>
+                            @endif
+                        @endif
+
+                    </ul>
+                </aside>
+
+                <div class="menu-mobile-toggler d-xl-none rounded-1">
+                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large text-bg-secondary p-2 rounded-1">
+                        <i class="bx bx-menu icon-base"></i>
+                        <i class="bx bx-chevron-right icon-base"></i>
                     </a>
                 </div>
-
-                <div class="menu-inner-shadow" style="background: #00000000;"></div>
-
-                <ul class="menu-inner py-1">
-
-                    <li class="menu-item">
-                        <a href="{{ route('dashboard.index') }}" class="menu-link">
-                            <i class="menu-icon icon-base bx bx-home-smile"></i>
-                            <div data-i18n="Dashboard">لوحة التحكم</div>
-                        </a>
-                    </li>
-
-
-                    <!-- Apps & Pages -->
-                    <li class="menu-header small">
-                        <span class="menu-header-text" data-i18n="Settings">الإعدادات</span>
-                    </li>
-                    @auth('admin')
-                        @if (auth('admin')->user()->canAccess('users.view'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.users.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-user"></i>
-                                    <div data-i18n="Users">المستخدمين</div>
-                                </a>
-                            </li>
-                        @endif
-                    @endauth
-                    @if (auth('web')->check() || (auth('admin')->check() && auth('admin')->user()->hasPermission('packages.view')))
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.packages.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-package"></i>
-                                <div data-i18n="Packages">الباقات</div>
-                            </a>
-                        </li>
-                    @endif
-                    @auth('admin')
-                        @if (auth('admin')->user()->canAccess('faq.view') || auth('admin')->user()->canAccess('faq.manage'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.faq.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-help-circle"></i>
-                                    <div data-i18n="FAQ">الأسئلة الشائعة</div>
-                                </a>
-                            </li>
-                        @endif
-                        @if (auth('admin')->user()->canAccess('features.view') || auth('admin')->user()->canAccess('features.manage'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.features.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-star"></i>
-                                    <div data-i18n="Features">المميزات</div>
-                                </a>
-                            </li>
-                        @endif
-                        @if (auth('admin')->user()->canAccess('media-department.manage'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.media-department.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-news"></i>
-                                    <div data-i18n="Media Department">القسم الإعلامي</div>
-                                </a>
-                            </li>
-                        @endif
-                        @if (auth('admin')->user()->canAccess('site-settings.manage'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.privacy-policy.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-shield-quarter"></i>
-                                    <div data-i18n="Privacy Policy">سياسة الخصوصيه</div>
-                                </a>
-                            </li>
-                        @endif
-                        @if (auth('admin')->user()->canAccess('site-settings.manage'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.terms-and-conditions.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-file-blank"></i>
-                                    <div data-i18n="Terms and Conditions">الشروط و الأحكام</div>
-                                </a>
-                            </li>
-                        @endif
-
-                        {{-- Subscriptions --}}
-                        @if (auth('admin')->user()->canAccess('subscriptions.view') || auth('admin')->user()->canAccess('subscriptions.manage'))
-                            <li class="menu-header small">
-                                <span class="menu-header-text" data-i18n="Subscriptions">الإشتراكات</span>
-                            </li>
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.subscriptions.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-credit-card"></i>
-                                    <div data-i18n="Subscriptions">الإشتراكات</div>
-                                </a>
-                            </li>
-                        @endif
-                    @endauth
-
-                    {{-- إدارة الوثائق (للمستخدمين فقط) --}}
-                    @if (auth('web')->check())
-                        <li class="menu-header small">
-                            <span class="menu-header-text" data-i18n="Documents">إدارة الوثائق</span>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.documents.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-file-blank"></i>
-                                <div data-i18n="My Documents">وثائقي وملفاتي</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.documents.storage-connections') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-cloud"></i>
-                                <div data-i18n="Storage Connections">ربط منصات التخزين</div>
-                            </a>
-                        </li>
-                    @endif
-                    {{-- إدارة منصات التخزين (للأدمن فقط) --}}
-
-                    {{-- صفحات المستخدمين (للمستخدمين فقط) --}}
-                    @if (auth('web')->check())
-                        <li class="menu-header small">
-                            <span class="menu-header-text">صفحات المستخدمين</span>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.life-stages.childhood.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-baby-carriage"></i>
-                                <div>مرحلة الطفولة</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.height-weight.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-ruler"></i>
-                                <div>الطول والوزن</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.achievements.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-trophy"></i>
-                                <div>الإنجازات</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.voices.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-music"></i>
-                                <div>الأصوات</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.drawings.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-palette"></i>
-                                <div>الرسم</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.visits.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-map-alt"></i>
-                                <div>الزيارات</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.injuries.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-first-aid"></i>
-                                <div>الإصابات</div>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="{{ route('dashboard.other-events.index') }}" class="menu-link">
-                                <i class="menu-icon icon-base bx bx-calendar-event"></i>
-                                <div>أحداث أخرى</div>
-                            </a>
-                        </li>
-                    @endif
-
-                    {{-- Support Tickets (users + admins) --}}
-                    <li class="menu-header small">
-                        <span class="menu-header-text" data-i18n="Support">الدعم الفني</span>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('dashboard.support-tickets.index') }}" class="menu-link">
-                            <i class="menu-icon icon-base bx bx-support"></i>
-                            <div data-i18n="Support Tickets">تذاكر الدعم الفني</div>
-                        </a>
-                    </li>
-                    @auth('admin')
-                        @if (auth('admin')->user()->canAccess('technical-support.view') || auth('admin')->user()->canAccess('technical-support.manage'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.technical-support.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-envelope"></i>
-                                    <div data-i18n="Messages">المراسلات</div>
-                                </a>
-                            </li>
-                        @endif
-                    @endauth
-
-
-                    @if (auth('admin')->check() && auth('admin')->user()->canAccessAdminManagement())
-                        <li class="menu-header small">
-                            <span class="menu-header-text">إدارة الأدمن</span>
-                        </li>
-                        @if (auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->roles->isEmpty() || auth('admin')->user()->hasPermission('admins.view'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.admins.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-user-circle"></i>
-                                    <div data-i18n="Admins">الأدمن</div>
-                                </a>
-                            </li>
-                        @endif
-                        @if (auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->roles->isEmpty() || auth('admin')->user()->hasPermission('roles.view'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.roles.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-id-card"></i>
-                                    <div data-i18n="Roles">الأدوار</div>
-                                </a>
-                            </li>
-                        @endif
-                        @if (auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->roles->isEmpty() || auth('admin')->user()->hasPermission('permissions.view'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.permissions.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-lock-alt"></i>
-                                    <div data-i18n="Permissions">الصلاحيات</div>
-                                </a>
-                            </li>
-                        @endif
-                        @if (auth('admin')->user()->canAccess('storage-platforms.manage'))
-                            <li class="menu-item">
-                                <a href="{{ route('dashboard.storage-platforms.index') }}" class="menu-link">
-                                    <i class="menu-icon icon-base bx bx-cloud"></i>
-                                    <div data-i18n="Storage Platforms">إدارة منصات التخزين</div>
-                                </a>
-                            </li>
-                        @endif
-                    @endif
-
-                </ul>
-            </aside>
-
-            <div class="menu-mobile-toggler d-xl-none rounded-1">
-                <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large text-bg-secondary p-2 rounded-1">
-                    <i class="bx bx-menu icon-base"></i>
-                    <i class="bx bx-chevron-right icon-base"></i>
-                </a>
-            </div>
+            @endunless
             <!-- / Menu -->
 
             <!-- Layout container -->
@@ -315,11 +319,13 @@
                 <!-- Navbar -->
 
                 <nav class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
-                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
-                        <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
-                            <i class="icon-base bx bx-menu icon-md"></i>
-                        </a>
-                    </div>
+                    @unless ($isUserDashboard)
+                        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+                            <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
+                                <i class="icon-base bx bx-menu icon-md"></i>
+                            </a>
+                        </div>
+                    @endunless
 
                     <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
                         <!-- Search -->
@@ -727,6 +733,14 @@
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
 
+                    @if ($isUserDashboard && !request()->routeIs('dashboard.index'))
+                        <div class="container-xxl flex-grow-1 pt-4" style="max-height: 65px;">
+                            <a href="{{ route('dashboard.index') }}" class="btn btn-label-secondary mb-4 mt-4">
+                                <i class="icon-base bx bx-arrow-back me-1"></i> الرجوع للشاشة الرئيسية
+                            </a>
+                        </div>
+                    @endif
+
                     @yield('content')
 
                     <!-- Footer -->
@@ -761,8 +775,10 @@
             <!-- / Layout page -->
         </div>
 
-        <!-- Overlay -->
-        <div class="layout-overlay layout-menu-toggle"></div>
+        @unless ($isUserDashboard)
+            <!-- Overlay -->
+            <div class="layout-overlay layout-menu-toggle"></div>
+        @endunless
 
         <!-- Drag Target Area To SlideIn Menu On Small Screens -->
         <div class="drag-target"></div>

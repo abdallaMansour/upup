@@ -12,6 +12,174 @@
             </div>
         </div>
         @endif
+
+        @if (auth('web')->check())
+        {{-- لوحة التحكم للمستخدم: كروت التنقل --}}
+        <div class="mb-6">
+            <h4 class="mb-4">مرحباً بك! 🎉</h4>
+            <p class="text-body-secondary mb-4">اختر القسم الذي تريد الوصول إليه</p>
+        </div>
+        <div class="row g-4">
+            {{-- إدارة الوثائق --}}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.documents.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-file-blank icon-lg text-primary"></i>
+                        </span>
+                        <h6 class="card-title mb-1">وثائقي وملفاتي</h6>
+                        <small class="text-body-secondary">إدارة الملفات والوثائق</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.documents.storage-connections') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-info" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-cloud icon-lg text-info"></i>
+                        </span>
+                        <h6 class="card-title mb-1">ربط منصات التخزين</h6>
+                        <small class="text-body-secondary">Google Drive و Wasabi</small>
+                    </div>
+                </a>
+            </div>
+            {{-- صفحات المستخدمين --}}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.life-stages.childhood.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-success" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-child icon-lg text-success"></i>
+                        </span>
+                        <h6 class="card-title mb-1">مرحلة الطفولة</h6>
+                        <small class="text-body-secondary">ذكريات الطفولة</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.height-weight.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-warning" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-ruler icon-lg text-warning"></i>
+                        </span>
+                        <h6 class="card-title mb-1">الطول والوزن</h6>
+                        <small class="text-body-secondary">تتبع النمو</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.achievements.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-trophy icon-lg text-primary"></i>
+                        </span>
+                        <h6 class="card-title mb-1">الإنجازات</h6>
+                        <small class="text-body-secondary">إنجازاتي</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.voices.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-secondary" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-music icon-lg text-secondary"></i>
+                        </span>
+                        <h6 class="card-title mb-1">الأصوات</h6>
+                        <small class="text-body-secondary">التسجيلات الصوتية</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.drawings.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-danger" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-palette icon-lg text-danger"></i>
+                        </span>
+                        <h6 class="card-title mb-1">الرسم</h6>
+                        <small class="text-body-secondary">رسوماتي</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.visits.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-info" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-map-alt icon-lg text-info"></i>
+                        </span>
+                        <h6 class="card-title mb-1">الزيارات</h6>
+                        <small class="text-body-secondary">سجل الزيارات</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.injuries.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-danger" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-first-aid icon-lg text-danger"></i>
+                        </span>
+                        <h6 class="card-title mb-1">الإصابات</h6>
+                        <small class="text-body-secondary">سجل الإصابات</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.other-events.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-success" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-calendar-event icon-lg text-success"></i>
+                        </span>
+                        <h6 class="card-title mb-1">أحداث أخرى</h6>
+                        <small class="text-body-secondary">مناسبات وذكريات</small>
+                    </div>
+                </a>
+            </div>
+            {{-- الدعم الفني والباقات --}}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.support-tickets.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-support icon-lg text-primary"></i>
+                        </span>
+                        <h6 class="card-title mb-1">تذاكر الدعم الفني</h6>
+                        <small class="text-body-secondary">الدعم والمساعدة</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.packages.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-package icon-lg text-primary"></i>
+                        </span>
+                        <h6 class="card-title mb-1">الباقات</h6>
+                        <small class="text-body-secondary">عرض الباقات والاشتراكات</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.faq.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-secondary" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-help-circle icon-lg text-secondary"></i>
+                        </span>
+                        <h6 class="card-title mb-1">الأسئلة الشائعة</h6>
+                        <small class="text-body-secondary">إجابات شائعة</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{{ route('dashboard.features.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-warning" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-star icon-lg text-warning"></i>
+                        </span>
+                        <h6 class="card-title mb-1">المميزات</h6>
+                        <small class="text-body-secondary">مميزات التطبيق</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+        @else
+        {{-- لوحة التحكم للأدمن: الإحصائيات والرسوم البيانية --}}
         <div class="row">
             <div class="col-xxl-8 mb-6 order-0">
                 <div class="card">
@@ -962,6 +1130,7 @@
             </div>
             <!--/ pill table -->
         </div>
+        @endif
     </div>
     <!-- / Content -->
 @endsection

@@ -7,12 +7,7 @@
             <i class="bx bx-arrow-back me-1"></i> رجوع إلى وثق
         </a>
     @endif
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h4 class="mb-0">الطول والوزن</h4>
-        <a href="{{ route('dashboard.height-weight.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}" class="btn btn-primary">
-            <i class="bx bx-plus me-1"></i> إضافة سجل
-        </a>
-    </div>
+    <h4 class="mb-4">الطول والوزن</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -34,74 +29,58 @@
         </div>
     @endif
 
-    <div class="card">
-        <div class="card-body">
-            @if ($records->isEmpty())
-                <div class="text-center py-5 text-muted">
-                    <i class="bx bx-ruler bx-lg mb-3"></i>
-                    <p class="mb-0">لا توجد سجلات. <a href="{{ route('dashboard.height-weight.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}">أضف أول سجل</a></p>
+    @php
+        $createUrl = route('dashboard.height-weight.create', isset($stage) && $stage ? ['stage' => $stage->id] : []);
+    @endphp
+
+    <div class="row g-4">
+        @foreach ($records as $record)
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    @if ($record->imageDocument)
+                        <img src="{{ $record->imageDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                    @else
+                        <div class="card-img-top bg-label-secondary d-flex align-items-center justify-content-center" style="height: 140px;">
+                            <i class="bx bx-ruler bx-lg text-secondary"></i>
+                        </div>
+                    @endif
+                    <div class="card-body">
+                        <h6 class="card-title">{{ $record->record_date->format('Y-m-d') }} {{ $record->record_time_formatted ? '• ' . $record->record_time_formatted : '' }}</h6>
+                        <p class="card-text small text-body-secondary mb-2">
+                            الطول: {{ $record->height ?? '-' }} سم • الوزن: {{ $record->weight ?? '-' }} كجم
+                        </p>
+                        @if ($record->videoDocument)
+                            <a href="{{ $record->videoDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary mb-2">
+                                <i class="bx bx-video"></i> فيديو
+                            </a>
+                        @endif
+                        <div class="d-flex gap-2 mt-2">
+                            <a href="{{ route('dashboard.height-weight.edit', $record) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bx bx-edit"></i>
+                            </a>
+                            <form action="{{ route('dashboard.height-weight.destroy', $record) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>التاريخ</th>
-                                <th>الوقت</th>
-                                <th>الطول (سم)</th>
-                                <th>الوزن (كجم)</th>
-                                <th>الصورة</th>
-                                <th>الفيديو</th>
-                                <th width="120">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($records as $record)
-                                <tr>
-                                    <td>{{ $record->record_date->format('Y-m-d') }}</td>
-                                    <td>{{ $record->record_time_formatted ?? '-' }}</td>
-                                    <td>{{ $record->height ?? '-' }}</td>
-                                    <td>{{ $record->weight ?? '-' }}</td>
-                                    <td>
-                                        @if ($record->imageDocument)
-                                            <a href="{{ $record->imageDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                <i class="bx bx-image"></i>
-                                            </a>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($record->videoDocument)
-                                            <a href="{{ $record->videoDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                <i class="bx bx-video"></i>
-                                            </a>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('dashboard.height-weight.edit', $record) }}" class="btn btn-sm btn-outline-secondary">
-                                            <i class="bx bx-edit"></i>
-                                        </a>
-                                        <form action="{{ route('dashboard.height-weight.destroy', $record) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bx bx-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-3">
-                    {{ $records->links() }}
-                </div>
-            @endif
-        </div>
+            </div>
+        @endforeach
+        @include('dashboard.partials.add-card', [
+            'url' => $createUrl,
+            'label' => 'إضافة سجل',
+            'icon' => 'bx-ruler',
+        ])
     </div>
+
+    @if ($records->hasPages())
+        <div class="mt-4">
+            {{ $records->links() }}
+        </div>
+    @endif
 </div>
 @endsection

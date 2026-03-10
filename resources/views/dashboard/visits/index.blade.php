@@ -7,12 +7,7 @@
             <i class="bx bx-arrow-back me-1"></i> رجوع إلى وثق
         </a>
     @endif
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h4 class="mb-0">الزيارات</h4>
-        <a href="{{ route('dashboard.visits.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}" class="btn btn-primary">
-            <i class="bx bx-plus me-1"></i> إضافة زيارة
-        </a>
-    </div>
+    <h4 class="mb-4">الزيارات</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -34,64 +29,61 @@
         </div>
     @endif
 
-    <div class="card">
-        <div class="card-body">
-            @if ($visits->isEmpty())
-                <div class="text-center py-5 text-muted">
-                    <i class="bx bx-map-alt bx-lg mb-3"></i>
-                    <p class="mb-0">لا توجد زيارات. <a href="{{ route('dashboard.visits.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}">أضف أول زيارة</a></p>
+    @php
+        $createUrl = route('dashboard.visits.create', isset($stage) && $stage ? ['stage' => $stage->id] : []);
+    @endphp
+
+    <div class="row g-4">
+        @foreach ($visits as $visit)
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    @if ($visit->mediaDocument && str_starts_with($visit->mediaDocument->mime_type ?? '', 'image/'))
+                        <img src="{{ $visit->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                    @else
+                        <div class="card-img-top bg-label-info d-flex align-items-center justify-content-center" style="height: 140px;">
+                            <i class="bx {{ optional($visit->mediaDocument)->file_icon ?? 'bx-map-alt' }} bx-lg text-info"></i>
+                        </div>
+                    @endif
+                    <div class="card-body">
+                        <h6 class="card-title">{{ $visit->title }}</h6>
+                        <p class="card-text small text-body-secondary mb-1">
+                            {{ $visit->record_date->format('Y-m-d') }} {{ $visit->record_time_formatted ? '• ' . $visit->record_time_formatted : '' }}
+                        </p>
+                        @if ($visit->other_info)
+                            <p class="card-text small text-body-secondary mb-2">{{ Str::limit($visit->other_info, 60) }}</p>
+                        @endif
+                        <div class="d-flex gap-2 mt-2">
+                            @if ($visit->mediaDocument)
+                                <a href="{{ $visit->mediaDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bx bx-show"></i> عرض
+                                </a>
+                            @endif
+                            <a href="{{ route('dashboard.visits.edit', $visit) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bx bx-edit"></i>
+                            </a>
+                            <form action="{{ route('dashboard.visits.destroy', $visit) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>التاريخ</th>
-                                <th>الوقت</th>
-                                <th>العنوان</th>
-                                <th>معلومات أخرى</th>
-                                <th>الصورة / الفيديو</th>
-                                <th width="120">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($visits as $visit)
-                                <tr>
-                                    <td>{{ $visit->record_date->format('Y-m-d') }}</td>
-                                    <td>{{ $visit->record_time_formatted ?? '-' }}</td>
-                                    <td>{{ $visit->title }}</td>
-                                    <td>{{ Str::limit($visit->other_info, 50) ?: '-' }}</td>
-                                    <td>
-                                        @if ($visit->mediaDocument)
-                                            <a href="{{ $visit->mediaDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                <i class="bx {{ $visit->mediaDocument->file_icon }}"></i> عرض
-                                            </a>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('dashboard.visits.edit', $visit) }}" class="btn btn-sm btn-outline-secondary">
-                                            <i class="bx bx-edit"></i>
-                                        </a>
-                                        <form action="{{ route('dashboard.visits.destroy', $visit) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bx bx-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-3">
-                    {{ $visits->links() }}
-                </div>
-            @endif
-        </div>
+            </div>
+        @endforeach
+        @include('dashboard.partials.add-card', [
+            'url' => $createUrl,
+            'label' => 'إضافة زيارة',
+            'icon' => 'bx-map-alt',
+        ])
     </div>
+
+    @if ($visits->hasPages())
+        <div class="mt-4">
+            {{ $visits->links() }}
+        </div>
+    @endif
 </div>
 @endsection

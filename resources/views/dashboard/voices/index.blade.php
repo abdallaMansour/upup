@@ -7,12 +7,7 @@
             <i class="bx bx-arrow-back me-1"></i> رجوع إلى وثق
         </a>
     @endif
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h4 class="mb-0">الأصوات</h4>
-        <a href="{{ route('dashboard.voices.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}" class="btn btn-primary">
-            <i class="bx bx-plus me-1"></i> إضافة صوت
-        </a>
-    </div>
+    <h4 class="mb-4">الأصوات</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -34,64 +29,63 @@
         </div>
     @endif
 
-    <div class="card">
-        <div class="card-body">
-            @if ($voices->isEmpty())
-                <div class="text-center py-5 text-muted">
-                    <i class="bx bx-music bx-lg mb-3"></i>
-                    <p class="mb-0">لا توجد أصوات. <a href="{{ route('dashboard.voices.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}">أضف أول صوت</a></p>
+    @php
+        $createUrl = route('dashboard.voices.create', isset($stage) && $stage ? ['stage' => $stage->id] : []);
+    @endphp
+
+    <div class="row g-4">
+        @foreach ($voices as $voice)
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-img-top bg-label-secondary d-flex align-items-center justify-content-center" style="height: 140px;">
+                        @if ($voice->audioDocument)
+                            <a href="{{ $voice->audioDocument->view_url }}" target="_blank" class="btn btn-primary btn-lg rounded-circle">
+                                <i class="bx bx-play bx-lg"></i>
+                            </a>
+                        @else
+                            <i class="bx bx-music bx-lg text-secondary"></i>
+                        @endif
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">{{ $voice->title }}</h6>
+                        <p class="card-text small text-body-secondary mb-1">
+                            {{ $voice->record_date->format('Y-m-d') }} {{ $voice->record_time_formatted ? '• ' . $voice->record_time_formatted : '' }}
+                        </p>
+                        @if ($voice->other_info)
+                            <p class="card-text small text-body-secondary mb-2">{{ Str::limit($voice->other_info, 60) }}</p>
+                        @endif
+                        <div class="d-flex gap-2 mt-2">
+                            @if ($voice->audioDocument)
+                                <a href="{{ $voice->audioDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bx bx-play"></i> استماع
+                                </a>
+                            @endif
+                            <a href="{{ route('dashboard.voices.edit', $voice) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bx bx-edit"></i>
+                            </a>
+                            <form action="{{ route('dashboard.voices.destroy', $voice) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>التاريخ</th>
-                                <th>الوقت</th>
-                                <th>العنوان</th>
-                                <th>معلومات أخرى</th>
-                                <th>الصوت</th>
-                                <th width="120">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($voices as $voice)
-                                <tr>
-                                    <td>{{ $voice->record_date->format('Y-m-d') }}</td>
-                                    <td>{{ $voice->record_time_formatted ?? '-' }}</td>
-                                    <td>{{ $voice->title }}</td>
-                                    <td>{{ Str::limit($voice->other_info, 50) ?: '-' }}</td>
-                                    <td>
-                                        @if ($voice->audioDocument)
-                                            <a href="{{ $voice->audioDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                <i class="bx bx-play"></i> استماع
-                                            </a>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('dashboard.voices.edit', $voice) }}" class="btn btn-sm btn-outline-secondary">
-                                            <i class="bx bx-edit"></i>
-                                        </a>
-                                        <form action="{{ route('dashboard.voices.destroy', $voice) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bx bx-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-3">
-                    {{ $voices->links() }}
-                </div>
-            @endif
-        </div>
+            </div>
+        @endforeach
+        @include('dashboard.partials.add-card', [
+            'url' => $createUrl,
+            'label' => 'إضافة صوت',
+            'icon' => 'bx-music',
+        ])
     </div>
+
+    @if ($voices->hasPages())
+        <div class="mt-4">
+            {{ $voices->links() }}
+        </div>
+    @endif
 </div>
 @endsection

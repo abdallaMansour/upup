@@ -7,12 +7,7 @@
             <i class="bx bx-arrow-back me-1"></i> رجوع إلى وثق
         </a>
     @endif
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h4 class="mb-0">الإنجازات</h4>
-        <a href="{{ route('dashboard.achievements.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}" class="btn btn-primary">
-            <i class="bx bx-plus me-1"></i> إضافة إنجاز
-        </a>
-    </div>
+    <h4 class="mb-4">الإنجازات</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -34,68 +29,56 @@
         </div>
     @endif
 
-    <div class="card">
-        <div class="card-body">
-            @if ($achievements->isEmpty())
-                <div class="text-center py-5 text-muted">
-                    <i class="bx bx-trophy bx-lg mb-3"></i>
-                    <p class="mb-0">لا توجد إنجازات. <a href="{{ route('dashboard.achievements.create', isset($stage) && $stage ? ['stage' => $stage->id] : []) }}">أضف أول إنجاز</a></p>
+    @php
+        $createUrl = route('dashboard.achievements.create', isset($stage) && $stage ? ['stage' => $stage->id] : []);
+    @endphp
+
+    <div class="row g-4">
+        @foreach ($achievements as $achievement)
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    @if ($achievement->certificateImageDocument)
+                        <img src="{{ $achievement->certificateImageDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                    @else
+                        <div class="card-img-top bg-label-primary d-flex align-items-center justify-content-center" style="height: 140px;">
+                            <i class="bx bx-trophy bx-lg text-primary"></i>
+                        </div>
+                    @endif
+                    <div class="card-body">
+                        <h6 class="card-title">{{ $achievement->title }}</h6>
+                        <p class="card-text small text-body-secondary mb-1">
+                            {{ $achievement->record_date->format('Y-m-d') }} {{ $achievement->record_time_formatted ? '• ' . $achievement->record_time_formatted : '' }}
+                        </p>
+                        <p class="card-text small text-body-secondary mb-2">
+                            {{ $achievement->type_label }} @if($achievement->place) • {{ $achievement->place }} @endif
+                        </p>
+                        <div class="d-flex gap-2 mt-2">
+                            <a href="{{ route('dashboard.achievements.edit', $achievement) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bx bx-edit"></i>
+                            </a>
+                            <form action="{{ route('dashboard.achievements.destroy', $achievement) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            @else
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>التاريخ</th>
-                                <th>الوقت</th>
-                                <th>النوع</th>
-                                <th>العنوان</th>
-                                <th>المكان</th>
-                                <th>السنة الدراسية</th>
-                                <th>الشهادة</th>
-                                <th width="120">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($achievements as $achievement)
-                                <tr>
-                                    <td>{{ $achievement->record_date->format('Y-m-d') }}</td>
-                                    <td>{{ $achievement->record_time_formatted ?? '-' }}</td>
-                                    <td>{{ $achievement->type_label }}</td>
-                                    <td>{{ $achievement->title }}</td>
-                                    <td>{{ $achievement->place ?? '-' }}</td>
-                                    <td>{{ $achievement->academic_year ?? '-' }}</td>
-                                    <td>
-                                        @if ($achievement->certificateImageDocument)
-                                            <a href="{{ $achievement->certificateImageDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                <i class="bx bx-image"></i>
-                                            </a>
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('dashboard.achievements.edit', $achievement) }}" class="btn btn-sm btn-outline-secondary">
-                                            <i class="bx bx-edit"></i>
-                                        </a>
-                                        <form action="{{ route('dashboard.achievements.destroy', $achievement) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bx bx-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <div class="mt-3">
-                    {{ $achievements->links() }}
-                </div>
-            @endif
-        </div>
+            </div>
+        @endforeach
+        @include('dashboard.partials.add-card', [
+            'url' => $createUrl,
+            'label' => 'إضافة إنجاز',
+            'icon' => 'bx-trophy',
+        ])
     </div>
+
+    @if ($achievements->hasPages())
+        <div class="mt-4">
+            {{ $achievements->links() }}
+        </div>
+    @endif
 </div>
 @endsection

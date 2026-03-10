@@ -2,12 +2,7 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h4 class="mb-0">صفحاتي</h4>
-        <a href="{{ route('dashboard.my-pages.create') }}" class="btn btn-primary">
-            <i class="bx bx-plus me-1"></i> إضافة مرحلة جديدة
-        </a>
-    </div>
+    <h4 class="mb-4">صفحاتي</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -22,16 +17,8 @@
         </div>
     @endif
 
-    @if ($stages->isEmpty())
-        <div class="card">
-            <div class="card-body text-center py-5">
-                <i class="bx bx-child bx-lg text-muted mb-3"></i>
-                <p class="text-muted mb-4">لا توجد مراحل طفولة. <a href="{{ route('dashboard.my-pages.create') }}">أضف أول مرحلة</a></p>
-            </div>
-        </div>
-    @else
-        <div class="row g-4">
-            @foreach ($stages as $stage)
+    <div class="row g-4">
+        @foreach ($stages as $stage)
                 @php
                     $coverUrl = $stage->coverImageDocument?->view_url ?? $stage->firstPhotoDocument?->view_url;
                 @endphp
@@ -69,9 +56,13 @@
                         </div>
                     </div>
                 </div>
-            @endforeach
-        </div>
-    @endif
+        @endforeach
+        @include('dashboard.partials.add-card', [
+            'url' => route('dashboard.my-pages.create'),
+            'label' => 'إضافة مرحلة جديدة',
+            'icon' => 'bx-plus',
+        ])
+    </div>
 </div>
 
 @if ($stages->isNotEmpty())

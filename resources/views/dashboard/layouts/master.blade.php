@@ -40,6 +40,10 @@
 
     <!-- Page CSS -->
     @yield('page-css')
+    @stack('page-css')
+    <style>
+    .add-card-link:hover { border-color: var(--bs-primary) !important; background-color: rgba(var(--bs-primary-rgb), 0.04); }
+    </style>
 
     <!-- Helpers -->
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>

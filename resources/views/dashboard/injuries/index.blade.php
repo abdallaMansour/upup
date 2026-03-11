@@ -38,7 +38,7 @@
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
                     @if ($injury->mediaDocument && str_starts_with($injury->mediaDocument->mime_type ?? '', 'image/'))
-                        <img src="{{ $injury->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                        <img src="{{ $injury->mediaDocument->embed_url ?? $injury->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
                     @else
                         <div class="card-img-top bg-label-danger d-flex align-items-center justify-content-center" style="height: 140px;">
                             <i class="bx {{ optional($injury->mediaDocument)->file_icon ?? 'bx-first-aid' }} bx-lg text-danger"></i>

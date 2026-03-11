@@ -68,6 +68,7 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
     Route::middleware('auth:web')->group(function () {
         Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
         Route::get('documents/{document}/view', [DocumentController::class, 'viewFile'])->name('documents.view-file');
+        Route::get('documents/{document}/embed', [DocumentController::class, 'embedFile'])->name('documents.embed');
         Route::post('documents/folders', [DocumentController::class, 'storeFolder'])->name('documents.folders.store');
         Route::post('documents/files', [DocumentController::class, 'storeFile'])->name('documents.files.store');
         Route::delete('documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
@@ -94,6 +95,7 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('my-pages/{stage}/edit', [MyPagesController::class, 'edit'])->name('my-pages.edit');
         Route::put('my-pages/{stage}', [MyPagesController::class, 'update'])->name('my-pages.update');
         Route::get('my-pages/{stage}/documents', [MyPagesController::class, 'documents'])->name('my-pages.documents');
+        Route::post('my-pages/{stage}/permissions', [MyPagesController::class, 'storePermission'])->name('my-pages.permissions.store');
         Route::delete('my-pages/{stage}', [MyPagesController::class, 'destroy'])->name('my-pages.destroy');
 
         Route::get('height-weight', [HeightWeightController::class, 'index'])->name('height-weight.index');

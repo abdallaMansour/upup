@@ -118,6 +118,11 @@ class UserChildhoodStage extends Model
         return $this->hasMany(UserOtherEvent::class, 'user_childhood_stage_id');
     }
 
+    public function temporaryPermissions(): HasMany
+    {
+        return $this->hasMany(ChildhoodStagePermission::class, 'user_childhood_stage_id');
+    }
+
     public function scopeForUser($query, int $userId)
     {
         return $query->where('user_id', $userId);
@@ -134,5 +139,34 @@ class UserChildhoodStage extends Model
         }
 
         return $time;
+    }
+
+    public function getAgeInYearsAttribute(): ?int
+    {
+        if (! $this->birth_date) {
+            return null;
+        }
+
+        return $this->birth_date->age;
+    }
+
+    /**
+     * Returns life stage: 'child' (<12), 'teenager' (12-17), 'adult' (18+).
+     * Defaults to 'child' when birth_date is missing.
+     */
+    public function getLifeStageAttribute(): string
+    {
+        $age = $this->age_in_years;
+        if ($age === null) {
+            return 'child';
+        }
+        if ($age < 12) {
+            return 'child';
+        }
+        if ($age <= 17) {
+            return 'teenager';
+        }
+
+        return 'adult';
     }
 }

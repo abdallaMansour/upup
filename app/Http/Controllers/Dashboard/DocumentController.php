@@ -898,6 +898,56 @@ class DocumentController extends Controller
         return redirect($url);
     }
 
+    /**
+     * Stream file content for embedding in img tags. Works for images from Google Drive and Wasabi.
+     */
+    public function embedFile(Request $request, UserDocument $document, GoogleDriveService $driveService, WasabiService $wasabiService)
+    {
+        $this->ensureWebUser();
+
+        if ($document->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        if ($document->isFolder()) {
+            abort(404);
+        }
+
+        $mime = $document->mime_type ?? 'application/octet-stream';
+        if (! str_starts_with($mime, 'image/')) {
+            abort(404);
+        }
+
+        $connection = $document->storageConnection;
+        if (! $connection) {
+            abort(404);
+        }
+
+        $content = null;
+
+        if ($connection->provider === 'google_drive') {
+            $accessToken = $this->getDriveAccessToken($connection, $driveService);
+            if (! $accessToken) {
+                abort(404);
+            }
+            $content = $driveService->downloadFileContent($accessToken, $document->external_id, $document->mime_type);
+        } elseif ($connection->provider === 'wasabi') {
+            $credentials = $this->getWasabiCredentials($connection);
+            if (! $credentials) {
+                abort(404);
+            }
+            $content = $wasabiService->downloadFileContent($credentials, $document->external_id);
+        }
+
+        if (! $content) {
+            abort(404);
+        }
+
+        return response($content)
+            ->header('Content-Type', $mime)
+            ->header('Cache-Control', 'private, max-age=3600');
+    }
+
     private function getWasabiCredentials(StorageConnection $connection): ?array
     {
         $credentials = $connection->credentials;

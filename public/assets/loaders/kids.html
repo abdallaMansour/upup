@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/kidsloader.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&family=Roboto:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.css" />
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Full viewport height */
+        margin: 0; /* Remove default margin */
+        background-color: #f0f0f0; /* Optional: background color */
+      }
+
+      .main {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center owl horizontally */
+      }
+
+      .cloud {
+        position: absolute; /* Allow clouds to float in the background */
+        width: 100px; /* Adjust size as needed */
+        height: 60px; /* Adjust size as needed */
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+      }
+
+      .cloud--1 {
+        top: 20%; /* Position the first cloud */
+        left: 10%;
+      }
+
+      .cloud--2 {
+        top: 30%; /* Position the second cloud */
+        right: 10%;
+      }
+      h3{
+            font-family: 'Alexandria', 'Roboto', sans-serif;
+
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cloud cloud--1"></div>
+    <div class="cloud cloud--2"></div>
+
+    <div class="main">
+      <div class="owl">
+        <div class="owl__head">
+          <div class="owl__tuft owl__tuft--left"></div>
+          <div class="owl__tuft owl__tuft--right"></div>
+          <div class="owl__eye owl__eye--left"></div>
+          <div class="owl__eye owl__eye--right"></div>
+          <div class="owl__beak"></div>
+        </div>
+        <div class="owl__body"></div>
+        <div class="owl__wing owl__wing--left"></div>
+        <div class="owl__wing owl__wing--right"></div>
+        <div class="owl__foot owl__foot--left"></div>
+        <div class="owl__foot owl__foot--right"></div>
+      </div>
+      <h3 class="mt-5">جاري التحميل</h3>
+    </div>
+  </body>
+</html>

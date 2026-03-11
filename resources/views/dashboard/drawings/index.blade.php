@@ -38,7 +38,7 @@
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
                     @if ($drawing->mediaDocument && str_starts_with($drawing->mediaDocument->mime_type ?? '', 'image/'))
-                        <img src="{{ $drawing->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                        <img src="{{ $drawing->mediaDocument->embed_url ?? $drawing->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
                     @else
                         <div class="card-img-top bg-label-secondary d-flex align-items-center justify-content-center" style="height: 140px;">
                             <i class="bx {{ optional($drawing->mediaDocument)->file_icon ?? 'bx-palette' }} bx-lg text-secondary"></i>

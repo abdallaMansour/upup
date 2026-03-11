@@ -38,7 +38,7 @@
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
                     @if ($record->imageDocument)
-                        <img src="{{ $record->imageDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                        <img src="{{ $record->imageDocument->embed_url ?? $record->imageDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
                     @else
                         <div class="card-img-top bg-label-secondary d-flex align-items-center justify-content-center" style="height: 140px;">
                             <i class="bx bx-ruler bx-lg text-secondary"></i>

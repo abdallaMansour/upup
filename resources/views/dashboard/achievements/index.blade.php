@@ -38,7 +38,7 @@
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
                     @if ($achievement->certificateImageDocument)
-                        <img src="{{ $achievement->certificateImageDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                        <img src="{{ $achievement->certificateImageDocument->embed_url ?? $achievement->certificateImageDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
                     @else
                         <div class="card-img-top bg-label-primary d-flex align-items-center justify-content-center" style="height: 140px;">
                             <i class="bx bx-trophy bx-lg text-primary"></i>

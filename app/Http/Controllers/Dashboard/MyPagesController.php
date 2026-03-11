@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChildhoodStagePermission;
 use App\Models\UserChildhoodMedia;
 use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\StagePermissionGrantedNotification;
 use App\Services\ChildhoodStageService;
 use App\Services\GoogleDriveService;
 use App\Services\WasabiService;
@@ -287,6 +291,59 @@ class MyPagesController extends Controller
         }
 
         return view('dashboard.my-pages.documents', compact('stage'));
+    }
+
+    public function storePermission(Request $request, UserChildhoodStage $stage)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+        if ($stage->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'grantee_name' => ['required', 'string', 'max:255'],
+            'grantee_email' => ['required', 'email'],
+            'expires_at' => ['required', 'date'],
+            'expires_time' => ['nullable', 'date_format:H:i'],
+        ], [], [
+            'grantee_name' => 'الاسم',
+            'grantee_email' => 'البريد الإلكتروني',
+            'expires_at' => 'تاريخ الانتهاء',
+            'expires_time' => 'وقت الانتهاء',
+        ]);
+
+        $expiresAt = \Carbon\Carbon::parse($validated['expires_at'] . ' ' . ($validated['expires_time'] ?? '23:59'));
+        if ($expiresAt->isPast()) {
+            return redirect()->back()->withErrors(['expires_at' => 'يجب أن يكون تاريخ الانتهاء في المستقبل.'])->withInput();
+        }
+
+        $pin = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $permission = ChildhoodStagePermission::create([
+            'user_childhood_stage_id' => $stage->id,
+            'grantee_name' => $validated['grantee_name'],
+            'grantee_email' => $validated['grantee_email'],
+            'pin_hash' => Hash::make($pin),
+            'expires_at' => $expiresAt,
+        ]);
+
+        Notification::route('mail', $validated['grantee_email'])
+            ->notify(new StagePermissionGrantedNotification(
+                $stage,
+                $pin,
+                $validated['grantee_name'],
+                $expiresAt->format('Y-m-d H:i')
+            ));
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'تم إرسال البريد بنجاح.',
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'تم إرسال البريد بنجاح.');
     }
 
     public function destroy(Request $request, UserChildhoodStage $stage)

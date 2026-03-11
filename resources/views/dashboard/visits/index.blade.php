@@ -38,7 +38,7 @@
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
                     @if ($visit->mediaDocument && str_starts_with($visit->mediaDocument->mime_type ?? '', 'image/'))
-                        <img src="{{ $visit->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                        <img src="{{ $visit->mediaDocument->embed_url ?? $visit->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
                     @else
                         <div class="card-img-top bg-label-info d-flex align-items-center justify-content-center" style="height: 140px;">
                             <i class="bx {{ optional($visit->mediaDocument)->file_icon ?? 'bx-map-alt' }} bx-lg text-info"></i>

@@ -90,6 +90,23 @@ class UserDocument extends Model
         return null;
     }
 
+    /**
+     * URL suitable for embedding in img src - streams file through our server to avoid CORS/external display issues.
+     * Returns null for non-image files or folders.
+     */
+    public function getEmbedUrlAttribute(): ?string
+    {
+        if (! $this->external_id || $this->isFolder()) {
+            return null;
+        }
+        $mime = $this->mime_type ?? '';
+        if (! str_starts_with($mime, 'image/')) {
+            return null;
+        }
+
+        return route('dashboard.documents.embed', $this);
+    }
+
     public function getFileIconAttribute(): string
     {
         if ($this->isFolder()) {

@@ -38,7 +38,7 @@
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
                     @if ($otherEvent->mediaDocument && str_starts_with($otherEvent->mediaDocument->mime_type ?? '', 'image/'))
-                        <img src="{{ $otherEvent->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
+                        <img src="{{ $otherEvent->mediaDocument->embed_url ?? $otherEvent->mediaDocument->view_url }}" class="card-img-top" alt="" style="height: 140px; object-fit: cover;">
                     @else
                         <div class="card-img-top bg-label-success d-flex align-items-center justify-content-center" style="height: 140px;">
                             <i class="bx {{ optional($otherEvent->mediaDocument)->file_icon ?? 'bx-calendar-event' }} bx-lg text-success"></i>

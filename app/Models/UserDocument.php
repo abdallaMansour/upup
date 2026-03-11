@@ -93,6 +93,7 @@ class UserDocument extends Model
     /**
      * URL suitable for embedding in img src - streams file through our server to avoid CORS/external display issues.
      * Returns null for non-image files or folders.
+     * For Wasabi, mime_type may be null (e.g. from sync) - we infer from file extension.
      */
     public function getEmbedUrlAttribute(): ?string
     {
@@ -100,11 +101,27 @@ class UserDocument extends Model
             return null;
         }
         $mime = $this->mime_type ?? '';
-        if (! str_starts_with($mime, 'image/')) {
-            return null;
+        if (str_starts_with($mime, 'image/')) {
+            return route('dashboard.documents.embed', $this);
+        }
+        // Wasabi sync may not set mime_type - infer from extension for common image formats
+        if ($this->provider === 'wasabi' && $this->looksLikeImageByExtension()) {
+            return route('dashboard.documents.embed', $this);
         }
 
-        return route('dashboard.documents.embed', $this);
+        return null;
+    }
+
+    /**
+     * Check if file appears to be an image based on extension (when mime_type is unknown).
+     */
+    public function looksLikeImageByExtension(): bool
+    {
+        $name = $this->original_name ?? $this->name ?? $this->path ?? '';
+        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'ico', 'heic'];
+
+        return in_array($ext, $imageExtensions, true);
     }
 
     public function getFileIconAttribute(): string

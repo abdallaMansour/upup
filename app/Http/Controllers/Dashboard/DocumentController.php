@@ -823,6 +823,8 @@ class DocumentController extends Controller
             $parentKey = $file['parents'][0] ?? null;
             $isFolder = $file['isFolder'] ?? false;
 
+            $mimeType = $isFolder ? 'application/x-wasabi-folder' : $this->inferMimeFromFileName($file['name']);
+
             $doc = UserDocument::updateOrCreate(
                 [
                     'user_id' => $user->id,
@@ -837,7 +839,7 @@ class DocumentController extends Controller
                     'original_name' => $file['name'],
                     'path' => $key,
                     'external_id' => $key,
-                    'mime_type' => $isFolder ? 'application/x-wasabi-folder' : null,
+                    'mime_type' => $mimeType,
                     'size' => (int) ($file['size'] ?? 0),
                     'provider' => 'wasabi',
                     'type' => $isFolder ? 'folder' : 'file',
@@ -900,6 +902,7 @@ class DocumentController extends Controller
 
     /**
      * Stream file content for embedding in img tags. Works for images from Google Drive and Wasabi.
+     * For Wasabi, mime_type may be null (e.g. from sync) - we infer from file extension.
      */
     public function embedFile(Request $request, UserDocument $document, GoogleDriveService $driveService, WasabiService $wasabiService)
     {
@@ -915,7 +918,11 @@ class DocumentController extends Controller
 
         $mime = $document->mime_type ?? 'application/octet-stream';
         if (! str_starts_with($mime, 'image/')) {
-            abort(404);
+            // Wasabi sync may not set mime_type - allow if extension suggests image
+            if (! $document->looksLikeImageByExtension()) {
+                abort(404);
+            }
+            $mime = $this->inferImageMimeFromExtension($document);
         }
 
         $connection = $document->storageConnection;
@@ -946,6 +953,40 @@ class DocumentController extends Controller
         return response($content)
             ->header('Content-Type', $mime)
             ->header('Cache-Control', 'private, max-age=3600');
+    }
+
+    private function inferImageMimeFromExtension(UserDocument $document): string
+    {
+        $name = $document->original_name ?? $document->name ?? $document->path ?? '';
+        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+        return $this->getExtensionToMimeMap()[$ext] ?? 'image/jpeg';
+    }
+
+    private function inferMimeFromFileName(?string $fileName): ?string
+    {
+        if (! $fileName) {
+            return null;
+        }
+        $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $map = $this->getExtensionToMimeMap();
+
+        return $map[$ext] ?? null;
+    }
+
+    private function getExtensionToMimeMap(): array
+    {
+        return [
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+            'bmp' => 'image/bmp',
+            'svg' => 'image/svg+xml',
+            'ico' => 'image/x-icon',
+            'heic' => 'image/heic',
+        ];
     }
 
     private function getWasabiCredentials(StorageConnection $connection): ?array

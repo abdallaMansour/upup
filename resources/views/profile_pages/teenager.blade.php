@@ -1506,7 +1506,7 @@
             avatarCircle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 // Check if there's an uploaded profile image, otherwise use default
-                const profileImg = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=800&fit=crop';
+                const profileImg = '{{ $avatarUrl }}';
                 openFrameModal(profileImg, document.documentElement.dir === 'rtl' ? 'الصورة الشخصية' : 'Profile Picture');
             });
         }

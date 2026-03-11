@@ -85,7 +85,10 @@
                 <p class="cover-bio" data-translate="profileBio">@if($stage->naming_reason){{ $stage->naming_reason }}@else شاب طموح يسعى لاكتشاف شغفه وبناء مستقبله @endif</p>
             </div>
             <div class="cover-avatar">
-                @php $avatarUrl = $stage->coverImageDocument?->embed_url ?? $stage->coverImageDocument?->view_url ?? $stage->firstPhotoDocument?->embed_url ?? $stage->firstPhotoDocument?->view_url; @endphp
+                @php
+    $avatarDoc = $stage->coverImageDocument ?? $stage->firstPhotoDocument;
+    $avatarUrl = $avatarDoc ? route('profile.document.embed', [$stage, $avatarDoc]) : null;
+@endphp
                 <div class="avatar-circle">
                     @if($avatarUrl)
                         <img src="{{ $avatarUrl }}" alt="{{ $stage->name }}" class="avatar-img" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">

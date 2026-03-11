@@ -8,6 +8,7 @@ use App\Http\Controllers\Website\ContactController;
 Route::get('/profile/{stage}', [ProfileViewController::class, 'show'])->name('profile.show');
 Route::get('/profile/{stage}/pin', [ProfileViewController::class, 'pinForm'])->name('profile.pin.form');
 Route::post('/profile/{stage}/pin', [ProfileViewController::class, 'verifyPin'])->name('profile.pin.verify');
+Route::get('/profile/{stage}/document/{document}/embed', [ProfileViewController::class, 'embedDocument'])->name('profile.document.embed');
 
 Route::as('website.')->group(function () {
     require_once __DIR__ . '/website.php';

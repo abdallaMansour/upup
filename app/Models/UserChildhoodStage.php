@@ -123,6 +123,30 @@ class UserChildhoodStage extends Model
         return $this->hasMany(ChildhoodStagePermission::class, 'user_childhood_stage_id');
     }
 
+    /**
+     * Check if a document belongs to this stage (cover, first photo, footprint, media, etc.).
+     */
+    public function documentBelongsToStage(?UserDocument $document): bool
+    {
+        if (! $document) {
+            return false;
+        }
+
+        $directIds = array_filter([
+            $this->cover_image_document_id,
+            $this->first_photo_document_id,
+            $this->footprint_document_id,
+            $this->first_video_document_id,
+            $this->first_gift_document_id,
+        ]);
+
+        if (in_array($document->id, $directIds, true)) {
+            return true;
+        }
+
+        return $this->mediaItems()->where('user_document_id', $document->id)->exists();
+    }
+
     public function scopeForUser($query, int $userId)
     {
         return $query->where('user_id', $userId);

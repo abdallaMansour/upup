@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\ChildhoodStagePermission;
 use App\Models\UserChildhoodStage;
+use App\Models\UserDocument;
+use App\Services\DocumentEmbedService;
+use App\Services\GoogleDriveService;
+use App\Services\WasabiService;
 use Illuminate\Http\Request;
 
 class ProfileViewController extends Controller
@@ -92,5 +96,32 @@ class ProfileViewController extends Controller
 
         return redirect()->route('profile.show', $stage)
             ->with('success', 'تم التحقق بنجاح.');
+    }
+
+    /**
+     * Stream document (image) for embedding when viewer has permission via PIN.
+     * Allows grantees to see images stored on Google Drive/Wasabi.
+     */
+    public function embedDocument(
+        UserChildhoodStage $stage,
+        UserDocument $document,
+        DocumentEmbedService $embedService,
+        GoogleDriveService $driveService,
+        WasabiService $wasabiService
+    ) {
+        if (! $this->canAccessStage($stage)) {
+            abort(403, 'لا تملك صلاحية لعرض هذا المحتوى.');
+        }
+
+        if (! $stage->documentBelongsToStage($document)) {
+            abort(404);
+        }
+
+        $response = $embedService->streamImage($document, $driveService, $wasabiService);
+        if (! $response) {
+            abort(404);
+        }
+
+        return $response;
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\StorageConnection;
 use App\Models\StoragePlatform;
 use App\Models\UserDocument;
+use App\Services\DocumentEmbedService;
 use App\Services\GoogleDriveService;
 use App\Services\StorageMigrationService;
 use App\Services\WasabiService;
@@ -902,9 +903,8 @@ class DocumentController extends Controller
 
     /**
      * Stream file content for embedding in img tags. Works for images from Google Drive and Wasabi.
-     * For Wasabi, mime_type may be null (e.g. from sync) - we infer from file extension.
      */
-    public function embedFile(Request $request, UserDocument $document, GoogleDriveService $driveService, WasabiService $wasabiService)
+    public function embedFile(Request $request, UserDocument $document, DocumentEmbedService $embedService, GoogleDriveService $driveService, WasabiService $wasabiService)
     {
         $this->ensureWebUser();
 
@@ -912,47 +912,12 @@ class DocumentController extends Controller
             abort(403);
         }
 
-        if ($document->isFolder()) {
+        $response = $embedService->streamImage($document, $driveService, $wasabiService);
+        if (! $response) {
             abort(404);
         }
 
-        $mime = $document->mime_type ?? 'application/octet-stream';
-        if (! str_starts_with($mime, 'image/')) {
-            // Wasabi sync may not set mime_type - allow if extension suggests image
-            if (! $document->looksLikeImageByExtension()) {
-                abort(404);
-            }
-            $mime = $this->inferImageMimeFromExtension($document);
-        }
-
-        $connection = $document->storageConnection;
-        if (! $connection) {
-            abort(404);
-        }
-
-        $content = null;
-
-        if ($connection->provider === 'google_drive') {
-            $accessToken = $this->getDriveAccessToken($connection, $driveService);
-            if (! $accessToken) {
-                abort(404);
-            }
-            $content = $driveService->downloadFileContent($accessToken, $document->external_id, $document->mime_type);
-        } elseif ($connection->provider === 'wasabi') {
-            $credentials = $this->getWasabiCredentials($connection);
-            if (! $credentials) {
-                abort(404);
-            }
-            $content = $wasabiService->downloadFileContent($credentials, $document->external_id);
-        }
-
-        if (! $content) {
-            abort(404);
-        }
-
-        return response($content)
-            ->header('Content-Type', $mime)
-            ->header('Cache-Control', 'private, max-age=3600');
+        return $response;
     }
 
     private function inferImageMimeFromExtension(UserDocument $document): string

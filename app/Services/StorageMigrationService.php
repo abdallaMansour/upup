@@ -14,6 +14,7 @@ use App\Models\UserVoice;
 use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserHeightWeight;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 
@@ -133,13 +134,12 @@ class StorageMigrationService
         $fileSizes = [];
         $prefix = $wasabiCreds['prefix'] ?? '';
 
-        foreach ($docs as $doc) {
-            if ($doc->isFolder()) {
-                $parentPrefix = $doc->parent_id ? ($oldIdToNew[$doc->parent_id] ?? null) : null;
-                $result = $this->wasabiService->createFolder($wasabiCreds, $doc->name, $parentPrefix);
-                if ($result) {
-                    $oldIdToNew[$doc->id] = $result['key'];
-                }
+        $orderedFolders = $this->orderFoldersByParentFirst($docs->where('type', 'folder'));
+        foreach ($orderedFolders as $doc) {
+            $parentPrefix = $doc->parent_id ? ($oldIdToNew[$doc->parent_id] ?? null) : null;
+            $result = $this->wasabiService->createFolder($wasabiCreds, $doc->name, $parentPrefix);
+            if ($result) {
+                $oldIdToNew[$doc->id] = $result['key'];
             }
         }
 
@@ -250,18 +250,16 @@ class StorageMigrationService
             ->get();
 
         $oldIdToNew = [];
-
         $driveRootFolderId = $to->root_folder_id;
 
-        foreach ($docs as $doc) {
-            if ($doc->isFolder()) {
-                $parentId = $doc->parent_id && isset($oldIdToNew[$doc->parent_id])
-                    ? $oldIdToNew[$doc->parent_id]
-                    : $driveRootFolderId;
-                $result = $this->driveService->createFolder($accessToken, $doc->name, $parentId);
-                if ($result) {
-                    $oldIdToNew[$doc->id] = $result['id'];
-                }
+        $orderedFolders = $this->orderFoldersByParentFirst($docs->where('type', 'folder'));
+        foreach ($orderedFolders as $doc) {
+            $parentId = $doc->parent_id && isset($oldIdToNew[$doc->parent_id])
+                ? $oldIdToNew[$doc->parent_id]
+                : $driveRootFolderId;
+            $result = $this->driveService->createFolder($accessToken, $doc->name, $parentId);
+            if ($result) {
+                $oldIdToNew[$doc->id] = $result['id'];
             }
         }
 
@@ -437,5 +435,42 @@ class StorageMigrationService
         }
 
         return json_decode(Crypt::decryptString($credentials['encrypted']), true);
+    }
+
+    /**
+     * Order folders so parents are created before children (topological order).
+     * Required for migration: e.g. childhood before stage_1, stage_1 before cover.
+     */
+    private function orderFoldersByParentFirst(Collection $folders): array
+    {
+        $byId = $folders->keyBy('id');
+        $ordered = [];
+        $added = [];
+
+        $queue = $folders->values()->all();
+        $maxIterations = count($queue) * 2;
+        $iterations = 0;
+
+        while (! empty($queue) && $iterations++ < $maxIterations) {
+            $doc = array_shift($queue);
+            if (isset($added[$doc->id])) {
+                continue;
+            }
+            $parentInSet = $doc->parent_id !== null && $byId->has($doc->parent_id);
+            if ($parentInSet && ! isset($added[$doc->parent_id])) {
+                $queue[] = $doc;
+                continue;
+            }
+            $ordered[] = $doc;
+            $added[$doc->id] = true;
+            $children = $folders->where('parent_id', $doc->id)->values()->all();
+            foreach ($children as $c) {
+                if (! isset($added[$c->id])) {
+                    $queue[] = $c;
+                }
+            }
+        }
+
+        return $ordered;
     }
 }

@@ -369,6 +369,9 @@ class StorageMigrationService
                 ->where('footprint_document_id', $oldId)
                 ->update(['footprint_document_id' => $newId]);
             UserChildhoodStage::where('user_id', $userId)
+                ->where('cover_image_document_id', $oldId)
+                ->update(['cover_image_document_id' => $newId]);
+            UserChildhoodStage::where('user_id', $userId)
                 ->where('first_photo_document_id', $oldId)
                 ->update(['first_photo_document_id' => $newId]);
             UserChildhoodStage::where('user_id', $userId)

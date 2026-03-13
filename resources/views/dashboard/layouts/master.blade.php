@@ -189,7 +189,6 @@
                                 </a>
                             </li>
                         @endif
-                        {{-- إدارة منصات التخزين (للأدمن فقط) --}}
 
                         {{-- صفحات المستخدمين (للمستخدمين فقط) --}}
                         @if (auth('web')->check())
@@ -259,6 +258,14 @@
                                     <a href="{{ route('dashboard.storage-platforms.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-cloud"></i>
                                         <div data-i18n="Storage Platforms">إدارة منصات التخزين</div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (auth('admin')->user()->canAccess('age-stages.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.age-stages.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-user"></i>
+                                        <div>المراحل العمرية</div>
                                     </a>
                                 </li>
                             @endif

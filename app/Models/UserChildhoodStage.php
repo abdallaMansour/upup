@@ -175,7 +175,7 @@ class UserChildhoodStage extends Model
     }
 
     /**
-     * Returns life stage: 'child' (<12), 'teenager' (12-17), 'adult' (18+).
+     * Returns life stage: 'child', 'teenager', or 'adult' based on configurable age limits from site settings.
      * Defaults to 'child' when birth_date is missing.
      */
     public function getLifeStageAttribute(): string
@@ -184,10 +184,15 @@ class UserChildhoodStage extends Model
         if ($age === null) {
             return 'child';
         }
-        if ($age < 12) {
+
+        $settings = SiteSetting::get();
+        $childhoodMax = (int) ($settings->age_stage_childhood_max ?? 11);
+        $teenagerMax = (int) ($settings->age_stage_teenager_max ?? 17);
+
+        if ($age <= $childhoodMax) {
             return 'child';
         }
-        if ($age <= 17) {
+        if ($age <= $teenagerMax) {
             return 'teenager';
         }
 

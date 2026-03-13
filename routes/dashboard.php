@@ -11,6 +11,7 @@ use App\Http\Controllers\Dashboard\FeatureController;
 use App\Http\Controllers\Dashboard\PackageController;
 use App\Http\Controllers\Dashboard\AdminAuthController;
 use App\Http\Controllers\Dashboard\PermissionController;
+use App\Http\Controllers\Dashboard\AgeStageController;
 use App\Http\Controllers\Dashboard\SiteSettingController;
 use App\Http\Controllers\Dashboard\VerificationController;
 use App\Http\Controllers\Dashboard\SupportTicketController;
@@ -55,6 +56,7 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
     Route::get('privacy-policy', [SiteSettingController::class, 'privacyPolicy'])->name('privacy-policy.index');
     Route::get('terms-and-conditions', [SiteSettingController::class, 'termsAndConditions'])->name('terms-and-conditions.index');
     Route::get('media-department', [MediaDepartmentController::class, 'index'])->name('media-department.index')->middleware('permission:media-department.manage');
+    Route::get('age-stages', [AgeStageController::class, 'index'])->name('age-stages.index')->middleware('permission:age-stages.manage');
 
     // Support Tickets (users + admins)
     Route::get('support-tickets', [SupportTicketController::class, 'index'])->name('support-tickets.index');
@@ -204,6 +206,11 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::middleware('permission:site-settings.manage')->group(function () {
             Route::put('privacy-policy', [SiteSettingController::class, 'updatePrivacyPolicy'])->name('privacy-policy.update');
             Route::put('terms-and-conditions', [SiteSettingController::class, 'updateTermsAndConditions'])->name('terms-and-conditions.update');
+        });
+
+        // Age Stages (admin only)
+        Route::middleware('permission:age-stages.manage')->group(function () {
+            Route::put('age-stages', [AgeStageController::class, 'update'])->name('age-stages.update');
         });
 
         // Media Department (admin only)

@@ -52,7 +52,18 @@ class ProfileViewController extends Controller
 
     public function show(UserChildhoodStage $stage)
     {
-        $stage->load(['coverImageDocument', 'firstPhotoDocument']);
+        $stage->load([
+            'coverImageDocument',
+            'firstPhotoDocument',
+            'footprintDocument',
+            'firstVideoDocument',
+            'firstGiftDocument',
+            'otherPhotos.userDocument',
+            'heightWeights.imageDocument',
+            'achievements' => fn ($q) => $q->with(['certificateImageDocument', 'mediaItems.userDocument']),
+            'visits.mediaDocument',
+            'otherEvents.mediaDocument',
+        ]);
 
         if (! $this->canAccessStage($stage)) {
             return redirect()->route('profile.pin.form', $stage);

@@ -144,7 +144,27 @@ class UserChildhoodStage extends Model
             return true;
         }
 
-        return $this->mediaItems()->where('user_document_id', $document->id)->exists();
+        if ($this->mediaItems()->where('user_document_id', $document->id)->exists()) {
+            return true;
+        }
+
+        if ($this->heightWeights()->where('image_document_id', $document->id)->exists()) {
+            return true;
+        }
+
+        if ($this->visits()->where('media_document_id', $document->id)->exists()) {
+            return true;
+        }
+
+        if ($this->otherEvents()->where('media_document_id', $document->id)->exists()) {
+            return true;
+        }
+
+        if ($this->achievements()->where('certificate_image_document_id', $document->id)->exists()) {
+            return true;
+        }
+
+        return $this->achievements()->whereHas('mediaItems', fn ($q) => $q->where('user_document_id', $document->id))->exists();
     }
 
     public function scopeForUser($query, int $userId)

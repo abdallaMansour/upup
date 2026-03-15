@@ -100,6 +100,83 @@
                     </div>
                 </a>
             </div>
+            {{-- المرحلة التعليمية --}}
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="javascript:void(0);" class="card h-100 text-decoration-none border shadow-sm" data-bs-toggle="modal" data-bs-target="#educationModal">
+                    <div class="card-body text-center">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
+                            <i class="icon-base bx bx-book-reader icon-lg text-primary"></i>
+                        </span>
+                        <h6 class="card-title mb-1">المرحلة التعليمية</h6>
+                        <small class="text-body-secondary">المرحلة والصف والمدرسة</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible mt-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        {{-- Modal: المرحلة التعليمية --}}
+        <div class="modal fade" id="educationModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('dashboard.education.update') }}" method="POST">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title">المرحلة التعليمية</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="education_stage_id" class="form-label">المرحلة</label>
+                                <select name="education_stage_id" id="education_stage_id" class="form-select @error('education_stage_id') is-invalid @enderror">
+                                    <option value="">اختر المرحلة</option>
+                                    @foreach ($educationStages ?? [] as $stage)
+                                        <option value="{{ $stage->id }}" {{ old('education_stage_id', optional(auth()->user())->education_stage_id) == $stage->id ? 'selected' : '' }}>{{ $stage->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('education_stage_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label for="education_grade_id" class="form-label">الصف</label>
+                                <select name="education_grade_id" id="education_grade_id" class="form-select @error('education_grade_id') is-invalid @enderror">
+                                    <option value="">اختر الصف</option>
+                                    @php
+                                        $selectedStageId = old('education_stage_id', optional(auth()->user())->education_stage_id);
+                                        $selectedStage = ($educationStages ?? collect())->firstWhere('id', $selectedStageId);
+                                    @endphp
+                                    @if ($selectedStage)
+                                        @foreach ($selectedStage->grades as $grade)
+                                            <option value="{{ $grade->id }}" {{ old('education_grade_id', optional(auth()->user())->education_grade_id) == $grade->id ? 'selected' : '' }}>{{ $grade->name }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                @error('education_grade_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label for="school_name" class="form-label">اسم المدرسة أو الجامعة</label>
+                                <input type="text" name="school_name" id="school_name" class="form-control @error('school_name') is-invalid @enderror" value="{{ old('school_name', optional(auth()->user())->school_name) }}" placeholder="مثال: مدرسة النور" maxlength="255">
+                                @error('school_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="submit" class="btn btn-primary">حفظ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
         @else
         {{-- لوحة التحكم للأدمن: الإحصائيات والرسوم البيانية --}}
@@ -1056,3 +1133,34 @@
     </div>
     <!-- / Content -->
 @endsection
+
+@if (auth('web')->check() && isset($educationStages))
+@section('page-js')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stageSelect = document.getElementById('education_stage_id');
+    const gradeSelect = document.getElementById('education_grade_id');
+    if (!stageSelect || !gradeSelect) return;
+
+    const stagesWithGrades = @json($educationStages->mapWithKeys(fn($s) => [$s->id => $s->grades->map(fn($g) => ['id' => $g->id, 'name' => $g->name])->values()]));
+
+    stageSelect.addEventListener('change', function() {
+        const stageId = this.value;
+        gradeSelect.innerHTML = '<option value="">اختر الصف</option>';
+        if (stageId && stagesWithGrades[stageId]) {
+            stagesWithGrades[stageId].forEach(function(grade) {
+                const opt = document.createElement('option');
+                opt.value = grade.id;
+                opt.textContent = grade.name;
+                gradeSelect.appendChild(opt);
+            });
+        }
+    });
+
+    @if ($errors->has('education_stage_id') || $errors->has('education_grade_id') || $errors->has('school_name'))
+    new bootstrap.Modal(document.getElementById('educationModal')).show();
+    @endif
+});
+</script>
+@endsection
+@endif

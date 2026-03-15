@@ -43,6 +43,7 @@ Route::post('auth/logout', [AdminAuthController::class, 'logout'])->name('logout
 // Dashboard Pages (users + admins - users see limited menu)
 Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function () {
     Route::get('/', [PagesController::class, 'index'])->name('index');
+    Route::post('education', [PagesController::class, 'updateEducation'])->name('education.update')->middleware('auth:web');
 
     // Verification (must be accessible before full verification)
     Route::get('verification', [VerificationController::class, 'index'])->name('verification.index');

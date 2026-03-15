@@ -25,6 +25,9 @@ class User extends Authenticatable
         'phone_verified_at',
         'password',
         'banned_at',
+        'education_stage_id',
+        'education_grade_id',
+        'school_name',
     ];
 
     /**
@@ -89,5 +92,15 @@ class User extends Authenticatable
     public function getActiveSubscriptionAttribute()
     {
         return $this->subscriptions()->active()->latest('expires_at')->first();
+    }
+
+    public function educationStage()
+    {
+        return $this->belongsTo(EducationStage::class, 'education_stage_id');
+    }
+
+    public function educationGrade()
+    {
+        return $this->belongsTo(EducationGrade::class, 'education_grade_id');
     }
 }

@@ -1091,6 +1091,64 @@
                         </div>
                         <!-- Info Tab -->
                         <div class="tab-panel" id="tab-info">
+                            @php
+                                $arDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+                                $allEvents = collect();
+                                foreach ($stage->visits as $v) {
+                                    $allEvents->push(
+                                        (object) [
+                                            'type' => 'visit',
+                                            'title' => $v->title ?? 'زيارة',
+                                            'record_date' => $v->record_date,
+                                            'record_time' => $v->record_time_formatted ?? $v->record_time,
+                                            'desc' => $v->other_info ?? '',
+                                            'badge' => 'زيارة',
+                                            'badge_class' => 'evt-milestone',
+                                            'doc' => $v->mediaDocument,
+                                            'photos' => $v->mediaDocument ? [route('profile.document.embed', [$stage, $v->mediaDocument])] : [],
+                                            'video' => null,
+                                        ],
+                                    );
+                                }
+                                foreach ($stage->otherEvents as $e) {
+                                    $allEvents->push(
+                                        (object) [
+                                            'type' => 'event',
+                                            'title' => $e->title ?? 'حدث',
+                                            'record_date' => $e->record_date,
+                                            'record_time' => $e->record_time_formatted ?? $e->record_time,
+                                            'desc' => $e->other_info ?? '',
+                                            'badge' => 'حدث',
+                                            'badge_class' => 'evt-education',
+                                            'doc' => $e->mediaDocument,
+                                            'photos' => $e->mediaDocument ? [route('profile.document.embed', [$stage, $e->mediaDocument])] : [],
+                                            'video' => null,
+                                        ],
+                                    );
+                                }
+                                foreach ($stage->achievements as $a) {
+                                    $photos = $a->mediaItems->map(fn($m) => $m->userDocument ? route('profile.document.embed', [$stage, $m->userDocument]) : null)->filter()->values()->all();
+                                    if ($a->certificateImageDocument) {
+                                        array_unshift($photos, route('profile.document.embed', [$stage, $a->certificateImageDocument]));
+                                    }
+                                    $allEvents->push(
+                                        (object) [
+                                            'type' => 'achievement',
+                                            'title' => $a->title ?? 'إنجاز',
+                                            'record_date' => $a->record_date,
+                                            'record_time' => $a->record_time_formatted ?? $a->record_time,
+                                            'desc' => $a->place ?? '',
+                                            'badge' => $a->type_label ?? 'إنجاز',
+                                            'badge_class' => 'evt-milestone',
+                                            'doc' => $a->certificateImageDocument,
+                                            'photos' => $photos,
+                                            'video' => null,
+                                        ],
+                                    );
+                                }
+                                $allEvents = $allEvents->sortByDesc('record_date');
+                                $eventYears = $allEvents->pluck('record_date')->filter()->map(fn($d) => $d->format('Y'))->unique()->sort()->values();
+                            @endphp
                             <div class="events-section">
                                 <!-- Header -->
                                 <div class="events-header">
@@ -1108,189 +1166,79 @@
                                 <!-- Year Filter -->
                                 <div class="mt-4 events-filter">
                                     <button class="events-filter-btn active" data-year="all"><i class="fas fa-layer-group"></i> الكل</button>
-                                    <button class="events-filter-btn" data-year="2020">2019 - 2020</button>
-                                    <button class="events-filter-btn" data-year="2021">2020 - 2021</button>
-                                    <button class="events-filter-btn" data-year="2022">2021 - 2022</button>
-                                    <button class="events-filter-btn" data-year="2023">2022 - 2023</button>
-                                    <button class="events-filter-btn" data-year="2024">2023 - 2024</button>
-                                    <button class="events-filter-btn" data-year="2025">2024 - 2025</button>
-                                    <button class="events-filter-btn" data-year="2026">2025 - 2026</button>
+                                    @foreach ($eventYears as $yr)
+                                        <button class="events-filter-btn" data-year="{{ $yr }}">{{ (int)$yr - 1 }} - {{ $yr }}</button>
+                                    @endforeach
                                 </div>
 
                                 <!-- Events List -->
                                 <div class="events-list" id="eventsList">
 
-                                    <!-- Event 1 -->
-                                    <div class="event-card scroll-reveal" data-event-year="2020" data-evt-title="أول خطوات محمد" data-evt-type="إنجاز" data-evt-badge="إنجاز شخصي"
-                                        data-evt-badge-class="evt-milestone" data-evt-stage="الطفولة المبكرة" data-evt-day="الأحد" data-evt-date="2022-5-7 " data-evt-time="3:30 مساءً"
-                                        data-evt-desc="خطا محمد أولى خطواته بمفرده اليوم! كانت لحظة مذهلة ومؤثرة للعائلة بأكملها. بدأ بالمشي متمسكاً بالأثاث ثم تجرأ وخطا 5 خطوات بمفرده نحو والدته."
-                                        data-evt-photos='["https://images.unsplash.com/photo-1519340333755-56e9c1d3611c?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&h=500&fit=crop"]'
-                                        data-evt-video="">
-                                        <div class="event-card-inner">
-                                            <span class="event-badge evt-milestone"><i class="fas fa-star"></i> إنجاز شخصي</span>
-                                            <div class="event-card-thumbnail">
-                                                <img src="https://images.unsplash.com/photo-1519340333755-56e9c1d3611c?w=600&h=300&fit=crop" alt="">
-                                            </div>
-                                            <div class="event-card-body">
-                                                <div class="event-meta-tags">
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> إنجاز</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> الطفولة المبكرة</span>
+                                    @forelse($allEvents as $evt)
+                                        @php
+                                            $dayName = $evt->record_date ? $arDays[$evt->record_date->dayOfWeek] : '';
+                                            $dateStr = $evt->record_date ? $evt->record_date->format('Y-m-d') : '';
+                                            $thumbUrl = !empty($evt->photos) ? $evt->photos[0] : null;
+                                        @endphp
+                                        <div class="event-card scroll-reveal" data-event-year="{{ $evt->record_date?->format('Y') ?? '' }}" data-evt-title="{{ $evt->title }}"
+                                            data-evt-type="{{ $evt->badge }}" data-evt-badge="{{ $evt->badge }}" data-evt-badge-class="{{ $evt->badge_class }}"
+                                            data-evt-stage="{{ $stage->age_in_years ? $stage->age_in_years . ' سنوات' : '' }}" data-evt-day="{{ $dayName }}"
+                                            data-evt-date="{{ $dateStr }}" data-evt-time="{{ $evt->record_time ?? '' }}" data-evt-desc="{{ $evt->desc }}"
+                                            data-evt-photos='@json($evt->photos ?? [])' data-evt-video="{{ $evt->video ?? '' }}">
+                                            <div class="event-card-inner">
+                                                <span class="event-badge {{ $evt->badge_class }}"><i class="fas fa-calendar-check"></i> {{ $evt->badge }}</span>
+                                                <div class="event-card-thumbnail">
+                                                    @if ($thumbUrl)
+                                                        <img src="{{ $thumbUrl }}" alt="{{ $evt->title }}" loading="lazy">
+                                                    @else
+                                                        <div style="background:#f0f0f0;height:120px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image"
+                                                                style="font-size:2rem;color:#ccc"></i></div>
+                                                    @endif
                                                 </div>
-                                                <h4 class="event-card-title">أول خطوات محمد</h4>
-                                                <p class="event-card-desc">خطا محمد أولى خطواته بمفرده اليوم! كانت لحظة مذهلة ومؤثرة للعائلة بأكملها.</p>
-                                                <div class="event-date-row">
-                                                    <span class="event-day-name">الأحد</span>
-                                                    <span><i class="fas fa-calendar-alt"></i> 2020-3-15</span>
-                                                    <span><i class="fas fa-clock"></i> 3:30 مساءً</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> 5 سنوات</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> المرحلة الابتدائية</span>
-                                                </div>
-                                                <div class="post-media-btns">
-                                                    <button class="media-btn media-btn-blue evt-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
-                                                    <button class="media-btn media-btn-green evt-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Event 2 -->
-                                    <div class="event-card scroll-reveal" data-event-year="2020" data-evt-title="التطعيمات الأساسية الكاملة" data-evt-type="طبي" data-evt-badge="صحة"
-                                        data-evt-badge-class="evt-medical" data-evt-stage="سنة واحدة" data-evt-day="الثلاثاء" data-evt-date="2022-5-7 " data-evt-time="10:00 صباحاً"
-                                        data-evt-desc="أكمل محمد جميع التطعيمات الأساسية المقررة لعمر السنة الأولى. الطبيب أكد أن نموه طبيعي وصحته ممتازة. وزنه 10.5 كجم وطوله 76 سم."
-                                        data-evt-photos='["https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&h=500&fit=crop"]'
-                                        data-evt-video="">
-                                        <div class="event-card-inner">
-                                            <span class="event-badge evt-medical"><i class="fas fa-heartbeat"></i> صحة</span>
-                                            <div class="event-card-thumbnail">
-                                                <img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=600&h=300&fit=crop" alt="">
-                                            </div>
-                                            <div class="event-card-body">
-                                                <div class="event-meta-tags">
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> طبي</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> سنة واحدة</span>
-                                                </div>
-                                                <h4 class="event-card-title">التطعيمات الأساسية الكاملة</h4>
-                                                <p class="event-card-desc">أكمل محمد جميع التطعيمات الأساسية. الطبيب أكد أن نموه طبيعي وصحته ممتازة.</p>
-                                                <div class="event-date-row">
-                                                    <span class="event-day-name">الثلاثاء</span>
-                                                    <span><i class="fas fa-calendar-alt"></i> 2020-8-4</span>
-                                                    <span><i class="fas fa-clock"></i> 10:00 صباحاً</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> 5 سنوات</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> المرحلة الابتدائية</span>
-                                                </div>
-                                                <div class="post-media-btns">
-                                                    <button class="media-btn media-btn-blue evt-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
-                                                    <button class="media-btn media-btn-green evt-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
+                                                <div class="event-card-body">
+                                                    <div class="event-meta-tags">
+                                                        <span class="event-meta-tag"><i class="fas fa-bookmark"></i> {{ $evt->badge }}</span>
+                                                        @if ($stage->age_in_years)
+                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
+                                                        @endif
+                                                    </div>
+                                                    <h4 class="event-card-title">{{ $evt->title }}</h4>
+                                                    <p class="event-card-desc">{{ Str::limit($evt->desc, 80) ?: $evt->title }}</p>
+                                                    <div class="event-date-row">
+                                                        <span class="event-day-name">{{ $dayName }}</span>
+                                                        @if ($dateStr)
+                                                            <span><i class="fas fa-calendar-alt"></i> {{ $dateStr }}</span>
+                                                        @endif
+                                                        @if ($evt->record_time)
+                                                            <span><i class="fas fa-clock"></i> {{ $evt->record_time }}</span>
+                                                        @endif
+                                                        @if ($stage->age_in_years)
+                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="post-media-btns">
+                                                        <button class="media-btn media-btn-blue evt-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
+                                                        @if (!empty($evt->photos))
+                                                            <button class="media-btn media-btn-green evt-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <!-- Event 3 -->
-                                    <div class="event-card scroll-reveal" data-event-year="2022" data-evt-title="حفل عيد الميلاد الثالث" data-evt-type="احتفال" data-evt-badge="اجتماعي"
-                                        data-evt-badge-class="evt-social" data-evt-stage="3 سنوات" data-evt-day="السبت" data-evt-date="2022-5-7 " data-evt-time="5:00 مساءً"
-                                        data-evt-desc="احتفال كبير بعيد ميلاد محمد الثالث مع العائلة والأصدقاء. حضر 25 طفلاً من روضة الأطفال. كعكة جميلة على شكل سيارة. محمد سعيد جداً!"
-                                        data-evt-photos='["https://images.unsplash.com/photo-1530023367847-a683933f4172?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&h=500&fit=crop"]'
-                                        data-evt-video="https://www.w3schools.com/html/mov_bbb.mp4">
-                                        <div class="event-card-inner">
-                                            <span class="event-badge evt-social"><i class="fas fa-users"></i> اجتماعي</span>
-                                            <div class="event-card-thumbnail">
-                                                <img src="https://images.unsplash.com/photo-1530023367847-a683933f4172?w=600&h=300&fit=crop" alt="">
-                                            </div>
-                                            <div class="event-card-body">
-                                                <div class="event-meta-tags">
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> احتفال</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> 3 سنوات</span>
-                                                </div>
-                                                <h4 class="event-card-title">حفل عيد الميلاد الثالث</h4>
-                                                <p class="event-card-desc">احتفال كبير مع العائلة والأصدقاء. كعكة جميلة وألعاب ومسابقات وهدايا.</p>
-                                                <div class="event-date-row">
-                                                    <span class="event-day-name">السبت</span>
-                                                    <span><i class="fas fa-calendar-alt"></i> 2020-8-4</span>
-                                                    <span><i class="fas fa-clock"></i> 5:00 مساءً</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> 5 سنوات</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> المرحلة الابتدائية</span>
-                                                </div>
-                                                <div class="post-media-btns">
-                                                    <button class="media-btn media-btn-blue evt-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
-                                                    <button class="media-btn media-btn-green evt-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
-                                                    <button class="media-btn media-btn-dark evt-btn-video" title="فيديو"><i class="fas fa-video"></i></button>
-                                                </div>
-                                            </div>
+                                    @empty
+                                        <div class="events-no-results">
+                                            <i class="fas fa-search" style="font-size:2rem;color:var(--text-muted);opacity:0.4;"></i>
+                                            <p>لا توجد أحداث بعد</p>
                                         </div>
-                                    </div>
+                                    @endforelse
 
-                                    <!-- Event 4 -->
-                                    <div class="event-card scroll-reveal" data-event-year="2023" data-evt-title="أول رحلة إلى البحر" data-evt-type="رحلة" data-evt-badge="عائلي"
-                                        data-evt-badge-class="evt-family" data-evt-stage="4 سنوات" data-evt-day="الخميس" data-evt-date="2022-5-7 " data-evt-time="طوال اليوم"
-                                        data-evt-desc="رحلة عائلية لا تُنسى إلى شاطئ البحر الأحمر. محمد رأى البحر للمرة الأولى وكان متحمساً جداً. لعب بالرمل، جمع الأصداف، وسبح مع والده. 3 أيام رائعة في جدة."
-                                        data-evt-photos='["https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&h=500&fit=crop"]'
-                                        data-evt-video="">
-                                        <div class="event-card-inner">
-                                            <span class="event-badge evt-family"><i class="fas fa-home"></i> عائلي</span>
-                                            <div class="event-card-thumbnail">
-                                                <img src="https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=600&h=300&fit=crop" alt="">
-                                            </div>
-                                            <div class="event-card-body">
-                                                <div class="event-meta-tags">
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> رحلة</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> 4 سنوات</span>
-                                                </div>
-                                                <h4 class="event-card-title">أول رحلة إلى البحر</h4>
-                                                <p class="event-card-desc">رحلة عائلية لا تُنسى إلى البحر الأحمر. لعب بالرمل وسبح مع والده.</p>
-                                                <div class="event-date-row">
-                                                    <span class="event-day-name">الخميس</span>
-                                                    <span><i class="fas fa-calendar-alt"></i> 2025-9-31 </span>
-                                                    <span><i class="fas fa-clock"></i> طوال اليوم</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> 5 سنوات</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> المرحلة الابتدائية</span>
-                                                </div>
-                                                <div class="post-media-btns">
-                                                    <button class="media-btn media-btn-blue evt-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
-                                                    <button class="media-btn media-btn-green evt-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
-                                                </div>
-                                            </div>
+                                    @if ($allEvents->isNotEmpty())
+                                        <!-- No results message (shown by JS when filter has no matches) -->
+                                        <div class="events-no-results" id="eventsNoResults" style="display:none;">
+                                            <i class="fas fa-search" style="font-size:2rem;color:var(--text-muted);opacity:0.4;"></i>
+                                            <p>لا توجد أحداث في هذه الفترة</p>
                                         </div>
-                                    </div>
-
-                                    <!-- Event 5 -->
-                                    <div class="event-card scroll-reveal" data-event-year="2024" data-evt-title="أول يوم في الروضة" data-evt-type="تعليم" data-evt-badge="تعليم"
-                                        data-evt-badge-class="evt-education" data-evt-stage="5 سنوات" data-evt-day="الأحد" data-evt-date="2022-5-7 " data-evt-time="7:30 صباحاً"
-                                        data-evt-desc="أول يوم لمحمد في الروضة الدولية. كان متحمساً ومتوتراً قليلاً لكنه سرعان ما تأقلم مع زملائه الجدد. بداية رائعة لمسيرته التعليمية."
-                                        data-evt-photos='["https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=500&fit=crop","https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&h=500&fit=crop"]'
-                                        data-evt-video="">
-                                        <div class="event-card-inner">
-                                            <span class="event-badge evt-education"><i class="fas fa-school"></i> تعليم</span>
-                                            <div class="event-card-thumbnail">
-                                                <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=300&fit=crop" alt="">
-                                            </div>
-                                            <div class="event-card-body">
-                                                <div class="event-meta-tags">
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> تعليم</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> 5 سنوات</span>
-                                                </div>
-                                                <h4 class="event-card-title">أول يوم في الروضة</h4>
-                                                <p class="event-card-desc">أول يوم لمحمد في الروضة. بداية رائعة لمسيرته التعليمية مع أصدقاء جدد.</p>
-                                                <div class="event-date-row">
-                                                    <span class="event-day-name">الأحد</span>
-                                                    <span><i class="fas fa-calendar-alt"></i> 2024-9-1 </span>
-                                                    <span><i class="fas fa-clock"></i> 7:30 صباحاً</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> 5 سنوات</span>
-                                                    <span class="event-meta-tag"><i class="fas fa-bookmark"></i> المرحلة الابتدائية</span>
-                                                </div>
-                                                <div class="post-media-btns">
-                                                    <button class="media-btn media-btn-blue evt-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
-                                                    <button class="media-btn media-btn-green evt-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- No results message -->
-                                    <div class="events-no-results" id="eventsNoResults" style="display:none;">
-                                        <i class="fas fa-search" style="font-size:2rem;color:var(--text-muted);opacity:0.4;"></i>
-                                        <p>لا توجد أحداث في هذه الفترة</p>
-                                    </div>
+                                    @endif
 
                                 </div>
                             </div>

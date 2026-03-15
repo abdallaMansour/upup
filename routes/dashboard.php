@@ -100,6 +100,7 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('my-pages/{stage}/edit', [MyPagesController::class, 'edit'])->name('my-pages.edit');
         Route::put('my-pages/{stage}', [MyPagesController::class, 'update'])->name('my-pages.update');
         Route::get('my-pages/{stage}/documents', [MyPagesController::class, 'documents'])->name('my-pages.documents');
+        Route::put('my-pages/{stage}/education-sections', [MyPagesController::class, 'updateEducationSections'])->name('my-pages.education-sections.update');
         Route::post('my-pages/{stage}/permissions', [MyPagesController::class, 'storePermission'])->name('my-pages.permissions.store');
         Route::delete('my-pages/{stage}', [MyPagesController::class, 'destroy'])->name('my-pages.destroy');
 

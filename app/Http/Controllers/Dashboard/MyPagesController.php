@@ -293,6 +293,26 @@ class MyPagesController extends Controller
         return view('dashboard.my-pages.documents', compact('stage'));
     }
 
+    public function updateEducationSections(Request $request, UserChildhoodStage $stage)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+        if ($stage->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $allowed = ['height_weight', 'achievements', 'voices', 'drawings', 'visits', 'injuries', 'other_events'];
+        $sections = $request->input('education_sections', []);
+        if (! is_array($sections)) {
+            $sections = [];
+        }
+        $sections = array_values(array_intersect($sections, $allowed));
+
+        $stage->update(['education_linked_sections' => $sections]);
+
+        return redirect()->route('dashboard.my-pages.documents', $stage)->with('success', 'تم حفظ إعدادات المراحل التعليمية بنجاح.');
+    }
+
     public function storePermission(Request $request, UserChildhoodStage $stage)
     {
         $this->ensureWebUser();

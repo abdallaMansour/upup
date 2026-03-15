@@ -63,20 +63,74 @@ class ProfileViewController extends Controller
             'achievements' => fn ($q) => $q->with(['certificateImageDocument', 'mediaItems.userDocument']),
             'visits.mediaDocument',
             'otherEvents.mediaDocument',
+            'drawings.mediaDocument',
+            'voices.audioDocument',
+            'injuries.mediaDocument',
         ]);
 
         if (! $this->canAccessStage($stage)) {
             return redirect()->route('profile.pin.form', $stage);
         }
 
+        $educationYears = $this->buildEducationYears($stage);
         $lifeStage = $stage->life_stage;
 
         return match ($lifeStage) {
-            'child' => view('profile_pages.child', compact('stage')),
-            'teenager' => view('profile_pages.teenager', compact('stage')),
-            'adult' => view('profile_pages.adults', compact('stage')),
-            default => view('profile_pages.child', compact('stage')),
+            'child' => view('profile_pages.child', compact('stage', 'educationYears')),
+            'teenager' => view('profile_pages.teenager', compact('stage', 'educationYears')),
+            'adult' => view('profile_pages.adults', compact('stage', 'educationYears')),
+            default => view('profile_pages.child', compact('stage', 'educationYears')),
         };
+    }
+
+    private function buildEducationYears(UserChildhoodStage $stage): array
+    {
+        $years = [];
+
+        foreach ($stage->heightWeights->where('show_in_education', true)->sortByDesc('record_date') as $hw) {
+            $y = $hw->record_date?->format('Y') ?? date('Y');
+            if (! isset($years[$y])) {
+                $years[$y] = ['height_weight' => null, 'events' => []];
+            }
+            if ($years[$y]['height_weight'] === null) {
+                $years[$y]['height_weight'] = $hw;
+            }
+        }
+
+        $eventTypes = [
+            'achievements' => ['type' => 'achievement', 'label_attr' => 'type_label'],
+            'visits' => ['type' => 'visit', 'label' => 'زيارة'],
+            'other_events' => ['type' => 'event', 'label' => 'حدث'],
+            'drawings' => ['type' => 'drawing', 'label' => 'رسم'],
+            'voices' => ['type' => 'voice', 'label' => 'صوت'],
+            'injuries' => ['type' => 'injury', 'label' => 'إصابة'],
+        ];
+
+        foreach ($eventTypes as $section => $config) {
+            $collection = ($stage->{$section} ?? collect())->where('show_in_education', true);
+            foreach ($collection as $item) {
+                $y = $item->record_date?->format('Y') ?? (isset($item->academic_year) ? $item->academic_year : date('Y'));
+                if (! isset($years[$y])) {
+                    $years[$y] = ['height_weight' => null, 'events' => []];
+                }
+                $label = $config['label'] ?? (isset($config['label_attr']) ? ($item->{$config['label_attr']} ?? $config['type']) : $config['type']);
+                $years[$y]['events'][] = [
+                    'item' => $item,
+                    'type' => $config['type'],
+                    'label' => $label,
+                ];
+            }
+        }
+
+        foreach (array_keys($years) as $y) {
+            if ($years[$y]['height_weight'] === null && empty($years[$y]['events'])) {
+                unset($years[$y]);
+            }
+        }
+
+        krsort($years, SORT_NUMERIC);
+
+        return $years;
     }
 
     public function pinForm(UserChildhoodStage $stage)

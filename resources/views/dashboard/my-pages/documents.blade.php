@@ -9,11 +9,11 @@
         </a>
     </div>
 
-    <p class="text-body-secondary mb-4">اختر القسم الذي تريد إضافة أو عرض المحتوى فيه</p>
+    <p class="text-body-secondary mb-4">اختر القسم الذي تريد إضافة أو عرض المحتوى فيه. حدد الأقسام التي تريد عرضها في تبويب المراحل التعليمية من صفحة الإنشاء أو التعديل لكل سجل.</p>
 
     <div class="row g-4">
         <div class="col-6 col-md-4 col-lg-3">
-            <a href="{{ route('dashboard.height-weight.index', ['stage' => $stage->id]) }}" class="card h-100 text-decoration-none border shadow-sm">
+            <a href="{{ route('dashboard.height-weight.index', ['stage' => $stage->id]) }}" class="card h-100 border shadow-sm text-decoration-none text-body">
                 <div class="card-body text-center">
                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-warning" style="width: 56px; height: 56px;">
                         <i class="icon-base bx bx-ruler icon-lg text-warning"></i>
@@ -24,7 +24,7 @@
             </a>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
-            <a href="{{ route('dashboard.achievements.index', ['stage' => $stage->id]) }}" class="card h-100 text-decoration-none border shadow-sm">
+            <a href="{{ route('dashboard.achievements.index', ['stage' => $stage->id]) }}" class="card h-100 border shadow-sm text-decoration-none text-body">
                 <div class="card-body text-center">
                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
                         <i class="icon-base bx bx-trophy icon-lg text-primary"></i>
@@ -35,7 +35,7 @@
             </a>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
-            <a href="{{ route('dashboard.voices.index', ['stage' => $stage->id]) }}" class="card h-100 text-decoration-none border shadow-sm">
+            <a href="{{ route('dashboard.voices.index', ['stage' => $stage->id]) }}" class="card h-100 border shadow-sm text-decoration-none text-body">
                 <div class="card-body text-center">
                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-secondary" style="width: 56px; height: 56px;">
                         <i class="icon-base bx bx-music icon-lg text-secondary"></i>
@@ -46,7 +46,7 @@
             </a>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
-            <a href="{{ route('dashboard.drawings.index', ['stage' => $stage->id]) }}" class="card h-100 text-decoration-none border shadow-sm">
+            <a href="{{ route('dashboard.drawings.index', ['stage' => $stage->id]) }}" class="card h-100 border shadow-sm text-decoration-none text-body">
                 <div class="card-body text-center">
                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-danger" style="width: 56px; height: 56px;">
                         <i class="icon-base bx bx-palette icon-lg text-danger"></i>
@@ -57,7 +57,7 @@
             </a>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
-            <a href="{{ route('dashboard.visits.index', ['stage' => $stage->id]) }}" class="card h-100 text-decoration-none border shadow-sm">
+            <a href="{{ route('dashboard.visits.index', ['stage' => $stage->id]) }}" class="card h-100 border shadow-sm text-decoration-none text-body">
                 <div class="card-body text-center">
                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-info" style="width: 56px; height: 56px;">
                         <i class="icon-base bx bx-map-alt icon-lg text-info"></i>
@@ -68,7 +68,7 @@
             </a>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
-            <a href="{{ route('dashboard.injuries.index', ['stage' => $stage->id]) }}" class="card h-100 text-decoration-none border shadow-sm">
+            <a href="{{ route('dashboard.injuries.index', ['stage' => $stage->id]) }}" class="card h-100 border shadow-sm text-decoration-none text-body">
                 <div class="card-body text-center">
                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-danger" style="width: 56px; height: 56px;">
                         <i class="icon-base bx bx-first-aid icon-lg text-danger"></i>
@@ -79,7 +79,7 @@
             </a>
         </div>
         <div class="col-6 col-md-4 col-lg-3">
-            <a href="{{ route('dashboard.other-events.index', ['stage' => $stage->id]) }}" class="card h-100 text-decoration-none border shadow-sm">
+            <a href="{{ route('dashboard.other-events.index', ['stage' => $stage->id]) }}" class="card h-100 border shadow-sm text-decoration-none text-body">
                 <div class="card-body text-center">
                     <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-success" style="width: 56px; height: 56px;">
                         <i class="icon-base bx bx-calendar-event icon-lg text-success"></i>

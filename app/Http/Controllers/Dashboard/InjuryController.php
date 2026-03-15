@@ -81,6 +81,7 @@ class InjuryController extends Controller
             'record_time' => $validated['record_time'] ?? null,
             'title' => $validated['title'],
             'other_info' => $validated['other_info'] ?? null,
+            'show_in_education' => $request->boolean('show_in_education'),
         ]);
 
         if ($connection && $request->hasFile('media')) {
@@ -139,6 +140,7 @@ class InjuryController extends Controller
             'record_time' => $validated['record_time'] ?? null,
             'title' => $validated['title'],
             'other_info' => $validated['other_info'] ?? null,
+            'show_in_education' => $request->boolean('show_in_education'),
         ]);
 
         if ($connection && $request->hasFile('media')) {

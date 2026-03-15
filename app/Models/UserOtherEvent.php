@@ -10,6 +10,7 @@ class UserOtherEvent extends Model
     protected $fillable = [
         'user_id',
         'user_childhood_stage_id',
+        'show_in_education',
         'record_date',
         'record_time',
         'media_document_id',
@@ -18,6 +19,7 @@ class UserOtherEvent extends Model
     ];
 
     protected $casts = [
+        'show_in_education' => 'boolean',
         'record_date' => 'date',
         'record_time' => 'string',
     ];

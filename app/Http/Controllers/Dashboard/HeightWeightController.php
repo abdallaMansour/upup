@@ -79,6 +79,7 @@ class HeightWeightController extends Controller
             'record_time' => $validated['record_time'] ?? null,
             'height' => $validated['height'] ?? null,
             'weight' => $validated['weight'] ?? null,
+            'show_in_education' => $request->boolean('show_in_education'),
         ]);
 
         if ($connection) {
@@ -149,6 +150,7 @@ class HeightWeightController extends Controller
             'record_time' => $validated['record_time'] ?? null,
             'height' => $validated['height'] ?? null,
             'weight' => $validated['weight'] ?? null,
+            'show_in_education' => $request->boolean('show_in_education'),
         ]);
 
         if ($connection) {

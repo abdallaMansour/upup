@@ -11,6 +11,7 @@ class UserChildhoodStage extends Model
     protected $fillable = [
         'user_id',
         'is_public',
+        'education_linked_sections',
         'footprint_document_id',
         'name',
         'mother_name',
@@ -32,6 +33,7 @@ class UserChildhoodStage extends Model
 
     protected $casts = [
         'is_public' => 'boolean',
+        'education_linked_sections' => 'array',
         'birth_date' => 'date',
         'birth_time' => 'string',
         'height' => 'decimal:2',
@@ -121,6 +123,13 @@ class UserChildhoodStage extends Model
     public function temporaryPermissions(): HasMany
     {
         return $this->hasMany(ChildhoodStagePermission::class, 'user_childhood_stage_id');
+    }
+
+    public function isSectionLinkedToEducation(string $section): bool
+    {
+        $sections = $this->education_linked_sections ?? [];
+
+        return in_array($section, $sections, true);
     }
 
     /**

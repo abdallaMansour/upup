@@ -21,7 +21,7 @@
         </div>
         <div class="row g-4">
             {{-- إدارة الوثائق --}}
-            <div class="col-6 col-md-4 col-lg-3">
+            {{-- <div class="col-6 col-md-4 col-lg-3">
                 <a href="{{ route('dashboard.documents.index') }}" class="card h-100 text-decoration-none border shadow-sm">
                     <div class="card-body text-center">
                         <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
@@ -31,7 +31,7 @@
                         <small class="text-body-secondary">إدارة الملفات والوثائق</small>
                     </div>
                 </a>
-            </div>
+            </div> --}}
             <div class="col-6 col-md-4 col-lg-3">
                 <a href="{{ route('dashboard.documents.storage-connections') }}" class="card h-100 text-decoration-none border shadow-sm">
                     <div class="card-body text-center">

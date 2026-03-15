@@ -31,10 +31,10 @@ const translations = {
         tabHome: 'الرئيسية',
         tabBirth: 'الولادة',
         tabHeight: 'الطول',
-        tabCertificates: 'الشهادات',
+        tabCertificates: 'الإنجازات',
         tabEducation: 'التعليم',
         tabPhotos: 'الصور',
-        tabInfo: 'المعلومات',
+        tabInfo: 'الأحداث',
 
         // Post 1 – Graduation
         badgeSuccess: 'ناجح',
@@ -237,10 +237,10 @@ const translations = {
         tabHome: 'Home',
         tabBirth: 'Birth',
         tabHeight: 'Height',
-        tabCertificates: 'Certificates',
+        tabCertificates: 'Achievements',
         tabEducation: 'Education',
         tabPhotos: 'Photos',
-        tabInfo: 'Information',
+        tabInfo: 'Events',
 
         // Post 1 – Graduation
         badgeSuccess: 'Passed',

@@ -89,6 +89,7 @@ class AchievementController extends Controller
             'place' => $validated['place'] ?? null,
             'academic_year' => $validated['academic_year'] ?? null,
             'school' => $validated['school'] ?? null,
+            'show_in_education' => $request->boolean('show_in_education'),
         ]);
 
         if ($connection) {
@@ -186,6 +187,7 @@ class AchievementController extends Controller
             'place' => $validated['place'] ?? null,
             'academic_year' => $validated['academic_year'] ?? null,
             'school' => $validated['school'] ?? null,
+            'show_in_education' => $request->boolean('show_in_education'),
         ]);
 
         if ($connection) {

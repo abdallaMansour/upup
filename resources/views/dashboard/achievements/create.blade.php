@@ -106,6 +106,12 @@
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
+                    <div class="col-12">
+                        <label class="form-check">
+                            <input type="checkbox" name="show_in_education" value="1" class="form-check-input" {{ old('show_in_education') ? 'checked' : '' }}>
+                            <span class="form-check-label">عرض في المراحل التعليمية</span>
+                        </label>
+                    </div>
                 </div>
 
                 <hr>

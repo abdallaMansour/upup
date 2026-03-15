@@ -12,6 +12,7 @@ class UserHeightWeight extends Model
     protected $fillable = [
         'user_id',
         'user_childhood_stage_id',
+        'show_in_education',
         'record_date',
         'record_time',
         'height',
@@ -21,6 +22,7 @@ class UserHeightWeight extends Model
     ];
 
     protected $casts = [
+        'show_in_education' => 'boolean',
         'record_date' => 'date',
         'record_time' => 'string',
         'height' => 'decimal:2',

@@ -269,6 +269,20 @@
                                     </a>
                                 </li>
                             @endif
+                            @if (auth('admin')->user()->canAccess('education-stages.manage'))
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.education-stages.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-book-reader"></i>
+                                        <div>المراحل التعليمية</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ route('dashboard.education-grades.index') }}" class="menu-link">
+                                        <i class="menu-icon icon-base bx bx-book"></i>
+                                        <div>الصفوف</div>
+                                    </a>
+                                </li>
+                            @endif
                         @endif
 
                     </ul>

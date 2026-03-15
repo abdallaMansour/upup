@@ -29,6 +29,8 @@ use App\Http\Controllers\Dashboard\VoiceController;
 use App\Http\Controllers\Dashboard\HeightWeightController;
 use App\Http\Controllers\Dashboard\StoragePlatformController;
 use App\Http\Controllers\Dashboard\SubscriptionController as DashboardSubscriptionController;
+use App\Http\Controllers\Dashboard\EducationStageController;
+use App\Http\Controllers\Dashboard\EducationGradeController;
 
 // Admin Auth (login only - no register, no forgot-password)
 Route::prefix('auth')->middleware('guest:admin')->group(function () {
@@ -211,6 +213,22 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         // Age Stages (admin only)
         Route::middleware('permission:age-stages.manage')->group(function () {
             Route::put('age-stages', [AgeStageController::class, 'update'])->name('age-stages.update');
+        });
+
+        // Education Stages (admin only)
+        Route::middleware('permission:education-stages.manage')->group(function () {
+            Route::get('education-stages', [EducationStageController::class, 'index'])->name('education-stages.index');
+            Route::get('education-stages/create', [EducationStageController::class, 'create'])->name('education-stages.create');
+            Route::post('education-stages', [EducationStageController::class, 'storeStage'])->name('education-stages.stages.store');
+            Route::get('education-stages/{education_stage}/edit', [EducationStageController::class, 'edit'])->name('education-stages.edit');
+            Route::put('education-stages/{education_stage}', [EducationStageController::class, 'updateStage'])->name('education-stages.stages.update');
+            Route::delete('education-stages/{education_stage}', [EducationStageController::class, 'destroyStage'])->name('education-stages.stages.destroy');
+            Route::get('education-grades', [EducationGradeController::class, 'index'])->name('education-grades.index');
+            Route::get('education-grades/create', [EducationGradeController::class, 'create'])->name('education-grades.create');
+            Route::post('education-grades', [EducationGradeController::class, 'store'])->name('education-grades.store');
+            Route::get('education-grades/{education_grade}/edit', [EducationGradeController::class, 'edit'])->name('education-grades.edit');
+            Route::put('education-grades/{education_grade}', [EducationGradeController::class, 'update'])->name('education-grades.update');
+            Route::delete('education-grades/{education_grade}', [EducationGradeController::class, 'destroy'])->name('education-grades.destroy');
         });
 
         // Media Department (admin only)

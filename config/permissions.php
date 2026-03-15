@@ -75,6 +75,7 @@ return [
             'permissions' => [
                 'site-settings.manage' => 'إدارة إعدادات الموقع',
                 'age-stages.manage' => 'إدارة المراحل العمرية',
+                'education-stages.manage' => 'إدارة المراحل التعليمية والصفوف',
                 'media-department.manage' => 'إدارة القسم الإعلامي',
                 'storage-platforms.manage' => 'إدارة منصات التخزين',
             ],

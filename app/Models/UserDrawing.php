@@ -34,6 +34,11 @@ class UserDrawing extends Model
         return $this->belongsTo(UserDocument::class, 'media_document_id');
     }
 
+    public function childhoodStage(): BelongsTo
+    {
+        return $this->belongsTo(UserChildhoodStage::class, 'user_childhood_stage_id');
+    }
+
     public function scopeForUser($query, int $userId)
     {
         return $query->where('user_id', $userId);

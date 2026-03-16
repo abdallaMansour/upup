@@ -2,12 +2,23 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h4 class="mb-0">تعديل سجل الطول والوزن</h4>
-        <a href="{{ route('dashboard.height-weight.index') }}" class="btn btn-label-secondary">
-            <i class="bx bx-arrow-back me-1"></i> رجوع
-        </a>
-    </div>
+    @php $editStage = $heightWeight->childhoodStage ?? null; @endphp
+    @include('dashboard.partials.breadcrumb', [
+        'items' => $editStage
+            ? [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
+                ['label' => 'وثق - ' . $editStage->name, 'url' => route('dashboard.my-pages.documents', $editStage)],
+                ['label' => 'الطول والوزن', 'url' => route('dashboard.height-weight.index', ['stage' => $editStage->id])],
+                ['label' => 'تعديل'],
+            ]
+            : [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'الطول والوزن', 'url' => route('dashboard.height-weight.index')],
+                ['label' => 'تعديل'],
+            ]
+    ])
+    <h4 class="mb-4">تعديل سجل الطول والوزن</h4>
 
     @if (session('error'))
         <div class="alert alert-danger alert-dismissible" role="alert">

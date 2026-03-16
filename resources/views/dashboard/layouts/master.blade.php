@@ -310,6 +310,20 @@
                         </div>
                     @endunless
 
+                    @if ($isUserDashboard)
+                        <a href="{{ route('dashboard.index') }}" class="navbar-brand me-4">
+                            <img width="50" src="{{ asset('assets/svg/icons/upup_logo_dark.svg') }}" alt="Upup" class="img-fluid">
+                        </a>
+                    @endif
+
+                    {{-- @if ($isUserDashboard && !request()->routeIs('dashboard.index'))
+                        <div class="navbar-nav align-items-center me-auto">
+                            <a href="{{ route('dashboard.index') }}" class="btn btn-label-secondary btn-sm">
+                                <i class="icon-base bx bx-arrow-back me-1"></i> الرجوع للشاشة الرئيسية
+                            </a>
+                        </div>
+                    @endif --}}
+
                     <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
                         <!-- Search -->
                         <div class="navbar-nav align-items-center">
@@ -715,14 +729,6 @@
 
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
-
-                    @if ($isUserDashboard && !request()->routeIs('dashboard.index'))
-                        <div class="container-xxl flex-grow-1 pt-4" style="max-height: 65px;">
-                            <a href="{{ route('dashboard.index') }}" class="btn btn-label-secondary mb-4 mt-4">
-                                <i class="icon-base bx bx-arrow-back me-1"></i> الرجوع للشاشة الرئيسية
-                            </a>
-                        </div>
-                    @endif
 
                     @yield('content')
 

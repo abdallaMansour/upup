@@ -2,12 +2,14 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">عرض الرسالة</h4>
-            <a href="{{ route('dashboard.technical-support.index') }}" class="btn btn-label-secondary">
-                <i class="bx bx-arrow-back me-1"></i> رجوع
-            </a>
-        </div>
+        @include('dashboard.partials.breadcrumb', [
+            'items' => [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'البريد - رسائل تواصل معنا', 'url' => route('dashboard.technical-support.index')],
+                ['label' => 'عرض الرسالة'],
+            ]
+        ])
+        <h4 class="mb-4">عرض الرسالة</h4>
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible" role="alert">

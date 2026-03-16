@@ -2,12 +2,14 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">تعديل الباقة</h4>
-        <a href="{{ route('dashboard.packages.index') }}" class="btn btn-label-secondary">
-            <i class="bx bx-arrow-back me-1"></i> رجوع
-        </a>
-    </div>
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'الباقات', 'url' => route('dashboard.packages.index')],
+            ['label' => 'تعديل الباقة'],
+        ]
+    ])
+    <h4 class="mb-4">تعديل الباقة</h4>
 
     <div class="card">
         <div class="card-body">

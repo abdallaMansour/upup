@@ -2,9 +2,13 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">الإشتراكات</h4>
-    </div>
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'الإشتراكات'],
+        ]
+    ])
+    <h4 class="mb-4">الإشتراكات</h4>
 
     <div class="card mb-4">
         <div class="card-body">

@@ -2,6 +2,12 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'صفحاتي'],
+        ]
+    ])
     <h4 class="mb-4">صفحاتي</h4>
 
     @if (session('success'))

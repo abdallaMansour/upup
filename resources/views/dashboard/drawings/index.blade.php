@@ -2,11 +2,19 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    @if (isset($stage) && $stage)
-        <a href="{{ route('dashboard.my-pages.documents', $stage) }}" class="btn btn-label-secondary mb-3">
-            <i class="bx bx-arrow-back me-1"></i> رجوع إلى وثق
-        </a>
-    @endif
+    @include('dashboard.partials.breadcrumb', [
+        'items' => isset($stage) && $stage
+            ? [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
+                ['label' => 'وثق - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
+                ['label' => 'الرسم'],
+            ]
+            : [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'الرسم'],
+            ]
+    ])
     <h4 class="mb-4">الرسم</h4>
 
     @if (session('success'))

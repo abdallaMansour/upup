@@ -2,12 +2,14 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">تفاصيل الإشتراك</h4>
-        <a href="{{ route('dashboard.subscriptions.index') }}" class="btn btn-label-secondary">
-            <i class="bx bx-arrow-back me-1"></i> رجوع
-        </a>
-    </div>
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'الإشتراكات', 'url' => route('dashboard.subscriptions.index')],
+            ['label' => 'تفاصيل الإشتراك'],
+        ]
+    ])
+    <h4 class="mb-4">تفاصيل الإشتراك</h4>
 
     <div class="row">
         <div class="col-lg-6 mb-4">

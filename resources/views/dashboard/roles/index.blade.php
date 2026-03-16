@@ -2,6 +2,12 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'الأدوار'],
+        ]
+    ])
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div>
             <h4 class="mb-1">الأدوار</h4>

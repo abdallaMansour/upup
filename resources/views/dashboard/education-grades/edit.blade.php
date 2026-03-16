@@ -2,12 +2,15 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">تعديل الصف</h4>
-        <a href="{{ route('dashboard.education-grades.index') }}" class="btn btn-label-secondary">
-            <i class="bx bx-arrow-back me-1"></i> رجوع
-        </a>
-    </div>
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'المراحل التعليمية', 'url' => route('dashboard.education-stages.index')],
+            ['label' => 'الصفوف', 'url' => route('dashboard.education-grades.index')],
+            ['label' => 'تعديل الصف'],
+        ]
+    ])
+    <h4 class="mb-4">تعديل الصف</h4>
 
     <div class="card">
         <div class="card-body">

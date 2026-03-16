@@ -2,12 +2,14 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h4 class="mb-0">إضافة مرحلة طفولة جديدة</h4>
-        <a href="{{ route('dashboard.my-pages.index') }}" class="btn btn-label-secondary">
-            <i class="bx bx-arrow-back me-1"></i> رجوع
-        </a>
-    </div>
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
+            ['label' => 'إضافة مرحلة طفولة جديدة'],
+        ]
+    ])
+    <h4 class="mb-4">إضافة مرحلة طفولة جديدة</h4>
 
     @if (session('error'))
         <div class="alert alert-danger alert-dismissible" role="alert">

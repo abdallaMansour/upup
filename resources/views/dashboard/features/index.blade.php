@@ -2,6 +2,12 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
+        @include('dashboard.partials.breadcrumb', [
+            'items' => [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'المميزات'],
+            ]
+        ])
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="mb-0">المميزات</h4>
             @if(auth('admin')->check() && auth('admin')->user()->hasPermission('features.manage'))

@@ -2,11 +2,15 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h4 class="mb-1">إدارة منصات التخزين</h4>
-                <p class="text-body-secondary mb-0 small">تفعيل أو تعطيل منصات التخزين السحابي. المنصات المعطلة لا يمكن للمستخدمين الربط معها.</p>
-            </div>
+        @include('dashboard.partials.breadcrumb', [
+            'items' => [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'إدارة منصات التخزين'],
+            ]
+        ])
+        <div class="mb-4">
+            <h4 class="mb-1">إدارة منصات التخزين</h4>
+            <p class="text-body-secondary mb-0 small">تفعيل أو تعطيل منصات التخزين السحابي. المنصات المعطلة لا يمكن للمستخدمين الربط معها.</p>
         </div>
 
         @if (session('success'))

@@ -2,26 +2,28 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
+        @include('dashboard.partials.breadcrumb', [
+            'items' => [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'تذاكر الدعم', 'url' => route('dashboard.support-tickets.index')],
+                ['label' => 'التذكرة #' . $supportTicket->id],
+            ]
+        ])
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <h4 class="mb-0">التذكرة #{{ $supportTicket->id }}</h4>
-            <div class="d-flex align-items-center gap-2">
-                @if (auth('admin')->check() && auth('admin')->user()->hasPermission('support-tickets.manage'))
-                    <form action="{{ route('dashboard.support-tickets.status', $supportTicket) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('PUT')
-                        <div class="input-group input-group-sm" style="width: auto;">
-                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                                @foreach (\App\Models\SupportTicket::statuses() as $value => $label)
-                                    <option value="{{ $value }}" {{ $supportTicket->status === $value ? 'selected' : '' }}>{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </form>
-                @endif
-                <a href="{{ route('dashboard.support-tickets.index') }}" class="btn btn-label-secondary">
-                    <i class="bx bx-arrow-back me-1"></i> رجوع
-                </a>
-            </div>
+            @if (auth('admin')->check() && auth('admin')->user()->hasPermission('support-tickets.manage'))
+                <form action="{{ route('dashboard.support-tickets.status', $supportTicket) }}" method="POST" class="d-inline">
+                    @csrf
+                    @method('PUT')
+                    <div class="input-group input-group-sm" style="width: auto;">
+                        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                            @foreach (\App\Models\SupportTicket::statuses() as $value => $label)
+                                <option value="{{ $value }}" {{ $supportTicket->status === $value ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
+            @endif
         </div>
 
         @if (session('success'))

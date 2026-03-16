@@ -2,6 +2,13 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'المراحل التعليمية', 'url' => route('dashboard.education-stages.index')],
+            ['label' => 'الصفوف'],
+        ]
+    ])
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="mb-0">الصفوف</h4>
         @if(auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage'))

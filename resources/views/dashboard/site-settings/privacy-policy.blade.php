@@ -2,9 +2,13 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">سياسة الخصوصية</h4>
-    </div>
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'سياسة الخصوصية'],
+        ]
+    ])
+    <h4 class="mb-4">سياسة الخصوصية</h4>
 
     @if (session('success'))
     <div class="alert alert-success alert-dismissible" role="alert">

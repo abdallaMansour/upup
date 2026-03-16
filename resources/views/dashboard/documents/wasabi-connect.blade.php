@@ -2,14 +2,17 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-            <div>
-                <h4 class="mb-1">ربط Wasabi</h4>
-                <p class="text-body-secondary mb-0 small">أدخل بيانات الاتصال بحساب Wasabi. يمكنك إنشاء Access Key من <a href="https://console.wasabisys.com" target="_blank" rel="noopener">Wasabi Console</a></p>
-            </div>
-            <a href="{{ route('dashboard.documents.storage-connections') }}" class="btn btn-outline-secondary">
-                <i class="bx bx-arrow-back me-1"></i> العودة
-            </a>
+        @include('dashboard.partials.breadcrumb', [
+            'items' => [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'وثائقي وملفاتي', 'url' => route('dashboard.documents.index')],
+                ['label' => 'ربط منصات التخزين', 'url' => route('dashboard.documents.storage-connections')],
+                ['label' => 'ربط Wasabi'],
+            ]
+        ])
+        <div class="mb-4">
+            <h4 class="mb-1">ربط Wasabi</h4>
+            <p class="text-body-secondary mb-0 small">أدخل بيانات الاتصال بحساب Wasabi. يمكنك إنشاء Access Key من <a href="https://console.wasabisys.com" target="_blank" rel="noopener">Wasabi Console</a></p>
         </div>
 
         @if (session('error'))

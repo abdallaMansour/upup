@@ -2,12 +2,22 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <h4 class="mb-0">إضافة زيارة</h4>
-        <a href="{{ ($stage ?? null) ? route('dashboard.my-pages.documents', $stage) : route('dashboard.visits.index') }}" class="btn btn-label-secondary">
-            <i class="bx bx-arrow-back me-1"></i> رجوع
-        </a>
-    </div>
+    @include('dashboard.partials.breadcrumb', [
+        'items' => ($stage ?? null)
+            ? [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
+                ['label' => 'وثق - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
+                ['label' => 'الزيارات', 'url' => route('dashboard.visits.index', ['stage' => $stage->id])],
+                ['label' => 'إضافة'],
+            ]
+            : [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'الزيارات', 'url' => route('dashboard.visits.index')],
+                ['label' => 'إضافة'],
+            ]
+    ])
+    <h4 class="mb-4">إضافة زيارة</h4>
 
     @if (session('error'))
         <div class="alert alert-danger alert-dismissible" role="alert">

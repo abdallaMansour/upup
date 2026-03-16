@@ -2,12 +2,14 @@
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">إنشاء تذكرة جديدة</h4>
-        <a href="{{ route('dashboard.support-tickets.index') }}" class="btn btn-label-secondary">
-            <i class="bx bx-arrow-back me-1"></i> رجوع
-        </a>
-    </div>
+    @include('dashboard.partials.breadcrumb', [
+        'items' => [
+            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+            ['label' => 'تذاكر الدعم', 'url' => route('dashboard.support-tickets.index')],
+            ['label' => 'إضافة تذكرة'],
+        ]
+    ])
+    <h4 class="mb-4">إنشاء تذكرة جديدة</h4>
 
     <div class="card">
         <div class="card-body">

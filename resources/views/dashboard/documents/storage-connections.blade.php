@@ -2,14 +2,16 @@
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-            <div>
-                <h4 class="mb-1">ربط منصات التخزين السحابي</h4>
-                <p class="text-body-secondary mb-0 small">اربط حسابك على Google Drive أو Wasabi أو غيرها لعرض ملفاتك ووثائقك</p>
-            </div>
-            <a href="{{ route('dashboard.documents.index') }}" class="btn btn-outline-secondary">
-                <i class="bx bx-arrow-back me-1"></i> العودة للوثائق
-            </a>
+        @include('dashboard.partials.breadcrumb', [
+            'items' => [
+                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
+                ['label' => 'وثائقي وملفاتي', 'url' => route('dashboard.documents.index')],
+                ['label' => 'ربط منصات التخزين'],
+            ]
+        ])
+        <div class="mb-4">
+            <h4 class="mb-1">ربط منصات التخزين السحابي</h4>
+            <p class="text-body-secondary mb-0 small">اربط حسابك على Google Drive أو Wasabi أو غيرها لعرض ملفاتك ووثائقك</p>
         </div>
 
         @if (session('success'))

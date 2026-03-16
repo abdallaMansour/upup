@@ -39,9 +39,14 @@
                 @method('PUT')
 
                 {{-- صفحة عامة/خاصة --}}
-                <div class="form-check form-switch mb-4">
+                <div class="form-check form-switch mb-2">
                     <input class="form-check-input" type="checkbox" id="is_public" name="is_public" value="1" {{ old('is_public', $stage->is_public) ? 'checked' : '' }}>
                     <label class="form-check-label" for="is_public">صفحة عامة (يمكن للآخرين مشاهدتها)</label>
+                </div>
+                <div id="is_public_warning" class="alert alert-warning py-2 mb-4 {{ old('is_public', $stage->is_public) ? '' : 'd-none' }}" role="alert">
+                    <i class="bx bx-error-circle me-2"></i>
+                    <strong>هل أنت متأكد من فتح الصفحة للجميع؟</strong><br>
+                    <small>ننصح بإبقاء الصفحة مغلقة لأنها تحتوي على بيانات شخصية.</small>
                 </div>
 
                 @include('dashboard.my-pages._form', ['stage' => $stage])
@@ -57,4 +62,13 @@
         </div>
     </div>
 </div>
+
+@section('page-js')
+<script>
+document.getElementById('is_public').addEventListener('change', function() {
+    const warning = document.getElementById('is_public_warning');
+    warning.classList.toggle('d-none', !this.checked);
+});
+</script>
+@endsection
 @endsection

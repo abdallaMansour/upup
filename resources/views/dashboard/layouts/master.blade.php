@@ -374,12 +374,12 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-locale">
                                     <li>
-                                        <a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{ route('locale.switch', 'ar') }}">
+                                        <a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{ route('locale.switch', 'ar') }}?intended={{ urlencode(request()->path() ? '/' . request()->path() : '/') }}">
                                             {{ __('dashboard.language.ar') }}
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('locale.switch', 'en') }}">
+                                        <a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('locale.switch', 'en') }}?intended={{ urlencode(request()->path() ? '/' . request()->path() : '/') }}">
                                             {{ __('dashboard.language.en') }}
                                         </a>
                                     </li>

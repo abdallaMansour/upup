@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'locale' => \App\Http\Middleware\SetLocale::class,
         ]);
-        $middleware->web(prepend: [
+        $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
         $middleware->redirectTo(

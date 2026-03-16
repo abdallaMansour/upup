@@ -102,8 +102,8 @@
                                 {{ __('dashboard.language.' . app()->getLocale()) }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{ route('locale.switch', 'ar') }}">{{ __('dashboard.language.ar') }}</a></li>
-                                <li><a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('locale.switch', 'en') }}">{{ __('dashboard.language.en') }}</a></li>
+                                <li><a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{ route('locale.switch', 'ar') }}?intended={{ urlencode(request()->path() ? '/' . request()->path() : '/') }}">{{ __('dashboard.language.ar') }}</a></li>
+                                <li><a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('locale.switch', 'en') }}?intended={{ urlencode(request()->path() ? '/' . request()->path() : '/') }}">{{ __('dashboard.language.en') }}</a></li>
                             </ul>
                         </li>
                         {{-- <li class="nav-item mega-dropdown">

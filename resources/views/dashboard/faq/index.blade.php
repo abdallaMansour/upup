@@ -4,15 +4,15 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الأسئلة الشائعة'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('faq.title')],
             ]
         ])
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">الأسئلة الشائعة</h4>
+            <h4 class="mb-0">{{ __('faq.title') }}</h4>
             @if(auth('admin')->check() && auth('admin')->user()->hasPermission('faq.manage'))
                 <a href="{{ route('dashboard.faq.create') }}" class="btn btn-primary">
-                    <i class="bx bx-plus me-1"></i> إضافة سؤال
+                    <i class="bx bx-plus me-1"></i> {{ __('faq.add_question') }}
                 </a>
             @endif
         </div>
@@ -30,10 +30,10 @@
                     <thead>
                         <tr>
                             <th width="50">#</th>
-                            <th>السؤال</th>
-                            <th>الإجابة</th>
+                            <th>{{ __('faq.question') }}</th>
+                            <th>{{ __('faq.answer') }}</th>
                             @if(auth('admin')->check() && auth('admin')->user()->hasPermission('faq.manage'))
-                                <th width="120">الإجراءات</th>
+                                <th width="120">{{ __('common.actions') }}</th>
                             @endif
                         </tr>
                     </thead>
@@ -51,13 +51,13 @@
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <a class="dropdown-item" href="{{ route('dashboard.faq.edit', $faq) }}">
-                                                    <i class="bx bx-edit-alt me-2"></i> تعديل
+                                                    <i class="bx bx-edit-alt me-2"></i> {{ __('common.edit') }}
                                                 </a>
-                                                <form action="{{ route('dashboard.faq.destroy', $faq) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد؟');">
+                                                <form action="{{ route('dashboard.faq.destroy', $faq) }}" method="POST" class="d-inline" onsubmit="return confirm({{ json_encode(__('common.confirm')) }});">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">
-                                                        <i class="bx bx-trash me-2"></i> حذف
+                                                        <i class="bx bx-trash me-2"></i> {{ __('common.delete') }}
                                                     </button>
                                                 </form>
                                             </div>
@@ -68,9 +68,9 @@
                         @empty
                             <tr>
                                 <td colspan="{{ auth('admin')->check() ? '4' : '3' }}" class="text-center py-5 text-body-secondary">
-                                    لا توجد أسئلة شائعة بعد.
+                                    {{ __('faq.no_faq') }}
                                     @if(auth('admin')->check() && auth('admin')->user()->hasPermission('faq.manage'))
-                                        <a href="{{ route('dashboard.faq.create') }}">إضافة سؤال</a>
+                                        <a href="{{ route('dashboard.faq.create') }}">{{ __('faq.add_link') }}</a>
                                     @endif
                                 </td>
                             </tr>

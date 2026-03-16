@@ -4,15 +4,15 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'وثائقي وملفاتي'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('documents.index.title')],
             ]
         ])
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-            <h4 class="mb-0">وثائقي وملفاتي</h4>
+            <h4 class="mb-0">{{ __('documents.index.title') }}</h4>
             <div class="d-flex gap-2">
                 <a href="{{ route('dashboard.documents.storage-connections') }}" class="btn btn-outline-primary">
-                    <i class="bx bx-link me-1"></i> ربط منصة تخزين
+                    <i class="bx bx-link me-1"></i> {{ __('documents.index.connect_storage') }}
                 </a>
             </div>
         </div>
@@ -28,7 +28,7 @@
                 {{ session('error') }}
                 @if (str_contains(session('error') ?? '', 'SYNC_FAILED'))
                     <hr class="my-2">
-                    <strong>الحل:</strong> اذهب إلى <a href="{{ route('dashboard.documents.storage-connections') }}" class="alert-link">ربط منصات التخزين</a> واضغط "إعادة الربط" بجانب Google Drive.
+                    <strong>{{ __('documents.index.solution') }}</strong> {!! __('documents.index.solution_sync', ['link' => route('dashboard.documents.storage-connections')]) !!}
                 @endif
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -44,7 +44,7 @@
         @if ($primaryConnection ?? null)
             <div class="card mb-4">
                 <div class="card-body">
-                    <h6 class="card-title mb-3">المنصة النشطة</h6>
+                    <h6 class="card-title mb-3">{{ __('documents.storage.active_platform') }}</h6>
                     <div class="d-flex flex-wrap gap-2 align-items-center">
                         <span class="badge bg-label-primary py-2 px-3">
                             <i class="bx bx-cloud me-1"></i>
@@ -54,19 +54,19 @@
                             <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
                                 @csrf
                                 <button type="submit" class="btn btn-sm btn-outline-primary">
-                                    <i class="bx bx-refresh me-1"></i> مزامنة
+                                    <i class="bx bx-refresh me-1"></i> {{ __('documents.storage.sync') }}
                                 </button>
                             </form>
                         @elseif ($primaryConnection->provider === 'wasabi')
                             <form action="{{ route('dashboard.documents.wasabi.sync') }}" method="POST" class="d-inline">
                                 @csrf
                                 <button type="submit" class="btn btn-sm btn-outline-primary">
-                                    <i class="bx bx-refresh me-1"></i> مزامنة
+                                    <i class="bx bx-refresh me-1"></i> {{ __('documents.storage.sync') }}
                                 </button>
                             </form>
                         @endif
                         <a href="{{ route('dashboard.documents.storage-connections') }}" class="badge bg-label-secondary py-2 px-3 text-decoration-none">
-                            <i class="bx bx-cog me-1"></i> إدارة
+                            <i class="bx bx-cog me-1"></i> {{ __('documents.index.manage') }}
                         </a>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <h5 class="mb-0">الملفات والوثائق</h5>
+                    <h5 class="mb-0">{{ __('documents.index.files_and_documents') }}</h5>
                     {{-- Breadcrumb --}}
                     @if (isset($breadcrumb) && count($breadcrumb) > 1)
                         <nav aria-label="breadcrumb" class="mb-0">
@@ -99,15 +99,15 @@
                 @if ($primaryConnection ?? null)
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createFolderModal">
-                            <i class="bx bx-folder-plus me-1"></i> مجلد جديد
+                            <i class="bx bx-folder-plus me-1"></i> {{ __('documents.index.new_folder') }}
                         </button>
                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
-                            <i class="bx bx-upload me-1"></i> رفع ملف
+                            <i class="bx bx-upload me-1"></i> {{ __('documents.index.upload_file') }}
                         </button>
                     </div>
                 @else
                     <a href="{{ route('dashboard.documents.storage-connections') }}" class="btn btn-sm btn-primary">
-                        <i class="bx bx-link me-1"></i> اربط منصة لعرض الملفات
+                        <i class="bx bx-link me-1"></i> {{ __('documents.index.connect_to_view') }}
                     </a>
                 @endif
             </div>
@@ -116,11 +116,11 @@
                     <thead>
                         <tr>
                             <th width="50">#</th>
-                            <th>الاسم</th>
-                            <th>المنصة</th>
-                            <th>الحجم</th>
-                            <th>التاريخ</th>
-                            <th width="180">الإجراءات</th>
+                            <th>{{ __('common.name') }}</th>
+                            <th>{{ __('documents.index.platform') }}</th>
+                            <th>{{ __('common.size') }}</th>
+                            <th>{{ __('common.date') }}</th>
+                            <th width="180">{{ __('common.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,19 +155,19 @@
                                 <td>
                                     <div class="d-flex gap-1">
                                         @if ($doc->view_url)
-                                            <a href="{{ $doc->view_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-icon btn-outline-primary" title="{{ $doc->provider === 'wasabi' ? 'تحميل' : 'فتح في Google Drive' }}">
+                                            <a href="{{ $doc->view_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-icon btn-outline-primary" title="{{ $doc->provider === 'wasabi' ? __('common.download') : __('documents.index.open_in_google_drive') }}">
                                                 <i class="bx bx-link-external"></i>
                                             </a>
                                         @endif
-                                        <button type="button" class="btn btn-sm btn-icon btn-outline-secondary move-btn" title="نقل"
+                                        <button type="button" class="btn btn-sm btn-icon btn-outline-secondary move-btn" title="{{ __('common.move') }}"
                                             data-doc-id="{{ $doc->id }}"
                                             data-doc-name="{{ $doc->name }}">
                                             <i class="bx bx-move"></i>
                                         </button>
-                                        <form action="{{ route('dashboard.documents.destroy', $doc) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                        <form action="{{ route('dashboard.documents.destroy', $doc) }}" method="POST" class="d-inline" onsubmit="return confirm({{ json_encode(__('common.confirm_delete')) }});">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="حذف">
+                                            <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="{{ __('common.delete') }}">
                                                 <i class="bx bx-trash"></i>
                                             </button>
                                         </form>
@@ -178,19 +178,19 @@
                             <tr>
                                 <td colspan="6" class="text-center py-5 text-body-secondary">
                                     @if (!($primaryConnection ?? null))
-                                        لا توجد ملفات بعد. قم بربط منصة تخزين سحابي (مثل Google Drive أو Wasabi) لعرض ملفاتك هنا.
+                                        {{ __('documents.index.empty_no_connection') }}
                                         <br>
                                         <a href="{{ route('dashboard.documents.storage-connections') }}" class="btn btn-primary btn-sm mt-3">
-                                            <i class="bx bx-link me-1"></i> ربط منصة تخزين
+                                            <i class="bx bx-link me-1"></i> {{ __('documents.index.connect_storage') }}
                                         </a>
                                     @else
-                                        لا توجد ملفات أو مجلدات في هذا المجلد.
+                                        {{ __('documents.index.empty_no_files') }}
                                         <br>
                                         <button type="button" class="btn btn-primary btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#createFolderModal">
-                                            <i class="bx bx-folder-plus me-1"></i> إنشاء مجلد
+                                            <i class="bx bx-folder-plus me-1"></i> {{ __('documents.index.create_folder') }}
                                         </button>
                                         <button type="button" class="btn btn-outline-primary btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
-                                            <i class="bx bx-upload me-1"></i> رفع ملف
+                                            <i class="bx bx-upload me-1"></i> {{ __('documents.index.upload_file') }}
                                         </button>
                                     @endif
                                 </td>
@@ -216,18 +216,18 @@
                         @csrf
                         <input type="hidden" name="parent_id" value="{{ $folderId ?? '' }}">
                         <div class="modal-header">
-                            <h5 class="modal-title">مجلد جديد</h5>
+                            <h5 class="modal-title">{{ __('documents.index.new_folder') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label class="form-label">اسم المجلد</label>
-                                <input type="text" name="name" class="form-control" required maxlength="255" placeholder="أدخل اسم المجلد">
+                                <label class="form-label">{{ __('documents.index.folder_name') }}</label>
+                                <input type="text" name="name" class="form-control" required maxlength="255" placeholder="{{ __('documents.index.folder_name_placeholder') }}">
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-                            <button type="submit" class="btn btn-primary">إنشاء</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('common.create') }}</button>
                         </div>
                     </form>
                 </div>
@@ -242,18 +242,18 @@
                         @csrf
                         <input type="hidden" name="parent_id" value="{{ $folderId ?? '' }}">
                         <div class="modal-header">
-                            <h5 class="modal-title">رفع ملف</h5>
+                            <h5 class="modal-title">{{ __('documents.index.upload_file') }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label class="form-label">الملف (حجم أقصى 50 ميجابايت)</label>
+                                <label class="form-label">{{ __('documents.index.file_max_50mb') }}</label>
                                 <input type="file" name="file" class="form-control" required>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-                            <button type="submit" class="btn btn-primary">رفع</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('common.upload') }}</button>
                         </div>
                     </form>
                 </div>
@@ -268,14 +268,14 @@
                         @csrf
                         @method('PUT')
                         <div class="modal-header">
-                            <h5 class="modal-title">نقل: <span id="moveDocName"></span></h5>
+                            <h5 class="modal-title">{{ __('documents.index.move_title') }}: <span id="moveDocName"></span></h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label class="form-label">المجلد الهدف</label>
+                                <label class="form-label">{{ __('documents.index.target_folder') }}</label>
                                 <select name="new_parent_id" id="moveParentSelect" class="form-select">
-                                    <option value="">الرئيسية (الجذر)</option>
+                                    <option value="">{{ __('documents.index.root_option') }}</option>
                                     @foreach ($allFolders ?? [] as $f)
                                         <option value="{{ $f->id }}">{{ $f->name }}</option>
                                     @endforeach
@@ -283,8 +283,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-                            <button type="submit" class="btn btn-primary">نقل</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('common.move') }}</button>
                         </div>
                     </form>
                 </div>

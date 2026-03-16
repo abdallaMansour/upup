@@ -1,9 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileViewController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Website\ContactController;
+
+Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch')->where('locale', 'ar|en');
 
 Route::get('/profile/{stage}', [ProfileViewController::class, 'show'])->name('profile.show');
 Route::get('/profile/{stage}/pin', [ProfileViewController::class, 'pinForm'])->name('profile.pin.form');

@@ -6,19 +6,19 @@
     @include('dashboard.partials.breadcrumb', [
         'items' => $editStage
             ? [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
-                ['label' => 'وثق - ' . $editStage->name, 'url' => route('dashboard.my-pages.documents', $editStage)],
-                ['label' => 'الزيارات', 'url' => route('dashboard.visits.index', ['stage' => $editStage->id])],
-                ['label' => 'تعديل'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('dashboard.menu.my_pages'), 'url' => route('dashboard.my-pages.index')],
+                ['label' => __('my_pages.documents') . ' - ' . $editStage->name, 'url' => route('dashboard.my-pages.documents', $editStage)],
+                ['label' => __('documents.visits'), 'url' => route('dashboard.visits.index', ['stage' => $editStage->id])],
+                ['label' => __('dashboard.breadcrumb.edit')],
             ]
             : [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الزيارات', 'url' => route('dashboard.visits.index')],
-                ['label' => 'تعديل'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('documents.visits'), 'url' => route('dashboard.visits.index')],
+                ['label' => __('dashboard.breadcrumb.edit')],
             ]
     ])
-    <h4 class="mb-4">تعديل الزيارة</h4>
+    <h4 class="mb-4">{{ __('documents.visit_edit_title') }}</h4>
 
     @if (session('error'))
         <div class="alert alert-danger alert-dismissible" role="alert">
@@ -30,7 +30,7 @@
     @if (!($primaryConnection ?? null))
         <div class="alert alert-warning">
             <i class="bx bx-info-circle me-2"></i>
-            يرجى <a href="{{ route('dashboard.documents.storage-connections') }}" class="alert-link">ربط منصة تخزين</a> لرفع الصور والفيديوهات.
+            {!! __('documents.storage_required_media', ['link' => route('dashboard.documents.storage-connections')]) !!}
         </div>
     @endif
 
@@ -42,44 +42,44 @@
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label for="record_date" class="form-label">التاريخ <span class="text-danger">*</span></label>
+                        <label for="record_date" class="form-label">{{ __('common.date') }} <span class="text-danger">*</span></label>
                         <input type="date" class="form-control @error('record_date') is-invalid @enderror" id="record_date" name="record_date" value="{{ old('record_date', $visit->record_date->format('Y-m-d')) }}" required>
                         @error('record_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="record_time" class="form-label">الوقت</label>
+                        <label for="record_time" class="form-label">{{ __('common.time') }}</label>
                         <input type="time" class="form-control @error('record_time') is-invalid @enderror" id="record_time" name="record_time" value="{{ old('record_time', $visit->record_time_formatted) }}">
                         @error('record_time')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-12">
-                        <label for="title" class="form-label">العنوان <span class="text-danger">*</span></label>
+                        <label for="title" class="form-label">{{ __('common.title') }} <span class="text-danger">*</span></label>
                         <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title', $visit->title) }}" required>
                         @error('title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-12">
-                        <label for="other_info" class="form-label">معلومات أخرى</label>
+                        <label for="other_info" class="form-label">{{ __('common.other_info') }}</label>
                         <textarea class="form-control @error('other_info') is-invalid @enderror" id="other_info" name="other_info" rows="3">{{ old('other_info', $visit->other_info) }}</textarea>
                         @error('other_info')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-12">
-                        <label for="media" class="form-label">الصورة / الفيديو</label>
+                        <label for="media" class="form-label">{{ __('documents.visit_image_video') }}</label>
                         @if ($visit->mediaDocument)
                             <div class="mb-2">
                                 <a href="{{ $visit->mediaDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    <i class="bx {{ $visit->mediaDocument->file_icon }} me-1"></i> عرض الملف الحالي
+                                    <i class="bx {{ $visit->mediaDocument->file_icon }} me-1"></i> {{ __('common.view_current_file') }}
                                 </a>
                             </div>
                         @endif
                         <input type="file" class="form-control @error('media') is-invalid @enderror" id="media" name="media" accept="image/*,video/*">
-                        <small class="text-muted">صيغ مدعومة: JPG, PNG, GIF, WebP, MP4, WebM, MOV. حد أقصى 50 ميجابايت (اترك فارغاً للاحتفاظ بالملف الحالي)</small>
+                        <small class="text-muted">{{ __('documents.visit_supported_formats_leave_empty') }}</small>
                         @error('media')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -87,14 +87,14 @@
                     <div class="col-12">
                         <label class="form-check">
                             <input type="checkbox" name="show_in_education" value="1" class="form-check-input" {{ old('show_in_education', $visit->show_in_education) ? 'checked' : '' }}>
-                            <span class="form-check-label">عرض في المراحل التعليمية</span>
+                            <span class="form-check-label">{{ __('life_stages.show_in_education') }}</span>
                         </label>
                     </div>
                 </div>
 
                 <hr>
                 <button type="submit" class="btn btn-primary">
-                    <i class="bx bx-save me-1"></i> تحديث
+                    <i class="bx bx-save me-1"></i> {{ __('common.update') }}
                 </button>
             </form>
         </div>

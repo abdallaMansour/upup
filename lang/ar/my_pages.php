@@ -1,0 +1,29 @@
+<?php
+
+return [
+    'title' => 'صفحاتي',
+    'documents' => 'وثق',
+    'settings' => 'إعدادات',
+    'temporary_permission' => 'صلاحية مؤقتة',
+    'add_stage' => 'إضافة مرحلة جديدة',
+    'create' => [
+        'title' => 'إضافة مرحلة طفولة جديدة',
+    ],
+    'edit' => [
+        'title_prefix' => 'تعديل إعدادات',
+    ],
+    'public_page' => 'صفحة عامة (يمكن للآخرين مشاهدتها)',
+    'public_warning_title' => 'هل أنت متأكد من فتح الصفحة للجميع؟',
+    'public_warning_desc' => 'ننصح بإبقاء الصفحة مغلقة لأنها تحتوي على بيانات شخصية.',
+    'storage_hint' => '(لرفع الملفات يرجى ربط منصة تخزين أولاً)',
+    'modal' => [
+        'title_prefix' => 'صلاحية مؤقتة -',
+    ],
+    'grantee_name' => 'اسم المستلم',
+    'expires_at' => 'تاريخ الانتهاء',
+    'expires_time' => 'وقت الانتهاء',
+    'confirm_delete_title' => 'تأكيد الحذف',
+    'confirm_delete_message' => 'لحذف هذه المرحلة، يرجى كتابة الاسم في الحقل أدناه:',
+    'confirm_delete_input_label' => 'اكتب الاسم للتأكيد',
+    'name_mismatch' => 'الاسم غير مطابق',
+];

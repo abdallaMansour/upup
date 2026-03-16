@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class,
+            'locale' => \App\Http\Middleware\SetLocale::class,
+        ]);
+        $middleware->web(prepend: [
+            \App\Http\Middleware\SetLocale::class,
         ]);
         $middleware->redirectTo(
             guests: fn ($request) => str_starts_with($request->path(), 'dashboard')

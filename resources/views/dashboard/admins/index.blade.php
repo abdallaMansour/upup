@@ -4,18 +4,18 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     @include('dashboard.partials.breadcrumb', [
         'items' => [
-            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-            ['label' => 'المسؤولين'],
+            ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+            ['label' => __('admins.admins_title')],
         ]
     ])
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div>
-            <h4 class="mb-1">إدارة الأدمن</h4>
-            <p class="text-body-secondary mb-0">إدارة حسابات الأدمن والأدوار والصلاحيات</p>
+            <h4 class="mb-1">{{ __('admins.title') }}</h4>
+            <p class="text-body-secondary mb-0">{{ __('admins.manage_desc') }}</p>
         </div>
         @if(auth('admin')->user()->hasPermission('admins.create') || auth('admin')->user()->hasRole('super_admin'))
         <a href="{{ route('dashboard.admins.create') }}" class="btn btn-primary">
-            <i class="bx bx-plus me-1"></i> إضافة أدمن
+            <i class="bx bx-plus me-1"></i> {{ __('admins.add_admin') }}
         </a>
         @endif
     </div>
@@ -63,12 +63,12 @@
                         <td>{{ $admin->created_at->format('Y-m-d H:i') }}</td>
                         <td>
                             @if(auth('admin')->user()->hasPermission('admins.edit') || auth('admin')->user()->hasRole('super_admin'))
-                            <a href="{{ route('dashboard.admins.edit', $admin) }}" class="btn btn-sm btn-icon btn-label-primary" title="تعديل">
+                            <a href="{{ route('dashboard.admins.edit', $admin) }}" class="btn btn-sm btn-icon btn-label-primary" title="{{ __('common.edit') }}">
                                 <i class="bx bx-edit"></i>
                             </a>
                             @endif
                             @if((auth('admin')->user()->hasPermission('admins.delete') || auth('admin')->user()->hasRole('super_admin')) && $admin->id !== auth('admin')->id())
-                            <form action="{{ route('dashboard.admins.destroy', $admin) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا الأدمن؟')">
+                            <form action="{{ route('dashboard.admins.destroy', $admin) }}" method="POST" class="d-inline" onsubmit="return confirm({{ json_encode(__('admins.confirm_delete_admin')) }});">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-icon btn-label-danger" title="حذف">
@@ -81,7 +81,7 @@
                     @empty
                     <tr>
                         <td colspan="6" class="text-center py-5 text-body-secondary">
-                            لا يوجد أدمن
+                            {{ __('admins.no_admins') }}
                         </td>
                     </tr>
                     @endforelse

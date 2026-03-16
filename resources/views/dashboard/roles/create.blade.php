@@ -4,12 +4,12 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     @include('dashboard.partials.breadcrumb', [
         'items' => [
-            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-            ['label' => 'الأدوار', 'url' => route('dashboard.roles.index')],
-            ['label' => 'إضافة دور'],
+            ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+            ['label' => __('roles.title'), 'url' => route('dashboard.roles.index')],
+            ['label' => __('roles.add_role')],
         ]
     ])
-    <h4 class="mb-4">إضافة دور</h4>
+    <h4 class="mb-4">{{ __('roles.add_title') }}</h4>
 
     <div class="card">
         <div class="card-body">
@@ -17,7 +17,7 @@
                 @csrf
 
                 <div class="mb-4">
-                    <label for="name" class="form-label">اسم الدور <span class="text-danger">*</span></label>
+                    <label for="name" class="form-label">{{ __('roles.role_name') }} <span class="text-danger">*</span></label>
                     <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
                     @error('name')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -25,15 +25,15 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="slug" class="form-label">المعرّف (slug)</label>
-                    <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug" name="slug" value="{{ old('slug') }}" placeholder="يتم إنشاؤه تلقائياً من الاسم إن تُرِك فارغاً">
+                    <label for="slug" class="form-label">{{ __('roles.slug') }}</label>
+                    <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug" name="slug" value="{{ old('slug') }}" placeholder="{{ __('roles.slug_placeholder') }}">
                     @error('slug')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-4">
-                    <label for="description" class="form-label">الوصف</label>
+                    <label for="description" class="form-label">{{ __('common.description') }}</label>
                     <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="2">{{ old('description') }}</textarea>
                     @error('description')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -64,7 +64,7 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary">إنشاء الدور</button>
+                <button type="submit" class="btn btn-primary">{{ __('roles.create_btn') }}</button>
             </form>
         </div>
     </div>

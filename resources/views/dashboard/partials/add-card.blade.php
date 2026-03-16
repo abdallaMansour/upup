@@ -1,7 +1,7 @@
 {{-- بطاقة إضافة جديدة - تستخدم في صفحات القوائم --}}
 @props([
     'url' => '#',
-    'label' => 'إضافة',
+    'label' => __('dashboard.breadcrumb.add'),
     'icon' => 'bx-plus',
 ])
 <div class="col-12 col-md-6 col-lg-4">

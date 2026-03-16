@@ -4,15 +4,15 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الباقات'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('packages.title')],
             ]
         ])
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">الباقات</h4>
+            <h4 class="mb-0">{{ __('packages.title') }}</h4>
             @if (auth('admin')->check() && auth('admin')->user()->hasPermission('packages.create'))
                 <a href="{{ route('dashboard.packages.create') }}" class="btn btn-primary">
-                    <i class="bx bx-plus me-1"></i> إضافة باقة
+                    <i class="bx bx-plus me-1"></i> {{ __('packages.add_package') }}
                 </a>
             @endif
         </div>
@@ -29,11 +29,11 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th width="60">الأيقونة</th>
-                            <th>العنوان</th>
-                            <th>السعر الشهري</th>
-                            <th>السعر السنوي</th>
-                            <th>المميزات</th>
+                            <th width="60">{{ __('packages.icon') }}</th>
+                            <th>{{ __('common.title') }}</th>
+                            <th>{{ __('packages.monthly_price') }}</th>
+                            <th>{{ __('packages.yearly_price') }}</th>
+                            <th>{{ __('packages.features') }}</th>
                             @if (
                                 auth('web')->check() ||
                                 (
@@ -63,7 +63,7 @@
                                 <td>${{ number_format($package->yearly_price, 2) }}</td>
                                 <td>
                                     @if ($package->features && count($package->features) > 0)
-                                        <span class="badge bg-label-primary">{{ count($package->features) }} ميزة</span>
+                                        <span class="badge bg-label-primary">{{ __('packages.feature_count', ['count' => count($package->features)]) }}</span>
                                     @else
                                         <span class="text-body-secondary">-</span>
                                     @endif
@@ -96,7 +96,7 @@
                                 @if (auth('web')->check())
                                     <td>
                                         <a href="{{ route('subscribe.page', $package) }}" class="btn btn-sm btn-primary">
-                                            <i class="bx bx-cart me-1"></i> اشترك
+                                            <i class="bx bx-cart me-1"></i> {{ __('packages.subscribe') }}
                                         </a>
                                     </td>
                                 @endif
@@ -104,9 +104,9 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="text-center py-5 text-body-secondary">
-                                    لا توجد باقات بعد.
+                                    {{ __('packages.no_packages') }}
                                     @if (auth('admin')->check() && auth('admin')->user()->hasPermission('packages.create'))
-                                        <a href="{{ route('dashboard.packages.create') }}">إنشاء باقة</a>
+                                        <a href="{{ route('dashboard.packages.create') }}">{{ __('packages.create_link') }}</a>
                                     @endif
                                 </td>
                             </tr>

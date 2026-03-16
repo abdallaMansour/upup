@@ -4,14 +4,14 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'وثائقي وملفاتي', 'url' => route('dashboard.documents.index')],
-                ['label' => 'ربط منصات التخزين'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('documents.index.title'), 'url' => route('dashboard.documents.index')],
+                ['label' => __('dashboard.menu.storage_connections')],
             ]
         ])
         <div class="mb-4">
-            <h4 class="mb-1">ربط منصات التخزين السحابي</h4>
-            <p class="text-body-secondary mb-0 small">اربط حسابك على Google Drive أو Wasabi أو غيرها لعرض ملفاتك ووثائقك</p>
+            <h4 class="mb-1">{{ __('documents.storage.title') }}</h4>
+            <p class="text-body-secondary mb-0 small">{{ __('documents.storage.subtitle') }}</p>
         </div>
 
         @if (session('success'))
@@ -25,7 +25,7 @@
                 {{ session('error') }}
                 @if (str_contains(session('error') ?? '', 'SYNC_FAILED'))
                     <hr>
-                    <strong>الحل:</strong> اضغط على "إعادة الربط" بجانب Google Drive للحصول على صلاحيات إضافة وحذف الملفات.
+                    {{ __('documents.storage.sync_fix') }}
                 @endif
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
@@ -33,7 +33,7 @@
 
         @if ($primaryConnection ?? null)
             <div class="alert alert-info mb-4" role="alert">
-                <strong>المنصة النشطة:</strong> {{ \App\Models\StorageConnection::PROVIDERS[$primaryConnection->provider] ?? $primaryConnection->provider }}
+                <strong>{{ __('documents.storage.active_platform') }}</strong> {{ \App\Models\StorageConnection::PROVIDERS[$primaryConnection->provider] ?? $primaryConnection->provider }}
                 <span class="text-body-secondary">— {{ $primaryConnection->name }}</span>
             </div>
         @endif
@@ -41,7 +41,7 @@
         {{-- منصات متاحة للربط --}}
         <div class="row mb-4">
             <div class="col-12">
-                <h6 class="mb-3">المنصات المتاحة</h6>
+                <h6 class="mb-3">{{ __('documents.storage.available_platforms') }}</h6>
             </div>
             @foreach ($storagePlatforms ?? [] as $platform)
                 @php
@@ -70,11 +70,11 @@
                                         <h6 class="mb-0 text-truncate">{{ $platform->name }}</h6>
                                         <small class="text-body-secondary d-block mt-1">
                                             @if ($connected)
-                                                <span class="badge bg-success">متصل</span>
+                                                <span class="badge bg-success">{{ __('documents.storage.connected') }}</span>
                                             @elseif (!$isActive)
-                                                <span class="badge bg-secondary">غير متاحة</span>
+                                                <span class="badge bg-secondary">{{ __('documents.storage.unavailable') }}</span>
                                             @else
-                                                <span class="badge bg-label-secondary">غير متصل</span>
+                                                <span class="badge bg-label-secondary">{{ __('documents.storage.disconnected') }}</span>
                                             @endif
                                         </small>
                                     </div>
@@ -86,40 +86,40 @@
                                         <i class="bx bx-transfer me-1"></i> الانتقال إلى هذه المنصة
                                     </a>
                                 @elseif ($isPrimary && $platform->provider === 'google_drive' && $isActive)
-                                    <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط (مطلوب لإضافة/حذف الملفات)">
-                                        <i class="bx bx-link-alt me-1"></i> إعادة الربط
+                                    <a href="{{ route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-outline-warning" title="{{ __('documents.storage.reconnect') }}">
+                                        <i class="bx bx-link-alt me-1"></i> {{ __('documents.storage.reconnect_btn') }}
                                     </a>
                                     <form action="{{ route('dashboard.documents.google-drive.sync') }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm btn-outline-primary" title="مزامنة الملفات">
-                                            <i class="bx bx-refresh me-1"></i> مزامنة
+                                        <button type="submit" class="btn btn-sm btn-outline-primary" title="{{ __('documents.storage.sync_title') }}">
+                                            <i class="bx bx-refresh me-1"></i> {{ __('documents.storage.sync') }}
                                         </button>
                                     </form>
                                 @elseif ($isPrimary && $platform->provider === 'wasabi' && $isActive)
-                                    <a href="{{ route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-outline-warning" title="إعادة الربط">
-                                        <i class="bx bx-link-alt me-1"></i> إعادة الربط
+                                    <a href="{{ route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-outline-warning" title="{{ __('documents.storage.reconnect_btn') }}">
+                                        <i class="bx bx-link-alt me-1"></i> {{ __('documents.storage.reconnect_btn') }}
                                     </a>
                                     <form action="{{ route('dashboard.documents.wasabi.sync') }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm btn-outline-primary" title="مزامنة الملفات">
-                                            <i class="bx bx-refresh me-1"></i> مزامنة
+                                        <button type="submit" class="btn btn-sm btn-outline-primary" title="{{ __('documents.storage.sync_title') }}">
+                                            <i class="bx bx-refresh me-1"></i> {{ __('documents.storage.sync') }}
                                         </button>
                                     </form>
                                 @elseif (!$connected && $platform->provider === 'google_drive' && $isActive)
                                     <a href="{{ ($hasPrimaryConnection ?? false) ? route('dashboard.documents.switch-storage.confirm', ['to' => 'google_drive']) : route('dashboard.documents.google-drive.connect') }}" class="btn btn-sm btn-primary">
-                                        <i class="bx bx-link me-1"></i> ربط
+                                        <i class="bx bx-link me-1"></i> {{ __('documents.storage.connect') }}
                                     </a>
                                 @elseif (!$connected && $platform->provider === 'wasabi' && $isActive)
                                     <a href="{{ ($hasPrimaryConnection ?? false) ? route('dashboard.documents.switch-storage.confirm', ['to' => 'wasabi']) : route('dashboard.documents.wasabi.connect') }}" class="btn btn-sm btn-primary">
-                                        <i class="bx bx-link me-1"></i> ربط
+                                        <i class="bx bx-link me-1"></i> {{ __('documents.storage.connect') }}
                                     </a>
                                 @elseif (!$isActive)
-                                    <button type="button" class="btn btn-sm btn-secondary" disabled title="المنصة غير متاحة حالياً">
-                                        <i class="bx bx-link me-1"></i> غير متاحة
+                                    <button type="button" class="btn btn-sm btn-secondary" disabled title="{{ __('documents.storage.platform_unavailable') }}">
+                                        <i class="bx bx-link me-1"></i> {{ __('documents.storage.unavailable') }}
                                     </button>
                                 @else
-                                    <button type="button" class="btn btn-sm btn-secondary" disabled title="قريباً - جاري إعداد التكامل">
-                                        <i class="bx bx-link me-1"></i> قريباً
+                                    <button type="button" class="btn btn-sm btn-secondary" disabled title="{{ __('documents.storage.coming_soon') }}">
+                                        <i class="bx bx-link me-1"></i> {{ __('documents.storage.coming_soon_btn') }}
                                     </button>
                                 @endif
                             </div>
@@ -132,16 +132,16 @@
         {{-- قائمة الاتصالات الحالية --}}
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0">الاتصالات الحالية</h5>
+                <h5 class="mb-0">{{ __('documents.storage.current_connections') }}</h5>
             </div>
             <div class="table-responsive text-nowrap">
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>المنصة</th>
-                            <th>الاسم</th>
-                            <th>الحالة</th>
-                            <th>تاريخ الربط</th>
+                            <th>{{ __('documents.storage.platform') }}</th>
+                            <th>{{ __('common.name') }}</th>
+                            <th>{{ __('common.status') }}</th>
+                            <th>{{ __('documents.storage.connected_at') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,9 +155,9 @@
                                 <td>{{ $conn->display_name }}</td>
                                 <td>
                                     @if ($conn->is_active)
-                                        <span class="badge bg-success">نشط</span>
+                                        <span class="badge bg-success">{{ __('documents.storage.active') }}</span>
                                     @else
-                                        <span class="badge bg-secondary">غير نشط</span>
+                                        <span class="badge bg-secondary">{{ __('documents.storage.inactive') }}</span>
                                     @endif
                                 </td>
                                 <td>{{ $conn->created_at->format('Y-m-d H:i') }}</td>
@@ -165,7 +165,7 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="text-center py-5 text-body-secondary">
-                                    لم تقم بربط أي منصة تخزين بعد. اختر منصة من الأعلى واتبع خطوات الربط.
+                                    {{ __('documents.storage.no_connections') }}
                                 </td>
                             </tr>
                         @endforelse

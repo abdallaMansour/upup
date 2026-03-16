@@ -4,15 +4,15 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'المميزات'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('features.title')],
             ]
         ])
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">المميزات</h4>
+            <h4 class="mb-0">{{ __('features.title') }}</h4>
             @if(auth('admin')->check() && auth('admin')->user()->hasPermission('features.manage'))
                 <a href="{{ route('dashboard.features.create') }}" class="btn btn-primary">
-                    <i class="bx bx-plus me-1"></i> إضافة ميزة
+                    <i class="bx bx-plus me-1"></i> {{ __('features.add_feature') }}
                 </a>
             @endif
         </div>
@@ -29,12 +29,12 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th width="80">الصورة</th>
+                            <th width="80">{{ __('features.image') }}</th>
                             <th width="50">#</th>
-                            <th>العنوان</th>
-                            <th>الوصف</th>
+                            <th>{{ __('common.title') }}</th>
+                            <th>{{ __('common.description') }}</th>
                             @if(auth('admin')->check() && auth('admin')->user()->hasPermission('features.manage'))
-                                <th width="120">الإجراءات</th>
+                                <th width="120">{{ __('common.actions') }}</th>
                             @endif
                         </tr>
                     </thead>
@@ -59,13 +59,13 @@
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <a class="dropdown-item" href="{{ route('dashboard.features.edit', $feature) }}">
-                                                    <i class="bx bx-edit-alt me-2"></i> تعديل
+                                                    <i class="bx bx-edit-alt me-2"></i> {{ __('common.edit') }}
                                                 </a>
-                                                <form action="{{ route('dashboard.features.destroy', $feature) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد؟');">
+                                                <form action="{{ route('dashboard.features.destroy', $feature) }}" method="POST" class="d-inline" onsubmit="return confirm({{ json_encode(__('common.confirm')) }});">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">
-                                                        <i class="bx bx-trash me-2"></i> حذف
+                                                        <i class="bx bx-trash me-2"></i> {{ __('common.delete') }}
                                                     </button>
                                                 </form>
                                             </div>
@@ -76,9 +76,9 @@
                         @empty
                             <tr>
                                 <td colspan="{{ auth('admin')->check() ? '5' : '4' }}" class="text-center py-5 text-body-secondary">
-                                    لا توجد مميزات بعد.
+                                    {{ __('features.no_features') }}
                                     @if(auth('admin')->check() && auth('admin')->user()->hasPermission('features.manage'))
-                                        <a href="{{ route('dashboard.features.create') }}">إضافة ميزة</a>
+                                        <a href="{{ route('dashboard.features.create') }}">{{ __('features.add_link') }}</a>
                                     @endif
                                 </td>
                             </tr>

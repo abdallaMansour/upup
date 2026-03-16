@@ -4,12 +4,12 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الأدوار', 'url' => route('dashboard.roles.index')],
-                ['label' => 'تعديل الدور'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('roles.title'), 'url' => route('dashboard.roles.index')],
+                ['label' => __('roles.edit_role')],
             ]
         ])
-        <h4 class="mb-4">تعديل الدور</h4>
+        <h4 class="mb-4">{{ __('roles.edit_title') }}</h4>
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible" role="alert">
@@ -39,7 +39,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="slug" class="form-label">المعرّف (slug)</label>
+                        <label for="slug" class="form-label">{{ __('roles.slug') }}</label>
                         <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug" name="slug" value="{{ old('slug', $role->slug) }}">
                         @error('slug')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="description" class="form-label">الوصف</label>
+                        <label for="description" class="form-label">{{ __('common.description') }}</label>
                         <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="2">{{ old('description', $role->description) }}</textarea>
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -80,7 +80,7 @@
                     </div>
 
                     @if (auth('admin')->user()->hasPermission('roles.edit'))
-                        <button type="submit" class="btn btn-primary">تحديث الدور</button>
+                        <button type="submit" class="btn btn-primary">{{ __('roles.update_btn') }}</button>
                     @endif
                 </form>
             </div>

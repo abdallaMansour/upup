@@ -5,19 +5,19 @@
     @include('dashboard.partials.breadcrumb', [
         'items' => ($stage ?? null)
             ? [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
-                ['label' => 'وثق - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
-                ['label' => 'الإنجازات', 'url' => route('dashboard.achievements.index', ['stage' => $stage->id])],
-                ['label' => 'إضافة'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('dashboard.menu.my_pages'), 'url' => route('dashboard.my-pages.index')],
+                ['label' => __('my_pages.documents') . ' - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
+                ['label' => __('documents.achievements'), 'url' => route('dashboard.achievements.index', ['stage' => $stage->id])],
+                ['label' => __('dashboard.breadcrumb.add')],
             ]
             : [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الإنجازات', 'url' => route('dashboard.achievements.index')],
-                ['label' => 'إضافة'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('documents.achievements'), 'url' => route('dashboard.achievements.index')],
+                ['label' => __('dashboard.breadcrumb.add')],
             ]
     ])
-    <h4 class="mb-4">إضافة إنجاز</h4>
+    <h4 class="mb-4">{{ __('documents.achievement_add_title') }}</h4>
 
     @if (session('error'))
         <div class="alert alert-danger alert-dismissible" role="alert">
@@ -29,7 +29,7 @@
     @if (!($primaryConnection ?? null))
         <div class="alert alert-warning">
             <i class="bx bx-info-circle me-2"></i>
-            يرجى <a href="{{ route('dashboard.documents.storage-connections') }}" class="alert-link">ربط منصة تخزين</a> لرفع الصور والفيديوهات.
+            {!! __('documents.storage_required_media', ['link' => route('dashboard.documents.storage-connections')]) !!}
         </div>
     @endif
 
@@ -40,24 +40,24 @@
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
-                        <label for="record_date" class="form-label">التاريخ <span class="text-danger">*</span></label>
+                        <label for="record_date" class="form-label">{{ __('common.date') }} <span class="text-danger">*</span></label>
                         <input type="date" class="form-control @error('record_date') is-invalid @enderror" id="record_date" name="record_date" value="{{ old('record_date', date('Y-m-d')) }}" required>
                         @error('record_date')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-4">
-                        <label for="record_time" class="form-label">الوقت</label>
+                        <label for="record_time" class="form-label">{{ __('common.time') }}</label>
                         <input type="time" class="form-control @error('record_time') is-invalid @enderror" id="record_time" name="record_time" value="{{ old('record_time') }}">
                         @error('record_time')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-4">
-                        <label for="type" class="form-label">النوع <span class="text-danger">*</span></label>
+                        <label for="type" class="form-label">{{ __('documents.achievement_type') }} <span class="text-danger">*</span></label>
                         <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
                             @foreach (\App\Models\UserAchievement::TYPES as $value => $label)
-                                <option value="{{ $value }}" @selected(old('type') === $value)>{{ $label }}</option>
+                                <option value="{{ $value }}" @selected(old('type') === $value)>{{ __('documents.achievement_types.' . $value) }}</option>
                             @endforeach
                         </select>
                         @error('type')
@@ -65,53 +65,53 @@
                         @enderror
                     </div>
                     <div class="col-12">
-                        <label for="title" class="form-label">العنوان <span class="text-danger">*</span></label>
+                        <label for="title" class="form-label">{{ __('common.title') }} <span class="text-danger">*</span></label>
                         <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title') }}" required>
                         @error('title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="place" class="form-label">المكان</label>
+                        <label for="place" class="form-label">{{ __('documents.achievement_place') }}</label>
                         <input type="text" class="form-control @error('place') is-invalid @enderror" id="place" name="place" value="{{ old('place') }}">
                         @error('place')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="academic_year" class="form-label">السنة الدراسية</label>
-                        <input type="text" class="form-control @error('academic_year') is-invalid @enderror" id="academic_year" name="academic_year" value="{{ old('academic_year') }}" placeholder="مثال: 2023-2024">
+                        <label for="academic_year" class="form-label">{{ __('documents.achievement_academic_year') }}</label>
+                        <input type="text" class="form-control @error('academic_year') is-invalid @enderror" id="academic_year" name="academic_year" value="{{ old('academic_year') }}" placeholder="{{ __('documents.achievement_academic_year_placeholder') }}">
                         @error('academic_year')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-12">
-                        <label for="school" class="form-label">المدرسة (اختياري)</label>
+                        <label for="school" class="form-label">{{ __('documents.achievement_school') }}</label>
                         <input type="text" class="form-control @error('school') is-invalid @enderror" id="school" name="school" value="{{ old('school') }}">
                         @error('school')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="certificate_image" class="form-label">صورة الشهادة</label>
+                        <label for="certificate_image" class="form-label">{{ __('documents.achievement_certificate_image') }}</label>
                         <input type="file" class="form-control @error('certificate_image') is-invalid @enderror" id="certificate_image" name="certificate_image" accept="image/*">
-                        <small class="text-muted">حد أقصى 10 ميجابايت</small>
+                        <small class="text-muted">{{ __('common.max_10mb') }}</small>
                         @error('certificate_image')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6">
-                        <label for="photos" class="form-label">الصور</label>
+                        <label for="photos" class="form-label">{{ __('documents.achievement_photos') }}</label>
                         <input type="file" class="form-control @error('photos.*') is-invalid @enderror" id="photos" name="photos[]" accept="image/*" multiple>
-                        <small class="text-muted">حد أقصى 10 ميجابايت لكل صورة</small>
+                        <small class="text-muted">{{ __('documents.achievement_max_10mb_per_image') }}</small>
                         @error('photos.*')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-12">
-                        <label for="videos" class="form-label">الفيديوهات</label>
+                        <label for="videos" class="form-label">{{ __('documents.achievement_videos') }}</label>
                         <input type="file" class="form-control @error('videos.*') is-invalid @enderror" id="videos" name="videos[]" accept="video/*" multiple>
-                        <small class="text-muted">حد أقصى 50 ميجابايت لكل فيديو</small>
+                        <small class="text-muted">{{ __('documents.achievement_max_50mb_per_video') }}</small>
                         @error('videos.*')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
@@ -119,14 +119,14 @@
                     <div class="col-12">
                         <label class="form-check">
                             <input type="checkbox" name="show_in_education" value="1" class="form-check-input" {{ old('show_in_education') ? 'checked' : '' }}>
-                            <span class="form-check-label">عرض في المراحل التعليمية</span>
+                            <span class="form-check-label">{{ __('life_stages.show_in_education') }}</span>
                         </label>
                     </div>
                 </div>
 
                 <hr>
                 <button type="submit" class="btn btn-primary">
-                    <i class="bx bx-save me-1"></i> حفظ
+                    <i class="bx bx-save me-1"></i> {{ __('common.save') }}
                 </button>
             </form>
         </div>

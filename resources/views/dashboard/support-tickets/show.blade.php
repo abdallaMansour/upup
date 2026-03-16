@@ -4,13 +4,13 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'تذاكر الدعم', 'url' => route('dashboard.support-tickets.index')],
-                ['label' => 'التذكرة #' . $supportTicket->id],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('support_tickets.tickets'), 'url' => route('dashboard.support-tickets.index')],
+                ['label' => __('support_tickets.ticket') . ' #' . $supportTicket->id],
             ]
         ])
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-            <h4 class="mb-0">التذكرة #{{ $supportTicket->id }}</h4>
+            <h4 class="mb-0">{{ __('support_tickets.ticket') }} #{{ $supportTicket->id }}</h4>
             @if (auth('admin')->check() && auth('admin')->user()->hasPermission('support-tickets.manage'))
                 <form action="{{ route('dashboard.support-tickets.status', $supportTicket) }}" method="POST" class="d-inline">
                     @csrf
@@ -61,7 +61,7 @@
                                     <div>
                                         <strong>
                                             @if ($reply->isFromAdmin())
-                                                <i class="bx bx-shield-quarter text-primary me-1"></i> {{ $reply->admin->name }} (الإدارة)
+                                                <i class="bx bx-shield-quarter text-primary me-1"></i> {{ $reply->admin->name }} ({{ __('support_tickets.admin_label') }})
                                             @else
                                                 <i class="bx bx-user me-1"></i> {{ $reply->user->name }}
                                             @endif
@@ -78,20 +78,20 @@
                 @if (!in_array($supportTicket->status, ['closed']) && auth('admin')->check() && auth('admin')->user()->hasPermission('support-tickets.manage'))
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">إضافة رد</h5>
+                            <h5 class="mb-0">{{ __('support_tickets.add_reply') }}</h5>
                         </div>
                         <div class="card-body">
                             <form action="{{ route('dashboard.support-tickets.reply', $supportTicket) }}" method="POST">
                                 @csrf
                                 <div class="mb-4">
-                                    <label for="message" class="form-label">الرد</label>
+                                    <label for="message" class="form-label">{{ __('support_tickets.reply_label') }}</label>
                                     <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" rows="4" required>{{ old('message') }}</textarea>
                                     @error('message')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bx bx-send me-1"></i> إرسال الرد
+                                    <i class="bx bx-send me-1"></i> {{ __('support_tickets.send_reply') }}
                                 </button>
                             </form>
                         </div>
@@ -103,12 +103,12 @@
                 <div class="col-lg-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0">معلومات التذكرة</h5>
+                            <h5 class="mb-0">{{ __('support_tickets.ticket_info') }}</h5>
                         </div>
                         <div class="card-body">
-                            <p class="mb-2"><strong>المستخدم:</strong> {{ $supportTicket->user->name }}</p>
-                            <p class="mb-2"><strong>البريد:</strong> {{ $supportTicket->user->email }}</p>
-                            <p class="mb-0"><strong>تاريخ الإنشاء:</strong> {{ $supportTicket->created_at->format('Y-m-d H:i') }}</p>
+                            <p class="mb-2"><strong>{{ __('support_tickets.user_label') }}:</strong> {{ $supportTicket->user->name }}</p>
+                            <p class="mb-2"><strong>{{ __('support_tickets.email_label') }}:</strong> {{ $supportTicket->user->email }}</p>
+                            <p class="mb-0"><strong>{{ __('common.created_at') }}:</strong> {{ $supportTicket->created_at->format('Y-m-d H:i') }}</p>
                         </div>
                     </div>
                 </div>

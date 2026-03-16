@@ -4,12 +4,12 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الأسئلة الشائعة', 'url' => route('dashboard.faq.index')],
-                ['label' => 'إضافة سؤال'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('faq.title'), 'url' => route('dashboard.faq.index')],
+                ['label' => __('faq.add_question')],
             ]
         ])
-        <h4 class="mb-4">إضافة سؤال شائع</h4>
+        <h4 class="mb-4">{{ __('faq.add_title') }}</h4>
 
         <div class="card">
             <div class="card-body">
@@ -17,7 +17,7 @@
                     @csrf
 
                     <div class="mb-4">
-                        <label for="question" class="form-label">السؤال <span class="text-danger">*</span></label>
+                        <label for="question" class="form-label">{{ __('faq.question') }} <span class="text-danger">*</span></label>
                         <input type="text" class="form-control @error('question') is-invalid @enderror" id="question" name="question" value="{{ old('question') }}" required>
                         @error('question')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -32,7 +32,7 @@
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-primary">إضافة السؤال</button>
+                    <button type="submit" class="btn btn-primary">{{ __('faq.add_btn') }}</button>
                 </form>
             </div>
         </div>

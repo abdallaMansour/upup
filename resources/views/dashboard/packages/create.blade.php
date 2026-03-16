@@ -4,12 +4,12 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     @include('dashboard.partials.breadcrumb', [
         'items' => [
-            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-            ['label' => 'الباقات', 'url' => route('dashboard.packages.index')],
-            ['label' => 'إضافة باقة'],
+            ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+            ['label' => __('packages.title'), 'url' => route('dashboard.packages.index')],
+            ['label' => __('packages.add_package')],
         ]
     ])
-    <h4 class="mb-4">إنشاء باقة</h4>
+    <h4 class="mb-4">{{ __('packages.create_title') }}</h4>
 
     <div class="card">
         <div class="card-body">
@@ -17,7 +17,7 @@
                 @csrf
 
                 <div class="mb-4">
-                    <label for="icon" class="form-label">الأيقونة</label>
+                    <label for="icon" class="form-label">{{ __('packages.icon') }}</label>
                     <input type="file" class="form-control @error('icon') is-invalid @enderror" id="icon" name="icon" accept="image/*">
                     @error('icon')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="title" class="form-label">العنوان <span class="text-danger">*</span></label>
+                    <label for="title" class="form-label">{{ __('common.title') }} <span class="text-danger">*</span></label>
                     <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title') }}" required>
                     @error('title')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -34,14 +34,14 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-4">
-                        <label for="monthly_price" class="form-label">السعر الشهري <span class="text-danger">*</span></label>
+                        <label for="monthly_price" class="form-label">{{ __('packages.monthly_price') }} <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" min="0" class="form-control @error('monthly_price') is-invalid @enderror" id="monthly_price" name="monthly_price" value="{{ old('monthly_price', 0) }}" required>
                         @error('monthly_price')
                         <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6 mb-4">
-                        <label for="yearly_price" class="form-label">السعر السنوي <span class="text-danger">*</span></label>
+                        <label for="yearly_price" class="form-label">{{ __('packages.yearly_price') }} <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" min="0" class="form-control @error('yearly_price') is-invalid @enderror" id="yearly_price" name="yearly_price" value="{{ old('yearly_price', 0) }}" required>
                         @error('yearly_price')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -50,18 +50,18 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">المميزات</label>
-                    <div id="features-container">
+                    <label class="form-label">{{ __('packages.features') }}</label>
+                    <div id="features-container" data-placeholder="{{ __('packages.feature_placeholder') }}">
                         <div class="input-group mb-2">
-                            <input type="text" class="form-control" name="features[]" placeholder="الميزة 1">
+                            <input type="text" class="form-control" name="features[]" placeholder="{{ __('packages.feature_placeholder') }} 1">
                             <button type="button" class="btn btn-outline-danger" onclick="this.closest('.input-group').remove()"><i class="bx bx-trash"></i></button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addFeature()"><i class="bx bx-plus me-1"></i> إضافة ميزة</button>
-                    <small class="d-block text-body-secondary mt-1">انقر لإضافة المزيد من المميزات</small>
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addFeature()"><i class="bx bx-plus me-1"></i> {{ __('packages.add_feature') }}</button>
+                    <small class="d-block text-body-secondary mt-1">{{ __('packages.add_more_hint') }}</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary">إنشاء الباقة</button>
+                <button type="submit" class="btn btn-primary">{{ __('packages.create_btn') }}</button>
             </form>
         </div>
     </div>
@@ -70,11 +70,12 @@
 <script>
 function addFeature() {
     const container = document.getElementById('features-container');
+    const placeholder = container.dataset.placeholder || 'Feature';
     const count = container.querySelectorAll('.input-group').length + 1;
     const div = document.createElement('div');
     div.className = 'input-group mb-2';
     div.innerHTML = `
-        <input type="text" class="form-control" name="features[]" placeholder="الميزة ${count}">
+        <input type="text" class="form-control" name="features[]" placeholder="${placeholder} ${count}">
         <button type="button" class="btn btn-outline-danger" onclick="this.closest('.input-group').remove()"><i class="bx bx-trash"></i></button>
     `;
     container.appendChild(div);

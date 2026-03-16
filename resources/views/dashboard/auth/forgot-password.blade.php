@@ -14,7 +14,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>تسجيل الدخول | Upup</title>
+    <title>{{ __('auth.forgot.title_page') }}</title>
 
     <meta name="description" content="" />
 
@@ -90,8 +90,8 @@
         <!-- Forgot Password -->
         <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
           <div class="w-px-400 mx-auto mt-sm-12 mt-8">
-            <h4 class="mb-1">Forgot Password? 🔒</h4>
-            <p class="mb-6">Enter your email and we'll send you a verification code to reset your password</p>
+            <h4 class="mb-1">{{ __('auth.forgot.title') }}</h4>
+            <p class="mb-6">{{ __('auth.forgot.subtitle') }}</p>
             @if ($errors->any())
             <div class="alert alert-danger mb-4">
               <ul class="mb-0">
@@ -107,26 +107,26 @@
             <form id="formAuthentication" class="mb-6" action="{{ route('dashboard.forgot-password.send') }}" method="POST">
               @csrf
               <div class="mb-6 form-control-validation">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">{{ __('auth.email') }}</label>
                 <input
                   type="email"
                   class="form-control @error('email') is-invalid @enderror"
                   id="email"
                   name="email"
                   value="{{ old('email') }}"
-                  placeholder="Enter your email"
+                  placeholder="{{ __('auth.email_placeholder') }}"
                   autofocus
                   required />
                 @error('email')
                   <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
               </div>
-              <button type="submit" class="btn btn-primary d-grid w-100">Send Verification Code</button>
+              <button type="submit" class="btn btn-primary d-grid w-100">{{ __('auth.forgot.submit') }}</button>
             </form>
             <div class="text-center">
               <a href="{{ route('dashboard.login') }}" class="d-flex align-items-center justify-content-center">
                 <i class="bx bx-chevron-left icon-20px scaleX-n1-rtl me-1_5 align-top"></i>
-                Back to login
+                {{ __('auth.forgot.back_to_login') }}
               </a>
             </div>
           </div>

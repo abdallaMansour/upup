@@ -1,0 +1,23 @@
+<?php
+
+return [
+    'title' => 'الباقات',
+    'add_package' => 'إضافة باقة',
+    'edit_package' => 'تعديل الباقة',
+    'create_title' => 'إنشاء باقة',
+    'edit_title' => 'تعديل الباقة',
+    'create_btn' => 'إنشاء الباقة',
+    'update_btn' => 'تحديث الباقة',
+    'icon' => 'الأيقونة',
+    'monthly_price' => 'السعر الشهري',
+    'yearly_price' => 'السعر السنوي',
+    'features' => 'المميزات',
+    'feature_placeholder' => 'الميزة',
+    'add_feature' => 'إضافة ميزة',
+    'add_more_hint' => 'انقر لإضافة المزيد من المميزات',
+    'feature_count' => ':count ميزة',
+    'subscribe' => 'اشترك',
+    'no_packages' => 'لا توجد باقات بعد.',
+    'create_link' => 'إنشاء باقة',
+    'current_icon_replace' => 'الأيقونة الحالية. ارفع صورة جديدة للاستبدال.',
+];

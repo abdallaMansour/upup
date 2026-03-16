@@ -1,13 +1,13 @@
 <!doctype html>
 
-<html lang="ar" class="layout-navbar-fixed layout-menu-fixed layout-compact" dir="rtl" data-skin="default" data-assets-path="{{ asset('assets/') }}" data-template="vertical-menu-template"
+<html lang="{{ app()->getLocale() }}" class="layout-navbar-fixed layout-menu-fixed layout-compact" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" data-skin="default" data-assets-path="{{ asset('assets/') }}" data-template="vertical-menu-template"
     data-bs-theme="light">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>لوحة التحكم | Upup</title>
+    <title>{{ __('dashboard.title') }}</title>
 
     <meta name="description" content="" />
 
@@ -42,7 +42,10 @@
     @yield('page-css')
     @stack('page-css')
     <style>
-    .add-card-link:hover { border-color: var(--bs-primary) !important; background-color: rgba(var(--bs-primary-rgb), 0.04); }
+        .add-card-link:hover {
+            border-color: var(--bs-primary) !important;
+            background-color: rgba(var(--bs-primary-rgb), 0.04);
+        }
     </style>
 
     <!-- Helpers -->
@@ -88,21 +91,21 @@
                         <li class="menu-item">
                             <a href="{{ route('dashboard.index') }}" class="menu-link">
                                 <i class="menu-icon icon-base bx bx-home-smile"></i>
-                                <div data-i18n="Dashboard">لوحة التحكم</div>
+                                <div data-i18n="Dashboard">{{ __('dashboard.menu.dashboard') }}</div>
                             </a>
                         </li>
 
 
                         <!-- Apps & Pages -->
                         <li class="menu-header small">
-                            <span class="menu-header-text" data-i18n="Settings">الإعدادات</span>
+                            <span class="menu-header-text" data-i18n="Settings">{{ __('dashboard.menu.settings') }}</span>
                         </li>
                         @auth('admin')
                             @if (auth('admin')->user()->canAccess('users.view'))
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.users.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-user"></i>
-                                        <div data-i18n="Users">المستخدمين</div>
+                                        <div data-i18n="Users">{{ __('dashboard.menu.users') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -111,7 +114,7 @@
                             <li class="menu-item">
                                 <a href="{{ route('dashboard.packages.index') }}" class="menu-link">
                                     <i class="menu-icon icon-base bx bx-package"></i>
-                                    <div data-i18n="Packages">الباقات</div>
+                                        <div data-i18n="Packages">{{ __('dashboard.menu.packages') }}</div>
                                 </a>
                             </li>
                         @endif
@@ -120,7 +123,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.faq.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-help-circle"></i>
-                                        <div data-i18n="FAQ">الأسئلة الشائعة</div>
+                                        <div data-i18n="FAQ">{{ __('dashboard.menu.faq') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -128,7 +131,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.features.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-star"></i>
-                                        <div data-i18n="Features">المميزات</div>
+                                        <div data-i18n="Features">{{ __('dashboard.menu.features') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -136,7 +139,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.media-department.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-news"></i>
-                                        <div data-i18n="Media Department">القسم الإعلامي</div>
+                                        <div data-i18n="Media Department">{{ __('dashboard.menu.media_department') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -144,7 +147,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.privacy-policy.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-shield-quarter"></i>
-                                        <div data-i18n="Privacy Policy">سياسة الخصوصيه</div>
+                                        <div data-i18n="Privacy Policy">{{ __('dashboard.menu.privacy_policy') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -152,7 +155,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.terms-and-conditions.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-file-blank"></i>
-                                        <div data-i18n="Terms and Conditions">الشروط و الأحكام</div>
+                                        <div data-i18n="Terms and Conditions">{{ __('dashboard.menu.terms_and_conditions') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -160,12 +163,12 @@
                             {{-- Subscriptions --}}
                             @if (auth('admin')->user()->canAccess('subscriptions.view') || auth('admin')->user()->canAccess('subscriptions.manage'))
                                 <li class="menu-header small">
-                                    <span class="menu-header-text" data-i18n="Subscriptions">الإشتراكات</span>
+                                    <span class="menu-header-text" data-i18n="Subscriptions">{{ __('dashboard.menu.subscriptions') }}</span>
                                 </li>
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.subscriptions.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-credit-card"></i>
-                                        <div data-i18n="Subscriptions">الإشتراكات</div>
+                                        <div data-i18n="Subscriptions">{{ __('dashboard.menu.subscriptions') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -174,18 +177,18 @@
                         {{-- إدارة الوثائق (للمستخدمين فقط) --}}
                         @if (auth('web')->check())
                             <li class="menu-header small">
-                                <span class="menu-header-text" data-i18n="Documents">إدارة الوثائق</span>
+                                <span class="menu-header-text" data-i18n="Documents">{{ __('dashboard.menu.documents') }}</span>
                             </li>
                             <li class="menu-item">
                                 <a href="{{ route('dashboard.documents.index') }}" class="menu-link">
                                     <i class="menu-icon icon-base bx bx-file-blank"></i>
-                                    <div data-i18n="My Documents">وثائقي وملفاتي</div>
+                                    <div data-i18n="My Documents">{{ __('dashboard.menu.my_documents') }}</div>
                                 </a>
                             </li>
                             <li class="menu-item">
                                 <a href="{{ route('dashboard.documents.storage-connections') }}" class="menu-link">
                                     <i class="menu-icon icon-base bx bx-cloud"></i>
-                                    <div data-i18n="Storage Connections">ربط منصات التخزين</div>
+                                    <div data-i18n="Storage Connections">{{ __('dashboard.menu.storage_connections') }}</div>
                                 </a>
                             </li>
                         @endif
@@ -193,24 +196,24 @@
                         {{-- صفحات المستخدمين (للمستخدمين فقط) --}}
                         @if (auth('web')->check())
                             <li class="menu-header small">
-                                <span class="menu-header-text">صفحات المستخدمين</span>
+                                <span class="menu-header-text">{{ __('dashboard.menu.user_pages') }}</span>
                             </li>
                             <li class="menu-item">
                                 <a href="{{ route('dashboard.my-pages.index') }}" class="menu-link">
                                     <i class="menu-icon icon-base bx bx-child"></i>
-                                    <div>صفحاتي</div>
+                                    <div>{{ __('dashboard.menu.my_pages') }}</div>
                                 </a>
                             </li>
                         @endif
 
                         {{-- Support Tickets (users + admins) --}}
                         <li class="menu-header small">
-                            <span class="menu-header-text" data-i18n="Support">الدعم الفني</span>
+                            <span class="menu-header-text" data-i18n="Support">{{ __('dashboard.menu.support') }}</span>
                         </li>
                         <li class="menu-item">
                             <a href="{{ route('dashboard.support-tickets.index') }}" class="menu-link">
                                 <i class="menu-icon icon-base bx bx-support"></i>
-                                <div data-i18n="Support Tickets">تذاكر الدعم الفني</div>
+                                <div data-i18n="Support Tickets">{{ __('dashboard.menu.support_tickets') }}</div>
                             </a>
                         </li>
                         @auth('admin')
@@ -218,7 +221,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.technical-support.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-envelope"></i>
-                                        <div data-i18n="Messages">المراسلات</div>
+                                        <div data-i18n="Messages">{{ __('dashboard.menu.messages') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -227,13 +230,13 @@
 
                         @if (auth('admin')->check() && auth('admin')->user()->canAccessAdminManagement())
                             <li class="menu-header small">
-                                <span class="menu-header-text">إدارة الأدمن</span>
+                                <span class="menu-header-text">{{ __('dashboard.menu.admin_management') }}</span>
                             </li>
                             @if (auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->roles->isEmpty() || auth('admin')->user()->hasPermission('admins.view'))
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.admins.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-user-circle"></i>
-                                        <div data-i18n="Admins">الأدمن</div>
+                                        <div data-i18n="Admins">{{ __('dashboard.menu.admins') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -241,7 +244,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.roles.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-id-card"></i>
-                                        <div data-i18n="Roles">الأدوار</div>
+                                        <div data-i18n="Roles">{{ __('dashboard.menu.roles') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -249,7 +252,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.permissions.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-lock-alt"></i>
-                                        <div data-i18n="Permissions">الصلاحيات</div>
+                                        <div data-i18n="Permissions">{{ __('dashboard.menu.permissions') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -257,7 +260,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.storage-platforms.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-cloud"></i>
-                                        <div data-i18n="Storage Platforms">إدارة منصات التخزين</div>
+                                        <div data-i18n="Storage Platforms">{{ __('dashboard.menu.storage_platforms') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -265,7 +268,7 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.age-stages.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-user"></i>
-                                        <div>المراحل العمرية</div>
+                                        <div>{{ __('dashboard.menu.age_stages') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -273,13 +276,13 @@
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.education-stages.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-book-reader"></i>
-                                        <div>المراحل التعليمية</div>
+                                        <div>{{ __('dashboard.menu.education_stages') }}</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
                                     <a href="{{ route('dashboard.education-grades.index') }}" class="menu-link">
                                         <i class="menu-icon icon-base bx bx-book"></i>
-                                        <div>الصفوف</div>
+                                        <div>{{ __('dashboard.menu.grades') }}</div>
                                     </a>
                                 </li>
                             @endif
@@ -341,27 +344,48 @@
                             <li class="nav-item dropdown me-2 me-xl-0">
                                 <a class="nav-link dropdown-toggle hide-arrow" id="nav-theme" href="javascript:void(0);" data-bs-toggle="dropdown">
                                     <i class="icon-base bx bx-sun icon-md theme-icon-active"></i>
-                                    <span class="d-none ms-2" id="nav-theme-text">تبديل المظهر</span>
+                                    <span class="d-none ms-2" id="nav-theme-text">{{ __('dashboard.theme.toggle') }}</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-theme-text">
                                     <li>
                                         <button type="button" class="dropdown-item align-items-center active" data-bs-theme-value="light" aria-pressed="false">
-                                            <span><i class="icon-base bx bx-sun icon-md me-3" data-icon="sun"></i>فاتح</span>
+                                            <span><i class="icon-base bx bx-sun icon-md me-3" data-icon="sun"></i>{{ __('dashboard.theme.light') }}</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button type="button" class="dropdown-item align-items-center" data-bs-theme-value="dark" aria-pressed="true">
-                                            <span><i class="icon-base bx bx-moon icon-md me-3" data-icon="moon"></i>داكن</span>
+                                            <span><i class="icon-base bx bx-moon icon-md me-3" data-icon="moon"></i>{{ __('dashboard.theme.dark') }}</span>
                                         </button>
                                     </li>
                                     <li>
                                         <button type="button" class="dropdown-item align-items-center" data-bs-theme-value="system" aria-pressed="false">
-                                            <span><i class="icon-base bx bx-desktop icon-md me-3" data-icon="desktop"></i>النظام</span>
+                                            <span><i class="icon-base bx bx-desktop icon-md me-3" data-icon="desktop"></i>{{ __('dashboard.theme.system') }}</span>
                                         </button>
                                     </li>
                                 </ul>
                             </li>
                             <!-- / Style Switcher-->
+
+                            <!-- Language Switcher -->
+                            <li class="nav-item dropdown me-2 me-xl-0">
+                                <a class="nav-link dropdown-toggle hide-arrow" id="nav-locale" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                    <i class="icon-base bx bx-globe icon-md"></i>
+                                    <span class="d-none ms-2">{{ __('dashboard.language.' . app()->getLocale()) }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-locale">
+                                    <li>
+                                        <a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{ route('locale.switch', 'ar') }}">
+                                            {{ __('dashboard.language.ar') }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('locale.switch', 'en') }}">
+                                            {{ __('dashboard.language.en') }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- / Language Switcher -->
 
                             <!-- Quick links  -->
                             <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
@@ -658,8 +682,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <h6 class="mb-0">{{ auth('admin')->user()?->name ?? (auth('web')->user()?->name ?? 'مستخدم') }}</h6>
-                                                    <small class="text-body-secondary">{{ auth('admin')->check() ? 'مدير' : 'مستخدم' }}</small>
+                                                    <h6 class="mb-0">{{ auth('admin')->user()?->name ?? (auth('web')->user()?->name ?? __('dashboard.user.default_name')) }}</h6>
+                                                    <small class="text-body-secondary">{{ auth('admin')->check() ? __('dashboard.user.admin_role') : __('dashboard.user.default_name') }}</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -669,18 +693,18 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="pages-profile-user.html">
-                                            <i class="icon-base bx bx-user icon-md me-3"></i><span>ملفي الشخصي</span>
+                                            <i class="icon-base bx bx-user icon-md me-3"></i><span>{{ __('dashboard.user.my_profile') }}</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="pages-account-settings-account.html">
-                                            <i class="icon-base bx bx-cog icon-md me-3"></i><span>الإعدادات</span>
+                                            <i class="icon-base bx bx-cog icon-md me-3"></i><span>{{ __('dashboard.menu.settings') }}</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="pages-account-settings-billing.html">
                                             <span class="d-flex align-items-center align-middle">
-                                                <i class="flex-shrink-0 icon-base bx bx-credit-card icon-md me-3"></i><span class="flex-grow-1 align-middle">خطة الفوترة</span>
+                                                <i class="flex-shrink-0 icon-base bx bx-credit-card icon-md me-3"></i><span class="flex-grow-1 align-middle">{{ __('dashboard.user.billing_plan') }}</span>
                                                 <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
                                             </span>
                                         </a>
@@ -690,7 +714,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="pages-pricing.html">
-                                            <i class="icon-base bx bx-dollar icon-md me-3"></i><span>الأسعار</span>
+                                            <i class="icon-base bx bx-dollar icon-md me-3"></i><span>{{ __('dashboard.user.pricing') }}</span>
                                         </a>
                                     </li>
                                     <li>
@@ -706,14 +730,14 @@
                                             <form method="POST" action="{{ route('dashboard.logout') }}" class="d-inline">
                                                 @csrf
                                                 <button type="submit" class="dropdown-item w-100 text-start border-0 bg-transparent">
-                                                    <i class="icon-base bx bx-power-off icon-md me-3"></i><span>تسجيل الخروج</span>
+                                                    <i class="icon-base bx bx-power-off icon-md me-3"></i><span>{{ __('dashboard.user.logout') }}</span>
                                                 </button>
                                             </form>
                                         @else
                                             <form method="POST" action="{{ route('auth.logout') }}" class="d-inline">
                                                 @csrf
                                                 <button type="submit" class="dropdown-item w-100 text-start border-0 bg-transparent">
-                                                    <i class="icon-base bx bx-power-off icon-md me-3"></i><span>تسجيل الخروج</span>
+                                                    <i class="icon-base bx bx-power-off icon-md me-3"></i><span>{{ __('dashboard.user.logout') }}</span>
                                                 </button>
                                             </form>
                                         @endauth

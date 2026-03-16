@@ -4,11 +4,11 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     @include('dashboard.partials.breadcrumb', [
         'items' => [
-            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-            ['label' => 'صفحاتي'],
+            ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+            ['label' => __('dashboard.breadcrumb.my_pages')],
         ]
     ])
-    <h4 class="mb-4">صفحاتي</h4>
+    <h4 class="mb-4">{{ __('my_pages.title') }}</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -53,20 +53,20 @@
                                 <i class="bx bx-calendar me-1"></i> {{ $stage->created_at->format('Y-m-d') }}
                             </p>
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="{{ route('profile.show', $stage) }}" class="btn btn-sm btn-outline-primary" title="عرض" target="_blank">
-                                    <i class="bx bx-show"></i> عرض
+                                <a href="{{ route('profile.show', $stage) }}" class="btn btn-sm btn-outline-primary" title="{{ __('common.view') }}" target="_blank">
+                                    <i class="bx bx-show"></i> {{ __('common.view') }}
                                 </a>
                                 <a href="{{ route('dashboard.my-pages.edit', $stage) }}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="bx bx-cog"></i> إعدادات
+                                    <i class="bx bx-cog"></i> {{ __('my_pages.settings') }}
                                 </a>
                                 <a href="{{ route('dashboard.my-pages.documents', $stage) }}" class="btn btn-sm btn-outline-info">
-                                    <i class="bx bx-file-blank"></i> وثق
+                                    <i class="bx bx-file-blank"></i> {{ __('my_pages.documents') }}
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-warning" title="صلاحيه مؤقته" data-bs-toggle="modal" data-bs-target="#permissionModal{{ $stage->id }}">
-                                    <i class="bx bx-lock-alt"></i> صلاحيه مؤقته
+                                <button type="button" class="btn btn-sm btn-outline-warning" title="{{ __('my_pages.temporary_permission') }}" data-bs-toggle="modal" data-bs-target="#permissionModal{{ $stage->id }}">
+                                    <i class="bx bx-lock-alt"></i> {{ __('my_pages.temporary_permission') }}
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-danger btn-delete-stage" data-stage-id="{{ $stage->id }}" data-stage-name="{{ $stage->name }}" data-delete-url="{{ route('dashboard.my-pages.destroy', $stage) }}">
-                                    <i class="bx bx-trash"></i> حذف
+                                    <i class="bx bx-trash"></i> {{ __('common.delete') }}
                                 </button>
                             </div>
                         </div>
@@ -80,8 +80,8 @@
                             <form method="POST" action="{{ route('dashboard.my-pages.permissions.store', $stage) }}">
                                 @csrf
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="permissionModalLabel{{ $stage->id }}">صلاحيه مؤقته - {{ $stage->name }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                    <h5 class="modal-title" id="permissionModalLabel{{ $stage->id }}">{{ __('my_pages.modal.title_prefix') }} {{ $stage->name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('common.close') }}"></button>
                                 </div>
                                 <div class="modal-body">
                                     @if ($errors->any())
@@ -94,27 +94,27 @@
                                         </div>
                                     @endif
                                     <div class="mb-3">
-                                        <label for="grantee_name{{ $stage->id }}" class="form-label">اسم المستلم</label>
+                                        <label for="grantee_name{{ $stage->id }}" class="form-label">{{ __('my_pages.grantee_name') }}</label>
                                         <input type="text" class="form-control" id="grantee_name{{ $stage->id }}" name="grantee_name" value="{{ old('grantee_name') }}" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="grantee_email{{ $stage->id }}" class="form-label">البريد الإلكتروني</label>
+                                        <label for="grantee_email{{ $stage->id }}" class="form-label">{{ __('common.email') }}</label>
                                         <input type="email" class="form-control" id="grantee_email{{ $stage->id }}" name="grantee_email" value="{{ old('grantee_email') }}" required>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="expires_at{{ $stage->id }}" class="form-label">تاريخ الانتهاء</label>
+                                            <label for="expires_at{{ $stage->id }}" class="form-label">{{ __('my_pages.expires_at') }}</label>
                                             <input type="date" class="form-control" id="expires_at{{ $stage->id }}" name="expires_at" value="{{ old('expires_at') }}" required>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="expires_time{{ $stage->id }}" class="form-label">وقت الانتهاء</label>
+                                            <label for="expires_time{{ $stage->id }}" class="form-label">{{ __('my_pages.expires_time') }}</label>
                                             <input type="time" class="form-control" id="expires_time{{ $stage->id }}" name="expires_time" value="{{ old('expires_time', '23:59') }}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">إلغاء</button>
-                                    <button type="submit" class="btn btn-primary">إرسال</button>
+                                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                                    <button type="submit" class="btn btn-primary">{{ __('common.submit') }}</button>
                                 </div>
                             </form>
                         </div>
@@ -123,7 +123,7 @@
         @endforeach
         @include('dashboard.partials.add-card', [
             'url' => route('dashboard.my-pages.create'),
-            'label' => 'إضافة مرحلة جديدة',
+            'label' => __('my_pages.add_stage'),
             'icon' => 'bx-plus',
         ])
     </div>
@@ -152,14 +152,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const deleteUrl = this.dataset.deleteUrl;
 
             Swal.fire({
-                title: 'تأكيد الحذف',
-                html: 'لحذف هذه المرحلة، يرجى كتابة الاسم في الحقل أدناه:<br><strong>' + stageName + '</strong>',
+                title: '{{ __('my_pages.confirm_delete_title') }}',
+                html: '{{ __('my_pages.confirm_delete_message') }}<br><strong>' + stageName + '</strong>',
                 input: 'text',
-                inputLabel: 'اكتب الاسم للتأكيد',
+                inputLabel: '{{ __('my_pages.confirm_delete_input_label') }}',
                 inputPlaceholder: stageName,
                 showCancelButton: true,
-                confirmButtonText: 'حذف',
-                cancelButtonText: 'إلغاء',
+                confirmButtonText: '{{ __('common.delete') }}',
+                cancelButtonText: '{{ __('common.cancel') }}',
                 confirmButtonColor: '#d33',
                 customClass: {
                     confirmButton: 'btn btn-danger',
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 buttonsStyling: false,
                 preConfirm: (value) => {
                     if (value !== stageName) {
-                        Swal.showValidationMessage('الاسم غير مطابق');
+                        Swal.showValidationMessage('{{ __('my_pages.name_mismatch') }}');
                         return false;
                     }
                     return value;

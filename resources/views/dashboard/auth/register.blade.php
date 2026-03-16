@@ -14,7 +14,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>إنشاء حساب المدير | Upup</title>
+    <title>{{ __('auth.register.admin_title') }}</title>
 
     <meta name="description" content="" />
 
@@ -90,8 +90,8 @@
         <!-- Register -->
         <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
           <div class="w-px-400 mx-auto mt-sm-12 mt-8">
-            <h4 class="mb-1">Adventure starts here 🚀</h4>
-            <p class="mb-6">Make your app management easy and fun!</p>
+            <h4 class="mb-1">{{ __('auth.register.title') }}</h4>
+            <p class="mb-6">{{ __('auth.register.subtitle') }}</p>
 
             @if ($errors->any())
             <div class="alert alert-danger mb-4">
@@ -105,14 +105,14 @@
             <form id="formAuthentication" class="mb-6" action="{{ route('dashboard.register.process') }}" method="POST">
               @csrf
               <div class="mb-6 form-control-validation">
-                <label for="name" class="form-label">Name</label>
+                <label for="name" class="form-label">{{ __('auth.name') }}</label>
                 <input
                   type="text"
                   class="form-control @error('name') is-invalid @enderror"
                   id="name"
                   name="name"
                   value="{{ old('name') }}"
-                  placeholder="Enter your name"
+                  placeholder="{{ __('auth.name_placeholder') }}"
                   autofocus
                   required />
                 @error('name')
@@ -120,21 +120,21 @@
                 @enderror
               </div>
               <div class="mb-6 form-control-validation">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">{{ __('auth.email') }}</label>
                 <input
                   type="email"
                   class="form-control @error('email') is-invalid @enderror"
                   id="email"
                   name="email"
                   value="{{ old('email') }}"
-                  placeholder="Enter your email"
+                  placeholder="{{ __('auth.email_placeholder') }}"
                   required />
                 @error('email')
                   <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
               </div>
               <div class="form-password-toggle form-control-validation">
-                <label class="form-label" for="password">Password</label>
+                <label class="form-label" for="password">{{ __('auth.password_label') }}</label>
                 <div class="input-group input-group-merge">
                   <input
                     type="password"
@@ -151,7 +151,7 @@
                 </div>
               </div>
               <div class="mb-6 form-password-toggle form-control-validation">
-                <label class="form-label" for="password_confirmation">Confirm Password</label>
+                <label class="form-label" for="password_confirmation">{{ __('auth.password_confirmation') }}</label>
                 <div class="input-group input-group-merge">
                   <input
                     type="password"
@@ -164,18 +164,18 @@
                   <span class="input-group-text cursor-pointer"><i class="icon-base bx bx-hide"></i></span>
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary d-grid w-100">Sign up</button>
+              <button type="submit" class="btn btn-primary d-grid w-100">{{ __('auth.register.submit') }}</button>
             </form>
 
             <p class="text-center">
-              <span>Already have an account?</span>
+              <span>{{ __('auth.register.already_have_account') }}</span>
               <a href="{{ route('dashboard.login') }}">
-                <span>Sign in instead</span>
+                <span>{{ __('auth.register.sign_in') }}</span>
               </a>
             </p>
 
             <div class="divider my-6">
-              <div class="divider-text">or</div>
+              <div class="divider-text">{{ __('auth.register.or') }}</div>
             </div>
 
             <div class="d-flex justify-content-center">
@@ -210,30 +210,30 @@
 
     <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
     <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('assets/vendor/') }}libs/@algolia/autocomplete-js.js"></script>
+    <script src="{{ asset('assets/vendor/libs/@algolia/autocomplete-js.js') }}"></script>
 
-    <script src="{{ asset('assets/vendor/') }}libs/pickr/pickr.js"></script>
+    <script src="{{ asset('assets/vendor/libs/pickr/pickr.js') }}"></script>
 
-    <script src="{{ asset('assets/vendor/') }}libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
 
-    <script src="{{ asset('assets/vendor/') }}libs/hammer/hammer.js"></script>
+    <script src="{{ asset('assets/vendor/libs/hammer/hammer.js') }}"></script>
 
-    <script src="{{ asset('assets/vendor/') }}libs/i18n/i18n.js"></script>
+    <script src="{{ asset('assets/vendor/libs/i18n/i18n.js') }}"></script>
 
-    <script src="{{ asset('assets/vendor/') }}js/menu.js"></script>
+    <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
 
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="{{ asset('assets/vendor/') }}libs/@form-validation/popular.js"></script>
-    <script src="{{ asset('assets/vendor/') }}libs/@form-validation/bootstrap5.js"></script>
-    <script src="{{ asset('assets/vendor/') }}libs/@form-validation/auto-focus.js"></script>
+    <script src="{{ asset('assets/vendor/libs/@form-validation/popular.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/@form-validation/bootstrap5.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/@form-validation/auto-focus.js') }}"></script>
 
     <!-- Main JS -->
 
-    <script src="{{ asset('assets/js/') }}main.js"></script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
-    <script src="{{ asset('assets/js/') }}pages-auth.js"></script>
+    <script src="{{ asset('assets/js/pages-auth.js') }}"></script>
   </body>
 </html>

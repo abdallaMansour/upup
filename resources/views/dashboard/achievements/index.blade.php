@@ -5,17 +5,17 @@
     @include('dashboard.partials.breadcrumb', [
         'items' => isset($stage) && $stage
             ? [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
-                ['label' => 'وثق - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
-                ['label' => 'الإنجازات'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('dashboard.menu.my_pages'), 'url' => route('dashboard.my-pages.index')],
+                ['label' => __('my_pages.documents') . ' - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
+                ['label' => __('documents.achievements')],
             ]
             : [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الإنجازات'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('documents.achievements')],
             ]
     ])
-    <h4 class="mb-4">الإنجازات</h4>
+    <h4 class="mb-4">{{ __('documents.achievements') }}</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -33,7 +33,7 @@
     @if (!($primaryConnection ?? null))
         <div class="alert alert-warning mb-4">
             <i class="bx bx-info-circle me-2"></i>
-            يرجى <a href="{{ route('dashboard.documents.storage-connections') }}" class="alert-link">ربط منصة تخزين</a> لرفع الصور والفيديوهات.
+            {!! __('documents.storage_required_media', ['link' => route('dashboard.documents.storage-connections')]) !!}
         </div>
     @endif
 
@@ -58,13 +58,13 @@
                             {{ $achievement->record_date->format('Y-m-d') }} {{ $achievement->record_time_formatted ? '• ' . $achievement->record_time_formatted : '' }}
                         </p>
                         <p class="card-text small text-body-secondary mb-2">
-                            {{ $achievement->type_label }} @if($achievement->place) • {{ $achievement->place }} @endif
+                            {{ __('documents.achievement_types.' . $achievement->type) }} @if($achievement->place) • {{ $achievement->place }} @endif
                         </p>
                         <div class="d-flex gap-2 mt-2">
                             <a href="{{ route('dashboard.achievements.edit', $achievement) }}" class="btn btn-sm btn-outline-secondary">
                                 <i class="bx bx-edit"></i>
                             </a>
-                            <form action="{{ route('dashboard.achievements.destroy', $achievement) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                            <form action="{{ route('dashboard.achievements.destroy', $achievement) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('life_stages.confirm_delete') }}');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -78,7 +78,7 @@
         @endforeach
         @include('dashboard.partials.add-card', [
             'url' => $createUrl,
-            'label' => 'إضافة إنجاز',
+            'label' => __('documents.achievement_add'),
             'icon' => 'bx-trophy',
         ])
     </div>

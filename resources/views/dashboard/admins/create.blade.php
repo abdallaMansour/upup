@@ -4,12 +4,12 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     @include('dashboard.partials.breadcrumb', [
         'items' => [
-            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-            ['label' => 'المسؤولين', 'url' => route('dashboard.admins.index')],
-            ['label' => 'إضافة أدمن'],
+            ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+            ['label' => __('admins.admins_title'), 'url' => route('dashboard.admins.index')],
+            ['label' => __('admins.add_admin')],
         ]
     ])
-    <h4 class="mb-4">إضافة أدمن</h4>
+    <h4 class="mb-4">{{ __('admins.add_title') }}</h4>
 
     <div class="card">
         <div class="card-body">
@@ -17,7 +17,7 @@
                 @csrf
 
                 <div class="mb-4">
-                    <label for="name" class="form-label">الاسم <span class="text-danger">*</span></label>
+                    <label for="name" class="form-label">{{ __('common.name') }} <span class="text-danger">*</span></label>
                     <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
                     @error('name')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="email" class="form-label">البريد الإلكتروني <span class="text-danger">*</span></label>
+                    <label for="email" class="form-label">{{ __('common.email') }} <span class="text-danger">*</span></label>
                     <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
                     @error('email')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -33,7 +33,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="password" class="form-label">كلمة المرور <span class="text-danger">*</span></label>
+                    <label for="password" class="form-label">{{ __('admins.password') }} <span class="text-danger">*</span></label>
                     <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
                     @error('password')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">الأدوار</label>
+                    <label class="form-label">{{ __('common.roles') }}</label>
                     <div class="row g-2">
                         @foreach($roles as $role)
                         <div class="col-12 col-md-6">
@@ -67,7 +67,7 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary">إنشاء الأدمن</button>
+                <button type="submit" class="btn btn-primary">{{ __('admins.create_btn') }}</button>
             </form>
         </div>
     </div>

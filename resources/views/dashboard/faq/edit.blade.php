@@ -4,12 +4,12 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         @include('dashboard.partials.breadcrumb', [
             'items' => [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الأسئلة الشائعة', 'url' => route('dashboard.faq.index')],
-                ['label' => 'تعديل السؤال'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('faq.title'), 'url' => route('dashboard.faq.index')],
+                ['label' => __('faq.edit_question')],
             ]
         ])
-        <h4 class="mb-4">تعديل السؤال</h4>
+        <h4 class="mb-4">{{ __('faq.edit_title') }}</h4>
 
         <div class="card">
             <div class="card-body">
@@ -18,7 +18,7 @@
                     @method('PUT')
 
                     <div class="mb-4">
-                        <label for="question" class="form-label">السؤال <span class="text-danger">*</span></label>
+                        <label for="question" class="form-label">{{ __('faq.question') }} <span class="text-danger">*</span></label>
                         <input type="text" class="form-control @error('question') is-invalid @enderror" id="question" name="question" value="{{ old('question', $faq->question) }}" required>
                         @error('question')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -33,7 +33,7 @@
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-primary">تحديث السؤال</button>
+                    <button type="submit" class="btn btn-primary">{{ __('faq.update_btn') }}</button>
                 </form>
             </div>
         </div>

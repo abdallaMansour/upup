@@ -1,12 +1,12 @@
 <!doctype html>
 
-<html lang="ar" class="layout-navbar-fixed layout-wide" dir="rtl" data-skin="default" data-assets-path="{{ asset('assets/') }}" data-template="front-pages-no-customizer" data-bs-theme="light">
+<html lang="{{ app()->getLocale() }}" class="layout-navbar-fixed layout-wide" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" data-skin="default" data-assets-path="{{ asset('assets/') }}" data-template="front-pages-no-customizer" data-bs-theme="light">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>الصفحة الرئيسية | Upup</title>
+    <title>{{ __('website.title') }}</title>
 
     <meta name="description" content="" />
 
@@ -80,22 +80,31 @@
                     </button>
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" aria-current="page" href="{{ route('website.landing-page') }}#landingHero">الرئيسية</a>
+                            <a class="nav-link fw-medium" aria-current="page" href="{{ route('website.landing-page') }}#landingHero">{{ __('website.home') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="{{ route('website.features') }}">المميزات</a>
+                            <a class="nav-link fw-medium" href="{{ route('website.features') }}">{{ __('website.features') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="{{ route('website.faq') }}">الأسئلة الشائعة</a>
+                            <a class="nav-link fw-medium" href="{{ route('website.faq') }}">{{ __('website.faq') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="{{ route('website.privacy-policy') }}">سياسة الخصوصيه</a>
+                            <a class="nav-link fw-medium" href="{{ route('website.privacy-policy') }}">{{ __('website.privacy_policy') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="{{ route('website.terms-and-conditions') }}">الشروط و الأحكام</a>
+                            <a class="nav-link fw-medium" href="{{ route('website.terms-and-conditions') }}">{{ __('website.terms_and_conditions') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-medium" href="{{ route('website.landing-page') }}#landingContact">تواصل معنا</a>
+                            <a class="nav-link fw-medium" href="{{ route('website.landing-page') }}#landingContact">{{ __('website.contact_us') }}</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle fw-medium" href="#" data-bs-toggle="dropdown">
+                                {{ __('dashboard.language.' . app()->getLocale()) }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{ route('locale.switch', 'ar') }}">{{ __('dashboard.language.ar') }}</a></li>
+                                <li><a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('locale.switch', 'en') }}">{{ __('dashboard.language.en') }}</a></li>
+                            </ul>
                         </li>
                         {{-- <li class="nav-item mega-dropdown">
                             <a href="javascript:void(0);" class="nav-link dropdown-toggle navbar-ex-14-mega-dropdown mega-dropdown fw-medium" aria-expanded="false" data-bs-toggle="mega-dropdown"

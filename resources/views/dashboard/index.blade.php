@@ -7,7 +7,7 @@
         <div class="row mb-6">
             <div class="col-12">
                 <div class="card overflow-hidden">
-                    <img src="{{ $media->getFirstMediaUrl('dashboard_banner') }}" alt="إعلان" class="card-img-top w-100" style="max-height: 200px; object-fit: cover;">
+                    <img src="{{ $media->getFirstMediaUrl('dashboard_banner') }}" alt="{{ __('dashboard.banner.alt') }}" class="card-img-top w-100" style="max-height: 200px; object-fit: cover;">
                 </div>
             </div>
         </div>
@@ -16,8 +16,8 @@
         @if (auth('web')->check())
         {{-- لوحة التحكم للمستخدم: كروت التنقل --}}
         <div class="mb-6">
-            <h4 class="mb-4">مرحباً بك! 🎉</h4>
-            <p class="text-body-secondary mb-4">اختر القسم الذي تريد الوصول إليه</p>
+            <h4 class="mb-4">{{ __('dashboard.welcome') }}</h4>
+            <p class="text-body-secondary mb-4">{{ __('dashboard.choose_section') }}</p>
         </div>
         <div class="row g-4">
             {{-- إدارة الوثائق --}}
@@ -38,8 +38,8 @@
                         <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-info" style="width: 56px; height: 56px;">
                             <i class="icon-base bx bx-cloud icon-lg text-info"></i>
                         </span>
-                        <h6 class="card-title mb-1">ربط منصات التخزين</h6>
-                        <small class="text-body-secondary">Google Drive و Wasabi</small>
+                        <h6 class="card-title mb-1">{{ __('dashboard.cards.storage_connections') }}</h6>
+                        <small class="text-body-secondary">{{ __('dashboard.cards.storage_desc') }}</small>
                     </div>
                 </a>
             </div>
@@ -62,8 +62,8 @@
                         <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
                             <i class="icon-base bx bx-support icon-lg text-primary"></i>
                         </span>
-                        <h6 class="card-title mb-1">تذاكر الدعم الفني</h6>
-                        <small class="text-body-secondary">الدعم والمساعدة</small>
+                        <h6 class="card-title mb-1">{{ __('dashboard.cards.support_tickets') }}</h6>
+                        <small class="text-body-secondary">{{ __('dashboard.cards.support_desc') }}</small>
                     </div>
                 </a>
             </div>
@@ -73,8 +73,8 @@
                         <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
                             <i class="icon-base bx bx-package icon-lg text-primary"></i>
                         </span>
-                        <h6 class="card-title mb-1">الباقات</h6>
-                        <small class="text-body-secondary">عرض الباقات والاشتراكات</small>
+                        <h6 class="card-title mb-1">{{ __('dashboard.cards.packages') }}</h6>
+                        <small class="text-body-secondary">{{ __('dashboard.cards.packages_desc') }}</small>
                     </div>
                 </a>
             </div>
@@ -84,8 +84,8 @@
                         <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-secondary" style="width: 56px; height: 56px;">
                             <i class="icon-base bx bx-help-circle icon-lg text-secondary"></i>
                         </span>
-                        <h6 class="card-title mb-1">الأسئلة الشائعة</h6>
-                        <small class="text-body-secondary">إجابات شائعة</small>
+                        <h6 class="card-title mb-1">{{ __('dashboard.cards.faq') }}</h6>
+                        <small class="text-body-secondary">{{ __('dashboard.cards.faq_desc') }}</small>
                     </div>
                 </a>
             </div>
@@ -95,8 +95,8 @@
                         <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-warning" style="width: 56px; height: 56px;">
                             <i class="icon-base bx bx-star icon-lg text-warning"></i>
                         </span>
-                        <h6 class="card-title mb-1">المميزات</h6>
-                        <small class="text-body-secondary">مميزات التطبيق</small>
+                        <h6 class="card-title mb-1">{{ __('dashboard.cards.features') }}</h6>
+                        <small class="text-body-secondary">{{ __('dashboard.cards.features_desc') }}</small>
                     </div>
                 </a>
             </div>
@@ -107,8 +107,8 @@
                         <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-primary" style="width: 56px; height: 56px;">
                             <i class="icon-base bx bx-book-reader icon-lg text-primary"></i>
                         </span>
-                        <h6 class="card-title mb-1">المرحلة التعليمية</h6>
-                        <small class="text-body-secondary">المرحلة والصف والمدرسة</small>
+                        <h6 class="card-title mb-1">{{ __('dashboard.cards.education_stage') }}</h6>
+                        <small class="text-body-secondary">{{ __('dashboard.cards.education_desc') }}</small>
                     </div>
                 </a>
             </div>
@@ -133,9 +133,9 @@
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="education_stage_id" class="form-label">المرحلة</label>
+                                <label for="education_stage_id" class="form-label">{{ __('dashboard.modal.stage') }}</label>
                                 <select name="education_stage_id" id="education_stage_id" class="form-select @error('education_stage_id') is-invalid @enderror">
-                                    <option value="">اختر المرحلة</option>
+                                    <option value="">{{ __('dashboard.modal.select_stage') }}</option>
                                     @foreach ($educationStages ?? [] as $stage)
                                         <option value="{{ $stage->id }}" {{ old('education_stage_id', optional(auth()->user())->education_stage_id) == $stage->id ? 'selected' : '' }}>{{ $stage->name }}</option>
                                     @endforeach
@@ -145,9 +145,9 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="education_grade_id" class="form-label">الصف</label>
+                                <label for="education_grade_id" class="form-label">{{ __('dashboard.modal.grade') }}</label>
                                 <select name="education_grade_id" id="education_grade_id" class="form-select @error('education_grade_id') is-invalid @enderror">
-                                    <option value="">اختر الصف</option>
+                                    <option value="">{{ __('dashboard.modal.select_grade') }}</option>
                                     @php
                                         $selectedStageId = old('education_stage_id', optional(auth()->user())->education_stage_id);
                                         $selectedStage = ($educationStages ?? collect())->firstWhere('id', $selectedStageId);
@@ -171,8 +171,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">إلغاء</button>
-                            <button type="submit" class="btn btn-primary">حفظ</button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('common.cancel') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
                         </div>
                     </form>
                 </div>
@@ -186,12 +186,12 @@
                     <div class="d-flex align-items-start row">
                         <div class="col-sm-7">
                             <div class="card-body">
-                                <h5 class="card-title text-primary mb-3">مرحباً بك! 🎉</h5>
+                                <h5 class="card-title text-primary mb-3">{{ __('dashboard.welcome') }}</h5>
                                 <p class="mb-6">
-                                    مرحباً بك في لوحة التحكم.<br />يمكنك إدارة الباقات والإشتراكات من هنا.
+                                    {!! __('dashboard.admin_welcome') !!}
                                 </p>
 
-                                <a href="{{ route('dashboard.packages.index') }}" class="btn btn-sm btn-label-primary">عرض الباقات</a>
+                                <a href="{{ route('dashboard.packages.index') }}" class="btn btn-sm btn-label-primary">{{ __('dashboard.view_packages') }}</a>
                             </div>
                         </div>
                         <div class="col-sm-5 text-center text-sm-left">

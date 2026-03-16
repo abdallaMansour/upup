@@ -1,9 +1,9 @@
 <!doctype html>
 
 <html
-  lang="ar"
+  lang="{{ app()->getLocale() }}"
   class="layout-wide customizer-hide"
-  dir="rtl"
+  dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}"
   data-skin="default"
   data-assets-path="{{ asset('assets/') }}"
   data-template="vertical-menu-template"
@@ -14,7 +14,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>تسجيل دخول المدير | Upup</title>
+    <title>{{ __('auth.login.admin_title') }}</title>
 
     <meta name="description" content="" />
 
@@ -90,8 +90,8 @@
         <!-- Login -->
         <div class="d-flex col-12 col-lg-5 col-xl-4 align-items-center authentication-bg p-sm-12 p-6">
           <div class="w-px-400 mx-auto mt-sm-12 mt-8">
-            <h4 class="mb-1">تسجيل دخول المدير 👋</h4>
-            <p class="mb-6">يرجى تسجيل الدخول للوصول إلى لوحة التحكم</p>
+            <h4 class="mb-1">{{ __('auth.login.title') }}</h4>
+            <p class="mb-6">{{ __('auth.login.subtitle') }}</p>
 
             @if ($errors->any())
             <div class="alert alert-danger mb-4">
@@ -105,14 +105,14 @@
             <form id="formAuthentication" class="mb-6" action="{{ route('dashboard.login.process') }}" method="POST">
               @csrf
               <div class="mb-6 form-control-validation">
-                <label for="email" class="form-label">البريد الإلكتروني</label>
+                <label for="email" class="form-label">{{ __('auth.email') }}</label>
                 <input
                   type="email"
                   class="form-control @error('email') is-invalid @enderror"
                   id="email"
                   name="email"
                   value="{{ old('email') }}"
-                  placeholder="أدخل بريدك الإلكتروني"
+                  placeholder="{{ __('auth.email_placeholder') }}"
                   autofocus
                   required />
                 @error('email')
@@ -120,7 +120,7 @@
                 @enderror
               </div>
               <div class="form-password-toggle form-control-validation">
-                <label class="form-label" for="password">كلمة المرور</label>
+                <label class="form-label" for="password">{{ __('auth.password_label') }}</label>
                 <div class="input-group input-group-merge">
                   <input
                     type="password"
@@ -139,10 +139,10 @@
               <div class="my-7">
                 <div class="form-check mb-0">
                   <input class="form-check-input" type="checkbox" id="remember-me" name="remember" />
-                  <label class="form-check-label" for="remember-me">تذكرني</label>
+                  <label class="form-check-label" for="remember-me">{{ __('auth.remember_me') }}</label>
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary d-grid w-100">تسجيل الدخول</button>
+              <button type="submit" class="btn btn-primary d-grid w-100">{{ __('auth.login.submit') }}</button>
             </form>
           </div>
         </div>

@@ -4,18 +4,18 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     @include('dashboard.partials.breadcrumb', [
         'items' => [
-            ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-            ['label' => 'الأدوار'],
+            ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+            ['label' => __('roles.title')],
         ]
     ])
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div>
-            <h4 class="mb-1">الأدوار</h4>
-            <p class="text-body-secondary mb-0">إدارة أدوار الأدمن والصلاحيات المرتبطة بها</p>
+            <h4 class="mb-1">{{ __('roles.title') }}</h4>
+            <p class="text-body-secondary mb-0">{{ __('roles.manage_desc') }}</p>
         </div>
         @if(auth('admin')->user()->hasPermission('roles.create') || auth('admin')->user()->hasRole('super_admin'))
         <a href="{{ route('dashboard.roles.create') }}" class="btn btn-primary">
-            <i class="bx bx-plus me-1"></i> إضافة دور
+            <i class="bx bx-plus me-1"></i> {{ __('roles.add_role') }}
         </a>
         @endif
     </div>
@@ -39,11 +39,11 @@
                 <thead>
                     <tr>
                         <th width="50">#</th>
-                        <th>الاسم</th>
-                        <th>المعرّف</th>
-                        <th>عدد الأدمن</th>
-                        <th>عدد الصلاحيات</th>
-                        <th width="120">الإجراءات</th>
+                        <th>{{ __('common.name') }}</th>
+                        <th>{{ __('common.identifier') }}</th>
+                        <th>{{ __('roles.admins_count') }}</th>
+                        <th>{{ __('roles.permissions_count') }}</th>
+                        <th width="120">{{ __('common.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,18 +57,18 @@
                         <td>
                             @if(auth('admin')->user()->hasPermission('roles.edit') || auth('admin')->user()->hasRole('super_admin'))
                             @if($role->slug !== 'super_admin')
-                            <a href="{{ route('dashboard.roles.edit', $role) }}" class="btn btn-sm btn-icon btn-label-primary" title="تعديل">
+                            <a href="{{ route('dashboard.roles.edit', $role) }}" class="btn btn-sm btn-icon btn-label-primary" title="{{ __('common.edit') }}">
                                 <i class="bx bx-edit"></i>
                             </a>
                             @else
-                            <span class="badge bg-label-info">مدير النظام</span>
+                            <span class="badge bg-label-info">{{ __('roles.super_admin_badge') }}</span>
                             @endif
                             @endif
                             @if((auth('admin')->user()->hasPermission('roles.delete') || auth('admin')->user()->hasRole('super_admin')) && $role->slug !== 'super_admin')
-                            <form action="{{ route('dashboard.roles.destroy', $role) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا الدور؟')">
+                            <form action="{{ route('dashboard.roles.destroy', $role) }}" method="POST" class="d-inline" onsubmit="return confirm({{ json_encode(__('roles.confirm_delete_role')) }});">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-icon btn-label-danger" title="حذف">
+                                <button type="submit" class="btn btn-sm btn-icon btn-label-danger" title="{{ __('common.delete') }}">
                                     <i class="bx bx-trash"></i>
                                 </button>
                             </form>
@@ -78,7 +78,7 @@
                     @empty
                     <tr>
                         <td colspan="6" class="text-center py-5 text-body-secondary">
-                            لا توجد أدوار
+                            {{ __('roles.no_roles') }}
                         </td>
                     </tr>
                     @endforelse

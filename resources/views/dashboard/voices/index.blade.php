@@ -5,17 +5,17 @@
     @include('dashboard.partials.breadcrumb', [
         'items' => isset($stage) && $stage
             ? [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
-                ['label' => 'وثق - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
-                ['label' => 'الأصوات'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('dashboard.menu.my_pages'), 'url' => route('dashboard.my-pages.index')],
+                ['label' => __('my_pages.documents') . ' - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
+                ['label' => __('documents.voices.title')],
             ]
             : [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'الأصوات'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('documents.voices.title')],
             ]
     ])
-    <h4 class="mb-4">الأصوات</h4>
+    <h4 class="mb-4">{{ __('documents.voices.title') }}</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -33,7 +33,7 @@
     @if (!($primaryConnection ?? null))
         <div class="alert alert-warning mb-4">
             <i class="bx bx-info-circle me-2"></i>
-            يرجى <a href="{{ route('dashboard.documents.storage-connections') }}" class="alert-link">ربط منصة تخزين</a> لرفع الملفات الصوتية.
+            {!! __('documents.storage_required_audio', ['link' => route('dashboard.documents.storage-connections')]) !!}
         </div>
     @endif
 
@@ -65,13 +65,13 @@
                         <div class="d-flex gap-2 mt-2">
                             @if ($voice->audioDocument)
                                 <a href="{{ $voice->audioDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    <i class="bx bx-play"></i> استماع
+                                    <i class="bx bx-play"></i> {{ __('documents.voices.listen') }}
                                 </a>
                             @endif
                             <a href="{{ route('dashboard.voices.edit', $voice) }}" class="btn btn-sm btn-outline-secondary">
                                 <i class="bx bx-edit"></i>
                             </a>
-                            <form action="{{ route('dashboard.voices.destroy', $voice) }}" method="POST" class="d-inline" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                            <form action="{{ route('dashboard.voices.destroy', $voice) }}" method="POST" class="d-inline" onsubmit="return confirm({{ json_encode(__('common.confirm_delete')) }});">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -85,7 +85,7 @@
         @endforeach
         @include('dashboard.partials.add-card', [
             'url' => $createUrl,
-            'label' => 'إضافة صوت',
+            'label' => __('documents.voices.add_label'),
             'icon' => 'bx-music',
         ])
     </div>

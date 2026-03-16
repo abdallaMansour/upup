@@ -5,17 +5,17 @@
     @include('dashboard.partials.breadcrumb', [
         'items' => isset($stage) && $stage
             ? [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'صفحاتي', 'url' => route('dashboard.my-pages.index')],
-                ['label' => 'وثق - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
-                ['label' => 'أحداث أخرى'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('dashboard.menu.my_pages'), 'url' => route('dashboard.my-pages.index')],
+                ['label' => __('my_pages.documents') . ' - ' . $stage->name, 'url' => route('dashboard.my-pages.documents', $stage)],
+                ['label' => __('documents.other_events.title')],
             ]
             : [
-                ['label' => 'لوحة التحكم', 'url' => route('dashboard.index')],
-                ['label' => 'أحداث أخرى'],
+                ['label' => __('dashboard.breadcrumb.dashboard'), 'url' => route('dashboard.index')],
+                ['label' => __('documents.other_events.title')],
             ]
     ])
-    <h4 class="mb-4">أحداث أخرى</h4>
+    <h4 class="mb-4">{{ __('documents.other_events.title') }}</h4>
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible" role="alert">
@@ -33,7 +33,7 @@
     @if (!($primaryConnection ?? null))
         <div class="alert alert-warning mb-4">
             <i class="bx bx-info-circle me-2"></i>
-            يرجى <a href="{{ route('dashboard.documents.storage-connections') }}" class="alert-link">ربط منصة تخزين</a> لرفع الصور والفيديوهات.
+            {!! __('documents.storage_required_media', ['link' => route('dashboard.documents.storage-connections')]) !!}
         </div>
     @endif
 
@@ -63,7 +63,7 @@
                         <div class="d-flex gap-2 mt-2">
                             @if ($otherEvent->mediaDocument)
                                 <a href="{{ $otherEvent->mediaDocument->view_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                    <i class="bx bx-show"></i> عرض
+                                    <i class="bx bx-show"></i> {{ __('common.view') }}
                                 </a>
                             @endif
                             <a href="{{ route('dashboard.other-events.edit', $otherEvent) }}" class="btn btn-sm btn-outline-secondary">
@@ -83,7 +83,7 @@
         @endforeach
         @include('dashboard.partials.add-card', [
             'url' => $createUrl,
-            'label' => 'إضافة حدث',
+            'label' => __('documents.other_events.add_label'),
             'icon' => 'bx-calendar-event',
         ])
     </div>

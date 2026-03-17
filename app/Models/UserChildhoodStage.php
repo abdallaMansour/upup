@@ -14,6 +14,8 @@ class UserChildhoodStage extends Model
         'education_linked_sections',
         'footprint_document_id',
         'name',
+        'theme',
+        'default_language',
         'mother_name',
         'father_name',
         'naming_reason',

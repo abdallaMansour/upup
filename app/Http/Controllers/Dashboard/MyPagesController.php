@@ -14,6 +14,7 @@ use App\Services\ChildhoodStageService;
 use App\Services\GoogleDriveService;
 use App\Services\WasabiService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class MyPagesController extends Controller
 {
@@ -364,6 +365,40 @@ class MyPagesController extends Controller
         }
 
         return redirect()->back()->with('success', 'تم إرسال البريد بنجاح.');
+    }
+
+    public function updateThemeAndLang(Request $request, UserChildhoodStage $stage)
+    {
+        $this->ensureWebUser();
+        $user = $request->user();
+        if ($stage->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $lifeStage = $stage->life_stage;
+        $allowedThemes = match ($lifeStage) {
+            'child' => ['playfulRed', 'oceanBlue', 'forestGreen', 'sunsetOrange', 'purpleDreams', 'candyPink', 'skyBlue', 'sunshineYellow', 'berryPurple', 'mintFresh'],
+            'teenager' => ['neon', 'electric', 'creative', 'cosmic'],
+            'adult' => ['royalGold', 'platinumSilver', 'roseGold', 'indigoNight'],
+            default => [],
+        };
+
+        $themeRules = ['nullable', 'string', 'max:50'];
+        if (! empty($allowedThemes)) {
+            $themeRules[] = Rule::in(array_merge($allowedThemes, ['']));
+        }
+
+        $validated = $request->validate([
+            'theme' => $themeRules,
+            'default_language' => ['nullable', 'string', 'in:ar,en'],
+        ]);
+
+        $stage->update([
+            'theme' => ! empty($validated['theme']) ? $validated['theme'] : null,
+            'default_language' => ! empty($validated['default_language']) ? $validated['default_language'] : null,
+        ]);
+
+        return redirect()->back()->with('success', __('my_pages.theme_lang_saved'));
     }
 
     public function destroy(Request $request, UserChildhoodStage $stage)

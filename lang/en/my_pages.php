@@ -2,7 +2,7 @@
 
 return [
     'title' => 'My Pages',
-    'documents' => 'Documents',
+    'documents' => 'Document before you forget',
     'settings' => 'Settings',
     'temporary_permission' => 'Temporary permission',
     'add_stage' => 'Add new stage',
@@ -26,4 +26,11 @@ return [
     'confirm_delete_message' => 'To delete this stage, please type the name in the field below:',
     'confirm_delete_input_label' => 'Type the name to confirm',
     'name_mismatch' => 'Name does not match',
+    'theme_language' => 'Theme & Language',
+    'theme_lang_saved' => 'Theme and language saved successfully.',
+    'theme_label' => 'Theme',
+    'default_language_label' => 'Default language',
+    'lang_ar' => 'Arabic',
+    'lang_en' => 'English',
+    'theme_not_set' => 'Not set',
 ];

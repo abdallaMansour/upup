@@ -2,7 +2,7 @@
 
 return [
     'title' => 'صفحاتي',
-    'documents' => 'وثق',
+    'documents' => 'وثق قبل ان تنسى',
     'settings' => 'إعدادات',
     'temporary_permission' => 'صلاحية مؤقتة',
     'add_stage' => 'إضافة مرحلة جديدة',
@@ -26,4 +26,11 @@ return [
     'confirm_delete_message' => 'لحذف هذه المرحلة، يرجى كتابة الاسم في الحقل أدناه:',
     'confirm_delete_input_label' => 'اكتب الاسم للتأكيد',
     'name_mismatch' => 'الاسم غير مطابق',
+    'theme_language' => 'الثيم واللغة',
+    'theme_lang_saved' => 'تم حفظ الثيم واللغة بنجاح.',
+    'theme_label' => 'الثيم',
+    'default_language_label' => 'اللغة الافتراضية',
+    'lang_ar' => 'العربية',
+    'lang_en' => 'English',
+    'theme_not_set' => 'لا محدد',
 ];

@@ -20,7 +20,7 @@
 <body>
 
     <!-- ====== TOP NAVBAR ====== -->
-    <nav class="top-navbar">
+    {{-- <nav class="top-navbar">
         <div class="container-fluid px-3">
             <div class="navbar-inner">
                 <!-- Right Side: Main nav buttons -->
@@ -56,7 +56,7 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </nav> --}}
 
     <!-- ====== COVER / PROFILE HEADER ====== -->
     <section class="profile-cover">
@@ -1132,6 +1132,7 @@
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>window.stageTheme = @json($stage->theme); window.stageDefaultLang = @json($stage->default_language);</script>
     <script src="{{ asset('assets/js/translation.js') }}"></script>
     <script src="{{ asset('assets/js/upup_main.js') }}"></script>
     <script src="{{ asset('assets/js/scrollAnimations.js') }}"></script>
@@ -2226,10 +2227,15 @@
             localStorage.setItem('adultTheme', theme);
         }
         (function() {
-            var saved = localStorage.getItem('adultTheme');
+            var stageTheme = (typeof window.stageTheme !== 'undefined' && window.stageTheme) ? window.stageTheme : null;
+            var saved = stageTheme || localStorage.getItem('adultTheme');
             if (saved) {
                 var dot = document.querySelector('[data-theme="' + saved + '"]');
-                if (dot) changeAdultTheme(dot);
+                if (!dot) {
+                    dot = document.createElement('span');
+                    dot.setAttribute('data-theme', saved);
+                }
+                changeAdultTheme(dot);
             }
         })();
     </script>

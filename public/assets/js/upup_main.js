@@ -176,14 +176,17 @@ function changeTheme(dotElement) {
     localStorage.setItem('selectedTheme', themeName);
 }
 
-// Load saved theme on page load
+// Load saved theme on page load (stage theme from DB takes priority, then localStorage)
 window.addEventListener('DOMContentLoaded', function() {
-    const savedTheme = localStorage.getItem('selectedTheme');
+    const stageTheme = typeof window.stageTheme !== 'undefined' && window.stageTheme ? window.stageTheme : null;
+    const savedTheme = stageTheme || localStorage.getItem('selectedTheme');
     if (savedTheme && kidsThemes[savedTheme]) {
-        const themeDot = document.querySelector(`[data-theme="${savedTheme}"]`);
-        if (themeDot) {
-            changeTheme(themeDot);
+        let themeDot = document.querySelector(`[data-theme="${savedTheme}"]`);
+        if (!themeDot) {
+            themeDot = document.createElement('span');
+            themeDot.dataset.theme = savedTheme;
         }
+        changeTheme(themeDot);
     }
 });
 

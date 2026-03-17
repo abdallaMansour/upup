@@ -470,9 +470,10 @@ function applyLanguage(lang) {
     localStorage.setItem('preferredLanguage', lang);
 }
 
-/* Init on load */
+/* Init on load (stage default from DB takes priority, then localStorage) */
 document.addEventListener('DOMContentLoaded', function () {
-    const saved = localStorage.getItem('preferredLanguage');
+    const stageLang = typeof window.stageDefaultLang !== 'undefined' && window.stageDefaultLang ? window.stageDefaultLang : null;
+    const saved = stageLang || localStorage.getItem('preferredLanguage');
     if (saved) {
         currentLanguage = saved;
         applyLanguage(currentLanguage);

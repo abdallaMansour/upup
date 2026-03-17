@@ -801,7 +801,7 @@
                                             <img src="https://cdn-icons-png.flaticon.com/128/3468/3468254.png" alt="education" class="cartoon-icon">
                                         </div>
                                         <div>
-                                            <h3 class="edu-section-title">المراحل التعليمية</h3>
+                                            {{-- <h3 class="edu-section-title">المراحل التعليمية</h3> --}}
                                             <p class="edu-section-sub mt-1">بطاقة كل سنة دراسية</p>
                                         </div>
                                     </div>
@@ -1134,6 +1134,7 @@
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>window.stageTheme = @json($stage->theme); window.stageDefaultLang = @json($stage->default_language);</script>
     <script src="{{ asset('assets/js/translation.js') }}"></script>
     <script src="{{ asset('assets/js/upup_main.js') }}"></script>
     <script src="{{ asset('assets/js/scrollAnimations.js') }}"></script>

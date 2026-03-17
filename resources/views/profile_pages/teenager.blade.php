@@ -1127,6 +1127,7 @@
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>window.stageTheme = @json($stage->theme); window.stageDefaultLang = @json($stage->default_language);</script>
     <script src="{{ asset('assets/js/translation.js') }}"></script>
     <script src="{{ asset('assets/js/upup_main.js') }}"></script>
     <script>
@@ -1142,12 +1143,17 @@
             dotElement.classList.add('active-dot');
             localStorage.setItem('teenTheme', themeName);
         }
-        /* Load saved teen theme */
+        /* Load saved teen theme (stage theme from DB takes priority, then localStorage) */
         (function() {
-            var saved = localStorage.getItem('teenTheme');
+            var stageTheme = (typeof window.stageTheme !== 'undefined' && window.stageTheme) ? window.stageTheme : null;
+            var saved = stageTheme || localStorage.getItem('teenTheme');
             if (saved) {
                 var dot = document.querySelector('[data-theme="' + saved + '"]');
-                if (dot) changeTeenTheme(dot);
+                if (!dot) {
+                    dot = document.createElement('span');
+                    dot.dataset.theme = saved;
+                }
+                changeTeenTheme(dot);
             }
             /* Disable kid bubble system */
             if (typeof bubblesActive !== 'undefined') bubblesActive = false;

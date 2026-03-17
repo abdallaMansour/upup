@@ -57,6 +57,15 @@
                 </div>
 
                 <div class="mb-4">
+                    <label for="max_pages" class="form-label">{{ __('packages.max_pages') }} <span class="text-danger">*</span></label>
+                    <input type="number" min="1" class="form-control @error('max_pages') is-invalid @enderror" id="max_pages" name="max_pages" value="{{ old('max_pages', $package->max_pages) }}" required>
+                    <small class="text-body-secondary">{{ __('packages.max_pages_hint') }}</small>
+                    @error('max_pages')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
                     <label class="form-label">{{ __('packages.features') }}</label>
                     <div id="features-container" data-placeholder="{{ __('packages.feature_placeholder') }}">
                         @if ($package->features && count($package->features) > 0)

@@ -23,6 +23,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
+        @if (session('error'))
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
 
         <div class="card">
             <div class="table-responsive text-nowrap">
@@ -33,6 +39,7 @@
                             <th>{{ __('common.title') }}</th>
                             <th>{{ __('packages.monthly_price') }}</th>
                             <th>{{ __('packages.yearly_price') }}</th>
+                            <th>{{ __('packages.max_pages') }}</th>
                             <th>{{ __('packages.features') }}</th>
                             @if (
                                 auth('web')->check() ||
@@ -61,6 +68,7 @@
                                 <td><strong>{{ $package->title }}</strong></td>
                                 <td>${{ number_format($package->monthly_price, 2) }}</td>
                                 <td>${{ number_format($package->yearly_price, 2) }}</td>
+                                <td>{{ $package->max_pages ?? 1 }}</td>
                                 <td>
                                     @if ($package->features && count($package->features) > 0)
                                         <span class="badge bg-label-primary">{{ __('packages.feature_count', ['count' => count($package->features)]) }}</span>
@@ -103,7 +111,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-5 text-body-secondary">
+                                <td colspan="7" class="text-center py-5 text-body-secondary">
                                     {{ __('packages.no_packages') }}
                                     @if (auth('admin')->check() && auth('admin')->user()->hasPermission('packages.create'))
                                         <a href="{{ route('dashboard.packages.create') }}">{{ __('packages.create_link') }}</a>

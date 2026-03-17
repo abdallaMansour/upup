@@ -11,6 +11,8 @@ return [
     'icon' => 'Icon',
     'monthly_price' => 'Monthly price',
     'yearly_price' => 'Yearly price',
+    'max_pages' => 'Max Pages',
+    'max_pages_hint' => 'Maximum number of pages the subscriber can create',
     'features' => 'Features',
     'feature_placeholder' => 'Feature',
     'add_feature' => 'Add feature',

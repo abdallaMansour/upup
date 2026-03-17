@@ -207,11 +207,24 @@
                     </div>
                 </div>
         @endforeach
-        @include('dashboard.partials.add-card', [
-            'url' => route('dashboard.my-pages.create'),
-            'label' => __('my_pages.add_stage'),
-            'icon' => 'bx-plus',
-        ])
+        @if ($canAddPage ?? true)
+            @include('dashboard.partials.add-card', [
+                'url' => route('dashboard.my-pages.create'),
+                'label' => __('my_pages.add_stage'),
+                'icon' => 'bx-plus',
+            ])
+        @else
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 border border-2 border-dashed border-secondary">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center text-center py-5">
+                        <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-secondary" style="width: 64px; height: 64px;">
+                            <i class="bx bx-lock-alt bx-lg text-secondary"></i>
+                        </span>
+                        <h6 class="card-title mb-0 text-body-secondary">{{ __('my_pages.max_pages_reached') }}</h6>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 

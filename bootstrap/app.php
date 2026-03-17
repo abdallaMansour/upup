@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class,
             'locale' => \App\Http\Middleware\SetLocale::class,
+            'subscribed' => \App\Http\Middleware\EnsureUserSubscribed::class,
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,

@@ -70,7 +70,7 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
     Route::put('support-tickets/{support_ticket}/status', [SupportTicketController::class, 'updateStatus'])->name('support-tickets.status')->middleware(['auth:admin', 'permission:support-tickets.manage']);
 
     // Documents & Storage (web users only - auth('web')->check())
-    Route::middleware('auth:web')->group(function () {
+    Route::middleware(['auth:web', 'subscribed'])->group(function () {
         Route::get('documents', [DocumentController::class, 'index'])->name('documents.index');
         Route::get('documents/{document}/view', [DocumentController::class, 'viewFile'])->name('documents.view-file');
         Route::get('documents/{document}/embed', [DocumentController::class, 'embedFile'])->name('documents.embed');

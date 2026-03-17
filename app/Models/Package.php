@@ -14,6 +14,7 @@ class Package extends Model implements HasMedia
         'title',
         'monthly_price',
         'yearly_price',
+        'max_pages',
         'features',
     ];
 
@@ -22,6 +23,7 @@ class Package extends Model implements HasMedia
         return [
             'monthly_price' => 'decimal:2',
             'yearly_price' => 'decimal:2',
+            'max_pages' => 'integer',
             'features' => 'array',
         ];
     }

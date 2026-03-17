@@ -31,6 +31,7 @@ class PackageController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'monthly_price' => ['required', 'numeric', 'min:0'],
             'yearly_price' => ['required', 'numeric', 'min:0'],
+            'max_pages' => ['required', 'integer', 'min:1'],
             'features' => ['nullable', 'array'],
             'features.*' => ['nullable', 'string', 'max:500'],
             'icon' => ['nullable', 'image', 'mimes:jpeg,png,gif,svg,webp', 'max:2048'],
@@ -40,6 +41,7 @@ class PackageController extends Controller
             'title' => $validated['title'],
             'monthly_price' => $validated['monthly_price'],
             'yearly_price' => $validated['yearly_price'],
+            'max_pages' => $validated['max_pages'],
             'features' => array_filter($validated['features'] ?? []),
         ]);
 
@@ -61,6 +63,7 @@ class PackageController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'monthly_price' => ['required', 'numeric', 'min:0'],
             'yearly_price' => ['required', 'numeric', 'min:0'],
+            'max_pages' => ['required', 'integer', 'min:1'],
             'features' => ['nullable', 'array'],
             'features.*' => ['nullable', 'string', 'max:500'],
             'icon' => ['nullable', 'image', 'mimes:jpeg,png,gif,svg,webp', 'max:2048'],
@@ -70,6 +73,7 @@ class PackageController extends Controller
             'title' => $validated['title'],
             'monthly_price' => $validated['monthly_price'],
             'yearly_price' => $validated['yearly_price'],
+            'max_pages' => $validated['max_pages'],
             'features' => array_filter($validated['features'] ?? []),
         ]);
 

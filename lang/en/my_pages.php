@@ -33,4 +33,6 @@ return [
     'lang_ar' => 'Arabic',
     'lang_en' => 'English',
     'theme_not_set' => 'Not set',
+    'subscription_required' => 'You must subscribe to a package first',
+    'max_pages_reached' => 'You have reached the maximum number of pages in your package',
 ];

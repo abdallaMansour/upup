@@ -36,13 +36,26 @@ class MyPagesController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return view('dashboard.my-pages.index', compact('stages'));
+        $subscription = $user->active_subscription;
+        $maxPages = $subscription?->package?->max_pages ?? 1;
+        $canAddPage = $stages->count() < $maxPages;
+
+        return view('dashboard.my-pages.index', compact('stages', 'canAddPage'));
     }
 
     public function create(ChildhoodStageService $childhoodService)
     {
         $this->ensureWebUser();
         $user = request()->user();
+        $subscription = $user->active_subscription;
+        $maxPages = $subscription?->package?->max_pages ?? 1;
+        $currentCount = UserChildhoodStage::forUser($user->id)->count();
+
+        if ($currentCount >= $maxPages) {
+            return redirect()->route('dashboard.my-pages.index')
+                ->with('error', __('my_pages.max_pages_reached'));
+        }
+
         $primaryConnection = $childhoodService->resolveStorageConnection($user);
 
         return view('dashboard.my-pages.create', [
@@ -88,6 +101,15 @@ class MyPagesController extends Controller
             'other_videos' => ['nullable', 'array'],
             'other_videos.*' => ['file', 'mimetypes:video/*', 'max:51200'],
         ]);
+
+        $subscription = $user->active_subscription;
+        $maxPages = $subscription?->package?->max_pages ?? 1;
+        $currentCount = UserChildhoodStage::forUser($user->id)->count();
+
+        if ($currentCount >= $maxPages) {
+            return redirect()->route('dashboard.my-pages.index')
+                ->with('error', __('my_pages.max_pages_reached'));
+        }
 
         $translatable = $translationService->prepareChildhoodStageTranslatable($validated);
 

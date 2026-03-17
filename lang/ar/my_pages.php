@@ -33,4 +33,6 @@ return [
     'lang_ar' => 'العربية',
     'lang_en' => 'English',
     'theme_not_set' => 'لا محدد',
+    'subscription_required' => 'يجب الاشتراك في باقة أولاً',
+    'max_pages_reached' => 'لقد وصلت للحد الأقصى لعدد الصفحات في باقتك',
 ];

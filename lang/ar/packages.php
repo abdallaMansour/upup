@@ -11,6 +11,8 @@ return [
     'icon' => 'الأيقونة',
     'monthly_price' => 'السعر الشهري',
     'yearly_price' => 'السعر السنوي',
+    'max_pages' => 'عدد الصفحات',
+    'max_pages_hint' => 'الحد الأقصى لعدد الصفحات التي يمكن للمشترك إنشاؤها',
     'features' => 'المميزات',
     'feature_placeholder' => 'الميزة',
     'add_feature' => 'إضافة ميزة',

@@ -52,8 +52,9 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
     Route::post('verification/phone/send', [VerificationController::class, 'sendPhoneCode'])->name('verification.phone.send');
     Route::post('verification/phone', [VerificationController::class, 'verifyPhone'])->name('verification.phone.verify');
 
-    // Packages: index for both, create/store/edit/update/destroy for admin only
+    // Packages: index for both, checkout for web users, create/store/edit/update/destroy for admin only
     Route::get('packages', [PackageController::class, 'index'])->name('packages.index');
+    Route::get('packages/{package}/checkout', [PackageController::class, 'checkout'])->name('packages.checkout')->middleware('auth:web');
     Route::get('faq', [FaqController::class, 'index'])->name('faq.index');
     Route::get('features', [FeatureController::class, 'index'])->name('features.index');
     Route::get('privacy-policy', [SiteSettingController::class, 'privacyPolicy'])->name('privacy-policy.index');

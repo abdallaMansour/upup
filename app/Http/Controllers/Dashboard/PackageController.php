@@ -11,13 +11,28 @@ class PackageController extends Controller
     public function index()
     {
         if (auth('admin')->check()) {
-            if (!auth('admin')->user()->hasPermission('packages.view')) {
+            if (! auth('admin')->user()->hasPermission('packages.view')) {
                 return abort(403, 'ليس لديك صلاحية لعرض الباقات');
             }
         }
-        $packages = Package::latest()->paginate(10);
+
+        $packages = auth('admin')->check()
+            ? Package::latest()->paginate(10)
+            : Package::orderBy('monthly_price')->get();
 
         return view('dashboard.packages.index', compact('packages'));
+    }
+
+    public function checkout(Package $package)
+    {
+        if (auth('admin')->check()) {
+            return redirect()->route('dashboard.packages.index');
+        }
+        if (! auth('web')->check()) {
+            return redirect()->route('auth.login');
+        }
+
+        return view('dashboard.packages.checkout', compact('package'));
     }
 
     public function create()

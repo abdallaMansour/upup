@@ -447,24 +447,42 @@ function applyLanguage(lang) {
     // Update all translatable elements
     document.querySelectorAll('[data-translate]').forEach(el => {
         const key = el.getAttribute('data-translate');
+        const contentAr = el.getAttribute('data-content-ar');
+        const contentEn = el.getAttribute('data-content-en');
+        if (contentAr !== null || contentEn !== null) {
+            const val = lang === 'ar' ? (contentAr || contentEn || '') : (contentEn || contentAr || '');
+            if (el.tagName === 'TITLE') {
+                document.title = val || translations[lang]?.pageTitle || document.title;
+            } else {
+                el.textContent = val;
+            }
+            return;
+        }
         if (translations[lang] && translations[lang][key]) {
-            // Preserve inner icons
             const icon = el.querySelector('i');
             if (icon) {
                 const iconHTML = icon.outerHTML;
-                if (lang === 'ar') {
-                    el.innerHTML = iconHTML + ' ' + translations[lang][key];
-                } else {
-                    el.innerHTML = iconHTML + ' ' + translations[lang][key];
-                }
+                el.innerHTML = iconHTML + ' ' + translations[lang][key];
             } else {
                 el.textContent = translations[lang][key];
             }
         }
     });
 
-    // Update page title
-    document.title = translations[lang].pageTitle || document.title;
+    // Update elements with user content (data-content-ar / data-content-en)
+    document.querySelectorAll('[data-content-ar], [data-content-en]').forEach(el => {
+        if (el.hasAttribute('data-translate')) return;
+        const contentAr = el.getAttribute('data-content-ar') || '';
+        const contentEn = el.getAttribute('data-content-en') || '';
+        const val = lang === 'ar' ? (contentAr || contentEn) : (contentEn || contentAr);
+        el.textContent = val;
+    });
+
+    // Update page title (if not handled by data-content above)
+    const titleEl = document.querySelector('title[data-translate]');
+    if (titleEl && titleEl.getAttribute('data-content-ar') === null && titleEl.getAttribute('data-content-en') === null) {
+        document.title = translations[lang].pageTitle || document.title;
+    }
 
     // Save preference
     localStorage.setItem('preferredLanguage', lang);

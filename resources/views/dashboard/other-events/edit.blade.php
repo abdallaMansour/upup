@@ -42,7 +42,7 @@
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label for="record_date" class="form-label">التاريخ <span class="text-danger">*</span></label>
+                        <label for="record_date" class="form-label">{{ __('common.date') }} <span class="text-danger">*</span></label>
                         <input type="date" class="form-control @error('record_date') is-invalid @enderror" id="record_date" name="record_date" value="{{ old('record_date', $other_event->record_date->format('Y-m-d')) }}" required>
                         @error('record_date')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -87,7 +87,7 @@
                     <div class="col-12">
                         <label class="form-check">
                             <input type="checkbox" name="show_in_education" value="1" class="form-check-input" {{ old('show_in_education', $other_event->show_in_education) ? 'checked' : '' }}>
-                            <span class="form-check-label">عرض في المراحل التعليمية</span>
+                            <span class="form-check-label">{{ __('life_stages.show_in_education') }}</span>
                         </label>
                     </div>
                 </div>

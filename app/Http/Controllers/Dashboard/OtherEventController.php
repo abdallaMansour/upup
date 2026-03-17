@@ -110,7 +110,7 @@ class OtherEventController extends Controller
         return view('dashboard.other-events.edit', compact('other_event', 'primaryConnection'));
     }
 
-    public function update(Request $request, UserOtherEvent $other_event, OtherEventService $otherEventService)
+    public function update(Request $request, UserOtherEvent $other_event, OtherEventService $otherEventService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate="pageTitle">صفحة المراهقة - {{ $stage->name }}</title>
+    <title data-translate="pageTitle" data-content-ar="صفحة المراهقة - {{ $stage->name_ar ?? $stage->name_en ?? '' }}" data-content-en="Teenager Page - {{ $stage->name_en ?? $stage->name_ar ?? '' }}">{{ $stage->name }}</title>
     <!-- Bootstrap 5 RTL -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap{{ app()->getLocale() === 'ar' ? '.rtl' : '' }}.min.css" rel="stylesheet">
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Google Fonts - Alexandria & Roboto -->
@@ -79,7 +79,7 @@
         <div class="cover-profile-info">
             <div class="cover-profile-text">
                 <p class="cover-bio">انا اسمي </p>
-                <h1 class="cover-name" data-translate="profileName">{{ $stage->name }}</h1>
+                <h1 class="cover-name" data-translate="profileName" data-content-ar="{{ $stage->name_ar ?? '' }}" data-content-en="{{ $stage->name_en ?? '' }}">{{ $stage->name }}</h1>
                 <p class="cover-bio">
                     @if ($stage->age_in_years !== null)
                         و عمري {{ $stage->age_in_years }} سنة
@@ -88,13 +88,11 @@
                 <div class="cover-badges" id="coverBadges">
                     <span class="cover-badge" data-translate="badgeChildhood">مرحلة المراهقة</span>
                 </div>
-                <p class="cover-bio" data-translate="profileBio">
-                    @if ($stage->naming_reason)
-                        {{ $stage->naming_reason }}
-                    @else
-                        شاب طموح يسعى لاكتشاف شغفه وبناء مستقبله
-                    @endif
-                </p>
+                @if ($stage->naming_reason)
+                    <p class="cover-bio" data-content-ar="{{ $stage->naming_reason_ar ?? '' }}" data-content-en="{{ $stage->naming_reason_en ?? '' }}">{{ $stage->naming_reason }}</p>
+                @else
+                    <p class="cover-bio" data-content-ar="شاب طموح يسعى لاكتشاف شغفه وبناء مستقبله" data-content-en="An ambitious youth seeking to discover his passion and build his future">شاب طموح يسعى لاكتشاف شغفه وبناء مستقبله</p>
+                @endif
             </div>
             <div class="cover-avatar">
                 @php
@@ -483,7 +481,7 @@
                                             <div class="birth-info-icon"><i class="fas fa-baby"></i></div>
                                             <div class="birth-info-detail">
                                                 <span class="birth-info-label" data-translate="birthName">اسم المولود</span>
-                                                <span class="birth-info-value" id="birthNameVal">{{ $stage->name }}</span>
+                                                <span class="birth-info-value" id="birthNameVal" data-content-ar="{{ $stage->name_ar ?? '' }}" data-content-en="{{ $stage->name_en ?? '' }}">{{ $stage->name }}</span>
                                             </div>
                                         </div>
                                         @if ($stage->birth_date)
@@ -530,7 +528,7 @@
                                                 <div class="birth-info-icon birth-icon-orange"><i class="fas fa-hospital"></i></div>
                                                 <div class="birth-info-detail">
                                                     <span class="birth-info-label" data-translate="birthPlaceLabel">مكان الولادة</span>
-                                                    <span class="birth-info-value" id="birthPlaceVal">{{ $stage->birth_place }}</span>
+                                                    <span class="birth-info-value" id="birthPlaceVal" data-content-ar="{{ $stage->birth_place_ar ?? '' }}" data-content-en="{{ $stage->birth_place_en ?? '' }}">{{ $stage->birth_place }}</span>
                                                 </div>
                                             </div>
                                         @endif
@@ -566,7 +564,7 @@
                                                 <div class="birth-info-icon birth-icon-green"><i class="fas fa-user-md"></i></div>
                                                 <div class="birth-info-detail">
                                                     <span class="birth-info-label">الطبيب</span>
-                                                    <span class="birth-info-value">{{ $stage->doctor }}</span>
+                                                    <span class="birth-info-value" data-content-ar="{{ $stage->doctor_ar ?? '' }}" data-content-en="{{ $stage->doctor_en ?? '' }}">{{ $stage->doctor }}</span>
                                                 </div>
                                             </div>
                                         @endif
@@ -759,9 +757,9 @@
                                                             <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
                                                         </div>
                                                     @endif
-                                                    <h4 class="cert-title"><i class="fas fa-graduation-cap" style="color:#7c4dff;margin-left:6px"></i> {{ $ach->title }}</h4>
+                                                    <h4 class="cert-title"><i class="fas fa-graduation-cap" style="color:#7c4dff;margin-left:6px"></i> <span data-content-ar="{{ $ach->title_ar ?? '' }}" data-content-en="{{ $ach->title_en ?? '' }}">{{ $ach->title }}</span></h4>
                                                     @if ($ach->place)
-                                                        <p class="cert-place"><i class="fas fa-map-marker-alt"></i> {{ $ach->place }}</p>
+                                                        <p class="cert-place"><i class="fas fa-map-marker-alt"></i> <span data-content-ar="{{ $ach->place_ar ?? '' }}" data-content-en="{{ $ach->place_en ?? '' }}">{{ $ach->place }}</span></p>
                                                     @endif
                                                     <div class="cert-date-info">
                                                         <span class="cert-day-name">{{ $dayName }}</span>
@@ -993,7 +991,7 @@
                                 <div class="info-row">
                                     <div class="info-icon info-icon-pink"><i class="fas fa-hospital"></i></div>
                                     <div class="info-text">
-                                        <span class="info-value">{{ $stage->birth_place }}</span>
+                                        <span class="info-value" data-content-ar="{{ $stage->birth_place_ar ?? '' }}" data-content-en="{{ $stage->birth_place_en ?? '' }}">{{ $stage->birth_place }}</span>
                                         <span class="info-label" data-translate="labelBirthPlace">مكان الولادة</span>
                                     </div>
                                 </div>
@@ -1020,7 +1018,7 @@
                                 <div class="info-row">
                                     <div class="info-icon info-icon-green"><i class="fas fa-university"></i></div>
                                     <div class="info-text">
-                                        <span class="info-value">{{ $latestAchievement->school }}</span>
+                                        <span class="info-value" data-content-ar="{{ $latestAchievement->school_ar ?? '' }}" data-content-en="{{ $latestAchievement->school_en ?? '' }}">{{ $latestAchievement->school }}</span>
                                         <span class="info-label" data-translate="labelEducation">التعليم</span>
                                     </div>
                                 </div>

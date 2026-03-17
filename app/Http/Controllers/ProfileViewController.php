@@ -72,6 +72,9 @@ class ProfileViewController extends Controller
             return redirect()->route('profile.pin.form', $stage);
         }
 
+        $locale = in_array($stage->default_language ?? '', ['ar', 'en']) ? $stage->default_language : config('app.locale', 'ar');
+        app()->setLocale($locale);
+
         $educationYears = $this->buildEducationYears($stage);
         $lifeStage = $stage->life_stage;
 

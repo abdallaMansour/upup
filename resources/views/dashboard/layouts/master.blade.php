@@ -1,7 +1,7 @@
 <!doctype html>
 
-<html lang="{{ app()->getLocale() }}" class="layout-navbar-fixed layout-menu-fixed layout-compact" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" data-skin="default" data-assets-path="{{ asset('assets/') }}" data-template="vertical-menu-template"
-    data-bs-theme="light">
+<html lang="{{ app()->getLocale() }}" class="layout-navbar-fixed layout-menu-fixed layout-compact" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" data-skin="default"
+    data-assets-path="{{ asset('assets/') }}" data-template="vertical-menu-template" data-bs-theme="light">
 
 <head>
     <meta charset="utf-8" />
@@ -114,7 +114,7 @@
                             <li class="menu-item">
                                 <a href="{{ route('dashboard.packages.index') }}" class="menu-link">
                                     <i class="menu-icon icon-base bx bx-package"></i>
-                                        <div data-i18n="Packages">{{ __('dashboard.menu.packages') }}</div>
+                                    <div data-i18n="Packages">{{ __('dashboard.menu.packages') }}</div>
                                 </a>
                             </li>
                         @endif
@@ -374,12 +374,14 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-locale">
                                     <li>
-                                        <a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}" href="{{ route('locale.switch', 'ar') }}?intended={{ urlencode(request()->path() ? '/' . request()->path() : '/') }}">
+                                        <a class="dropdown-item {{ app()->getLocale() === 'ar' ? 'active' : '' }}"
+                                            href="{{ route('locale.switch', 'ar') }}?intended={{ urlencode(request()->path() ? '/' . request()->path() : '/') }}">
                                             {{ __('dashboard.language.ar') }}
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}" href="{{ route('locale.switch', 'en') }}?intended={{ urlencode(request()->path() ? '/' . request()->path() : '/') }}">
+                                        <a class="dropdown-item {{ app()->getLocale() === 'en' ? 'active' : '' }}"
+                                            href="{{ route('locale.switch', 'en') }}?intended={{ urlencode(request()->path() ? '/' . request()->path() : '/') }}">
                                             {{ __('dashboard.language.en') }}
                                         </a>
                                     </li>
@@ -667,7 +669,7 @@
                             <!--/ Notification -->
                             <!-- User -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                                <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                {{-- <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
                                         <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="rounded-circle" />
                                     </div>
@@ -742,7 +744,23 @@
                                             </form>
                                         @endauth
                                     </li>
-                                </ul>
+                                </ul> --}}
+
+                                @auth('admin')
+                                    <form method="POST" action="{{ route('dashboard.logout') }}" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item w-100 text-start border-0 bg-transparent">
+                                            <i class="icon-base bx bx-log-out icon-md"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <form method="POST" action="{{ route('auth.logout') }}" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item w-100 text-start border-0 bg-transparent">
+                                            <i class="icon-base bx bx-log-out icon-md"></i>
+                                        </button>
+                                    </form>
+                                @endauth
                             </li>
                             <!--/ User -->
                         </ul>

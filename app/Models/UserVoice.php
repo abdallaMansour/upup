@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserVoice extends Model
 {
+    use HasTranslatableFields;
+
     protected $fillable = [
         'user_id',
         'user_childhood_stage_id',
@@ -14,8 +17,10 @@ class UserVoice extends Model
         'record_date',
         'record_time',
         'audio_document_id',
-        'title',
-        'other_info',
+        'title_ar',
+        'title_en',
+        'other_info_ar',
+        'other_info_en',
     ];
 
     protected $casts = [
@@ -64,5 +69,15 @@ class UserVoice extends Model
         }
 
         return $time;
+    }
+
+    public function getTitleAttribute(): string
+    {
+        return $this->getTranslated('title');
+    }
+
+    public function getOtherInfoAttribute(): string
+    {
+        return $this->getTranslated('other_info');
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserVoice;
+use App\Services\TranslationService;
 use App\Services\VoiceService;
 use Illuminate\Http\Request;
 
@@ -48,7 +49,7 @@ class VoiceController extends Controller
         return view('dashboard.voices.create', compact('primaryConnection', 'stage'));
     }
 
-    public function store(Request $request, VoiceService $voiceService)
+    public function store(Request $request, VoiceService $voiceService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -69,15 +70,15 @@ class VoiceController extends Controller
         $stageId = $request->query('stage');
         $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        $voice = UserVoice::create([
+        $translatable = $translationService->prepareTitleOtherInfoTranslatable($validated);
+
+        $voice = UserVoice::create(array_merge([
             'user_id' => $user->id,
             'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
-            'title' => $validated['title'],
-            'other_info' => $validated['other_info'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection && $request->hasFile('audio')) {
             $rootFolder = $voiceService->getOrCreateRootFolder($user, $connection);
@@ -104,7 +105,7 @@ class VoiceController extends Controller
         return view('dashboard.voices.edit', compact('voice', 'primaryConnection'));
     }
 
-    public function update(Request $request, UserVoice $voice, VoiceService $voiceService)
+    public function update(Request $request, UserVoice $voice, VoiceService $voiceService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -125,13 +126,13 @@ class VoiceController extends Controller
             'audio' => ['nullable', 'file', 'mimetypes:audio/mpeg,audio/wav,audio/ogg,audio/m4a,audio/x-m4a,audio/webm', 'max:51200'],
         ]);
 
-        $voice->update([
+        $translatable = $translationService->prepareTitleOtherInfoTranslatable($validated);
+
+        $voice->update(array_merge([
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
-            'title' => $validated['title'],
-            'other_info' => $validated['other_info'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection && $request->hasFile('audio')) {
             if ($voice->audio_document_id) {

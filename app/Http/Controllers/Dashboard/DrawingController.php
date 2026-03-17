@@ -7,6 +7,7 @@ use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserDrawing;
 use App\Services\DrawingService;
+use App\Services\TranslationService;
 use Illuminate\Http\Request;
 
 class DrawingController extends Controller
@@ -48,7 +49,7 @@ class DrawingController extends Controller
         return view('dashboard.drawings.create', compact('primaryConnection', 'stage'));
     }
 
-    public function store(Request $request, DrawingService $drawingService)
+    public function store(Request $request, DrawingService $drawingService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -109,7 +110,7 @@ class DrawingController extends Controller
         return view('dashboard.drawings.edit', compact('drawing', 'primaryConnection'));
     }
 
-    public function update(Request $request, UserDrawing $drawing, DrawingService $drawingService)
+    public function update(Request $request, UserDrawing $drawing, DrawingService $drawingService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -135,13 +136,13 @@ class DrawingController extends Controller
             ],
         ]);
 
-        $drawing->update([
+        $translatable = $translationService->prepareTitleOtherInfoTranslatable($validated);
+
+        $drawing->update(array_merge([
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
-            'title' => $validated['title'],
-            'other_info' => $validated['other_info'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection && $request->hasFile('media')) {
             if ($drawing->media_document_id) {

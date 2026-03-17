@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\StagePermissionGrantedNotification;
 use App\Services\ChildhoodStageService;
 use App\Services\GoogleDriveService;
+use App\Services\TranslationService;
 use App\Services\WasabiService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -50,7 +51,7 @@ class MyPagesController extends Controller
         ]);
     }
 
-    public function store(Request $request, ChildhoodStageService $childhoodService, GoogleDriveService $driveService, WasabiService $wasabiService)
+    public function store(Request $request, ChildhoodStageService $childhoodService, GoogleDriveService $driveService, WasabiService $wasabiService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -88,22 +89,18 @@ class MyPagesController extends Controller
             'other_videos.*' => ['file', 'mimetypes:video/*', 'max:51200'],
         ]);
 
-        $stage = UserChildhoodStage::create([
+        $translatable = $translationService->prepareChildhoodStageTranslatable($validated);
+
+        $stage = UserChildhoodStage::create(array_merge([
             'user_id' => $user->id,
             'is_public' => $request->boolean('is_public'),
-            'name' => $validated['name'],
-            'mother_name' => $validated['mother_name'],
-            'father_name' => $validated['father_name'],
-            'naming_reason' => $validated['naming_reason'] ?? null,
             'birth_date' => $validated['birth_date'] ?? null,
             'birth_time' => $validated['birth_time'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'height' => $validated['height'] ?? null,
             'weight' => $validated['weight'] ?? null,
             'blood_type' => $validated['blood_type'] ?? null,
-            'doctor' => $validated['doctor'] ?? null,
-            'birth_place' => $validated['birth_place'] ?? null,
-        ]);
+        ], $translatable));
 
         if ($connection) {
             $childhoodFolder = $childhoodService->getOrCreateChildhoodFolderForStage($user, $connection, $stage);
@@ -173,7 +170,7 @@ class MyPagesController extends Controller
         ]);
     }
 
-    public function update(Request $request, UserChildhoodStage $stage, ChildhoodStageService $childhoodService, GoogleDriveService $driveService, WasabiService $wasabiService)
+    public function update(Request $request, UserChildhoodStage $stage, ChildhoodStageService $childhoodService, GoogleDriveService $driveService, WasabiService $wasabiService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -214,21 +211,17 @@ class MyPagesController extends Controller
             'other_videos.*' => ['file', 'mimetypes:video/*', 'max:51200'],
         ]);
 
-        $stage->update([
+        $translatable = $translationService->prepareChildhoodStageTranslatable($validated);
+
+        $stage->update(array_merge([
             'is_public' => $request->boolean('is_public'),
-            'name' => $validated['name'],
-            'mother_name' => $validated['mother_name'],
-            'father_name' => $validated['father_name'],
-            'naming_reason' => $validated['naming_reason'] ?? null,
             'birth_date' => $validated['birth_date'] ?? null,
             'birth_time' => $validated['birth_time'] ?? null,
             'gender' => $validated['gender'] ?? null,
             'height' => $validated['height'] ?? null,
             'weight' => $validated['weight'] ?? null,
             'blood_type' => $validated['blood_type'] ?? null,
-            'doctor' => $validated['doctor'] ?? null,
-            'birth_place' => $validated['birth_place'] ?? null,
-        ]);
+        ], $translatable));
 
         if ($connection) {
             $childhoodFolder = $childhoodService->getOrCreateChildhoodFolderForStage($user, $connection, $stage);

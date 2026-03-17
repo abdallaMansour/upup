@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class UserAchievement extends Model
 {
+    use HasTranslatableFields;
+
     public const TYPES = [
         'honor' => 'تكريم',
         'success' => 'نجاح',
@@ -24,10 +27,14 @@ class UserAchievement extends Model
         'record_date',
         'record_time',
         'type',
-        'title',
-        'place',
-        'academic_year',
-        'school',
+        'title_ar',
+        'title_en',
+        'place_ar',
+        'place_en',
+        'academic_year_ar',
+        'academic_year_en',
+        'school_ar',
+        'school_en',
         'certificate_image_document_id',
     ];
 
@@ -97,5 +104,25 @@ class UserAchievement extends Model
         }
 
         return $time;
+    }
+
+    public function getTitleAttribute(): string
+    {
+        return $this->getTranslated('title');
+    }
+
+    public function getPlaceAttribute(): string
+    {
+        return $this->getTranslated('place');
+    }
+
+    public function getAcademicYearAttribute(): string
+    {
+        return $this->getTranslated('academic_year');
+    }
+
+    public function getSchoolAttribute(): string
+    {
+        return $this->getTranslated('school');
     }
 }

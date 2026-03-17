@@ -2,31 +2,40 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslatableFields;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class UserChildhoodStage extends Model
 {
+    use HasTranslatableFields;
+
     protected $fillable = [
         'user_id',
         'is_public',
         'education_linked_sections',
         'footprint_document_id',
-        'name',
+        'name_ar',
+        'name_en',
         'theme',
         'default_language',
-        'mother_name',
-        'father_name',
-        'naming_reason',
+        'mother_name_ar',
+        'mother_name_en',
+        'father_name_ar',
+        'father_name_en',
+        'naming_reason_ar',
+        'naming_reason_en',
         'birth_date',
         'birth_time',
         'gender',
         'height',
         'weight',
         'blood_type',
-        'doctor',
-        'birth_place',
+        'birth_place_ar',
+        'birth_place_en',
+        'doctor_ar',
+        'doctor_en',
         'first_photo_document_id',
         'first_video_document_id',
         'first_gift_document_id',
@@ -194,6 +203,36 @@ class UserChildhoodStage extends Model
         }
 
         return $time;
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->getTranslated('name');
+    }
+
+    public function getMotherNameAttribute(): string
+    {
+        return $this->getTranslated('mother_name');
+    }
+
+    public function getFatherNameAttribute(): string
+    {
+        return $this->getTranslated('father_name');
+    }
+
+    public function getNamingReasonAttribute(): string
+    {
+        return $this->getTranslated('naming_reason');
+    }
+
+    public function getBirthPlaceAttribute(): string
+    {
+        return $this->getTranslated('birth_place');
+    }
+
+    public function getDoctorAttribute(): string
+    {
+        return $this->getTranslated('doctor');
     }
 
     public function getAgeInYearsAttribute(): ?int

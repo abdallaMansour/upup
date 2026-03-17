@@ -7,6 +7,7 @@ use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserOtherEvent;
 use App\Services\OtherEventService;
+use App\Services\TranslationService;
 use Illuminate\Http\Request;
 
 class OtherEventController extends Controller
@@ -48,7 +49,7 @@ class OtherEventController extends Controller
         return view('dashboard.other-events.create', compact('primaryConnection', 'stage'));
     }
 
-    public function store(Request $request, OtherEventService $otherEventService)
+    public function store(Request $request, OtherEventService $otherEventService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -74,15 +75,15 @@ class OtherEventController extends Controller
         $stageId = $request->query('stage');
         $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        $otherEvent = UserOtherEvent::create([
+        $translatable = $translationService->prepareTitleOtherInfoTranslatable($validated);
+
+        $otherEvent = UserOtherEvent::create(array_merge([
             'user_id' => $user->id,
             'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
-            'title' => $validated['title'],
-            'other_info' => $validated['other_info'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection && $request->hasFile('media')) {
             $rootFolder = $otherEventService->getOrCreateRootFolder($user, $connection);
@@ -135,13 +136,13 @@ class OtherEventController extends Controller
             ],
         ]);
 
-        $other_event->update([
+        $translatable = $translationService->prepareTitleOtherInfoTranslatable($validated);
+
+        $other_event->update(array_merge([
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
-            'title' => $validated['title'],
-            'other_info' => $validated['other_info'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection && $request->hasFile('media')) {
             if ($other_event->media_document_id) {

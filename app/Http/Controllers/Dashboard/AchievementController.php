@@ -8,6 +8,7 @@ use App\Models\UserAchievementMedia;
 use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Services\AchievementService;
+use App\Services\TranslationService;
 use Illuminate\Http\Request;
 
 class AchievementController extends Controller
@@ -49,7 +50,7 @@ class AchievementController extends Controller
         return view('dashboard.achievements.create', compact('primaryConnection', 'stage'));
     }
 
-    public function store(Request $request, AchievementService $achievementService)
+    public function store(Request $request, AchievementService $achievementService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -79,18 +80,16 @@ class AchievementController extends Controller
         $stageId = $request->query('stage');
         $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        $achievement = UserAchievement::create([
+        $translatable = $translationService->prepareAchievementTranslatable($validated);
+
+        $achievement = UserAchievement::create(array_merge([
             'user_id' => $user->id,
             'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'type' => $validated['type'],
-            'title' => $validated['title'],
-            'place' => $validated['place'] ?? null,
-            'academic_year' => $validated['academic_year'] ?? null,
-            'school' => $validated['school'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection) {
             $rootFolder = $achievementService->getOrCreateRootFolder($user, $connection);
@@ -149,7 +148,7 @@ class AchievementController extends Controller
         return view('dashboard.achievements.edit', compact('achievement', 'primaryConnection'));
     }
 
-    public function update(Request $request, UserAchievement $achievement, AchievementService $achievementService)
+    public function update(Request $request, UserAchievement $achievement, AchievementService $achievementService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -179,16 +178,14 @@ class AchievementController extends Controller
             'videos.*' => ['file', 'mimetypes:video/*', 'max:51200'],
         ]);
 
-        $achievement->update([
+        $translatable = $translationService->prepareAchievementTranslatable($validated);
+
+        $achievement->update(array_merge([
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
             'type' => $validated['type'],
-            'title' => $validated['title'],
-            'place' => $validated['place'] ?? null,
-            'academic_year' => $validated['academic_year'] ?? null,
-            'school' => $validated['school'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection) {
             $rootFolder = $achievementService->getOrCreateRootFolder($user, $connection);

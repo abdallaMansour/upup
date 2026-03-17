@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserChildhoodStage;
 use App\Models\UserDocument;
 use App\Models\UserVisit;
+use App\Services\TranslationService;
 use App\Services\VisitService;
 use Illuminate\Http\Request;
 
@@ -48,7 +49,7 @@ class VisitController extends Controller
         return view('dashboard.visits.create', compact('primaryConnection', 'stage'));
     }
 
-    public function store(Request $request, VisitService $visitService)
+    public function store(Request $request, VisitService $visitService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -74,15 +75,15 @@ class VisitController extends Controller
         $stageId = $request->query('stage');
         $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
 
-        $visit = UserVisit::create([
+        $translatable = $translationService->prepareTitleOtherInfoTranslatable($validated);
+
+        $visit = UserVisit::create(array_merge([
             'user_id' => $user->id,
             'user_childhood_stage_id' => $stage?->id,
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
-            'title' => $validated['title'],
-            'other_info' => $validated['other_info'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection && $request->hasFile('media')) {
             $rootFolder = $visitService->getOrCreateRootFolder($user, $connection);
@@ -109,7 +110,7 @@ class VisitController extends Controller
         return view('dashboard.visits.edit', compact('visit', 'primaryConnection'));
     }
 
-    public function update(Request $request, UserVisit $visit, VisitService $visitService)
+    public function update(Request $request, UserVisit $visit, VisitService $visitService, TranslationService $translationService)
     {
         $this->ensureWebUser();
         $user = $request->user();
@@ -135,13 +136,13 @@ class VisitController extends Controller
             ],
         ]);
 
-        $visit->update([
+        $translatable = $translationService->prepareTitleOtherInfoTranslatable($validated);
+
+        $visit->update(array_merge([
             'record_date' => $validated['record_date'],
             'record_time' => $validated['record_time'] ?? null,
-            'title' => $validated['title'],
-            'other_info' => $validated['other_info'] ?? null,
             'show_in_education' => $request->boolean('show_in_education'),
-        ]);
+        ], $translatable));
 
         if ($connection && $request->hasFile('media')) {
             if ($visit->media_document_id) {

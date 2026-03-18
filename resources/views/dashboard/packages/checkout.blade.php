@@ -18,13 +18,37 @@
                     </div>
                     <div class="card-body">
                         @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                            @if ($errors->has('pages'))
+                                <div class="modal fade" id="downgradePagesModal" tabindex="-1" aria-labelledby="downgradePagesModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="downgradePagesModalLabel">
+                                                    <i class="bx bx-error-circle text-warning me-2"></i> لا يمكن الإشتراك
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="mb-0">{{ $errors->first('pages') }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="{{ route('dashboard.my-pages.index') }}" class="btn btn-primary">
+                                                    <i class="bx bx-folder me-1"></i> الذهاب لصفحاتي
+                                                </a>
+                                                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="alert alert-danger">
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         @endif
 
                         <div class="d-flex align-items-center mb-6">
@@ -83,4 +107,16 @@
             </div>
         </div>
     </div>
+
 @endsection
+
+@if ($errors->has('pages'))
+@section('page-js')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = new bootstrap.Modal(document.getElementById('downgradePagesModal'));
+        modal.show();
+    });
+</script>
+@endsection
+@endif

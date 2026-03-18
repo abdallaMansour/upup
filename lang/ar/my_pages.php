@@ -35,4 +35,5 @@ return [
     'theme_not_set' => 'لا محدد',
     'subscription_required' => 'يجب الاشتراك في باقة أولاً',
     'max_pages_reached' => 'لقد وصلت للحد الأقصى لعدد الصفحات في باقتك',
+    'downgrade_pages_required' => 'يجب حذف :count صفحة أو أكثر للإشتراك في هذه الباقة',
 ];

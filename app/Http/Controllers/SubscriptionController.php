@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Package;
 use App\Models\Subscription;
+use App\Models\UserChildhoodStage;
 use App\Services\ZiinaService;
 use Illuminate\Http\Request;
 
@@ -21,6 +22,18 @@ class SubscriptionController extends Controller
     public function checkout(Package $package, Request $request)
     {
         $request->validate(['period' => ['required', 'in:monthly,yearly']]);
+
+        $user = auth()->user();
+        $currentPageCount = UserChildhoodStage::forUser($user->id)->count();
+        $newMaxPages = $package->max_pages ?? 1;
+
+        if ($currentPageCount > $newMaxPages) {
+            $pagesToDelete = $currentPageCount - $newMaxPages;
+
+            return back()->withErrors([
+                'pages' => __('my_pages.downgrade_pages_required', ['count' => $pagesToDelete]),
+            ]);
+        }
 
         $period = $request->period;
         $amount = $period === 'monthly' ? (float) $package->monthly_price : (float) $package->yearly_price;

@@ -20,57 +20,19 @@
 <body>
 
     <!-- ====== TOP NAVBAR ====== -->
-    {{-- <nav class="top-navbar">
-        <div class="container-fluid px-3">
-            <div class="navbar-inner">
-                <!-- Right Side: Main nav buttons -->
-                <div class="nav-right">
-                    <a href="index.html" class="nav-btn">
-                        <i class="fas fa-child"></i> مرحلة الطفولة
-                    </a>
-                    <a href="teen.html" class="nav-btn">
-                        <i class="fas fa-bolt"></i> مرحلة المراهقة
-                    </a>
-                    <button id="editProfileBtn" class="nav-btn nav-btn-primary active">
-                        <i class="fas fa-crown"></i> مرحلة الشباب و البلوغ
-                    </button>
-                    <button class="lang-btn" id="langBtnAr" onclick="toggleLanguage()">ع</button>
-                    <button class="lang-btn lang-btn-en" id="langBtnEn" onclick="toggleLanguage()">EN</button>
-
-                </div>
-
-                <!-- Center: Theme Picker -->
-                <div class="nav-center">
-                    <span class="color-label">مظاهر البلوغ</span>
-                    <span class="color-dot active-dot" style="background:linear-gradient(135deg, #D4AF37 0%, #111827 100%);" data-theme="royalGold" onclick="changeAdultTheme(this)"
-                        title="Royal Gold"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #C0C0C0 0%, #0F172A 100%);" data-theme="platinumSilver" onclick="changeAdultTheme(this)"
-                        title="Platinum Silver"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #B76E79 0%, #1A0A0F 100%);" data-theme="roseGold" onclick="changeAdultTheme(this)" title="Rose Gold"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #6366F1 0%, #020617 100%);" data-theme="indigoNight" onclick="changeAdultTheme(this)" title="Indigo Night"></span>
-                </div>
-
-                <!-- Left Side: Info label -->
-                <div class="nav-left">
-                    <span class="info-label">مرحلة البلوغ - النضج والتميز 👑</span>
-                </div>
-            </div>
-        </div>
-    </nav> --}}
-
     <nav class="top-navbar">
         <div class="container-fluid px-3">
             <div class="navbar-inner">
                 <div class="nav-right">
                     <button class="lang-btn" id="langToggleBtn" onclick="toggleLanguage()" data-switch-to-ar="ع" data-switch-to-en="EN">EN</button>
                 </div>
-                    <div class="nav-left">
-                            <span class="expiry-badge" data-content-ar="تاريخ الانتهاء: {{ now()->addYear() }}" data-content-en="Expires: {{ now()->addYear() }}">{{ __('profile.expires_at') }}:
-                                {{ now()->addYear() }}</span>
-                        <a href="#" class="btn-logout">
-                            <i class="fas fa-sign-out-alt me-1"></i><span data-content-ar="تسجيل الخروج" data-content-en="Logout">{{ __('profile.logout') }}</span>
-                        </a>
-                    </div>
+                <div class="nav-left">
+                    <span class="expiry-badge" data-content-ar="تاريخ الانتهاء: {{ now()->addYear() }}" data-content-en="Expires: {{ now()->addYear() }}">{{ __('profile.expires_at') }}:
+                        {{ now()->addYear() }}</span>
+                    <a href="#" class="btn-logout">
+                        <i class="fas fa-sign-out-alt me-1"></i><span data-content-ar="تسجيل الخروج" data-content-en="Logout">{{ __('profile.logout') }}</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>

@@ -20,56 +20,22 @@
 <body>
 
     <!-- ====== TOP NAVBAR ====== -->
-    {{-- <nav class="top-navbar">
+    <nav class="top-navbar">
         <div class="container-fluid px-3">
             <div class="navbar-inner">
-                <!-- Right Side: Main nav buttons -->
                 <div class="nav-right">
-                    <button id="editProfileBtn" class="nav-btn nav-btn-primary active" data-translate="navEditProfile">
-                        <i class="fas fa-user-edit"></i> مرحلة الطفولة
-                    </button>
-                    <a href="#" class="nav-btn" data-translate="navAttendance">
-                        <i class="fas fa-shield-alt"></i> مرحلة المراهقة
-                    </a>
-                    <a href="#" class="nav-btn" data-translate="navExpenses">
-                        <i class="fas fa-file-invoice-dollar"></i> مرحلة الشباب و البلوغ
-                    </a>
-                    <button class="lang-btn" id="langBtnAr" onclick="toggleLanguage()">ع</button>
-                    <button class="lang-btn lang-btn-en" id="langBtnEn" onclick="toggleLanguage()">EN</button>
-
+                    <button class="lang-btn" id="langToggleBtn" onclick="toggleLanguage()" data-switch-to-ar="ع" data-switch-to-en="EN">EN</button>
                 </div>
-
-                <!-- Center: Theme Picker -->
-                <div class="nav-center">
-                    <span class="color-label" data-translate="colorLabel">ثيمات الاطفال</span>
-                    <span class="color-dot active-dot" style="background:linear-gradient(135deg, #e74c3c 0%, #ff9800 50%, #ffb74d 100%);" data-theme="playfulRed" onclick="changeTheme(this)"
-                        title="Playful Red"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #1e88e5 0%, #42a5f5 50%, #90caf9 100%);" data-theme="oceanBlue" onclick="changeTheme(this)"
-                        title="Ocean Blue"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #43a047 0%, #66bb6a 50%, #a5d6a7 100%);" data-theme="forestGreen" onclick="changeTheme(this)"
-                        title="Forest Green"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #ff6f00 0%, #ff9800 50%, #ffcc80 100%);" data-theme="sunsetOrange" onclick="changeTheme(this)"
-                        title="Sunset Orange"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #7b1fa2 0%, #ab47bc 50%, #ce93d8 100%);" data-theme="purpleDreams" onclick="changeTheme(this)"
-                        title="Purple Dreams"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #ec407a 0%, #f48fb1 50%, #f8bbd0 100%);" data-theme="candyPink" onclick="changeTheme(this)"
-                        title="Candy Pink"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #039be5 0%, #4fc3f7 50%, #b3e5fc 100%);" data-theme="skyBlue" onclick="changeTheme(this)" title="Sky Blue"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #fbc02d 0%, #fdd835 50%, #fff59d 100%);" data-theme="sunshineYellow" onclick="changeTheme(this)"
-                        title="Sunshine Yellow"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #8e24aa 0%, #ba68c8 50%, #e1bee7 100%);" data-theme="berryPurple" onclick="changeTheme(this)"
-                        title="Berry Purple"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #26a69a 0%, #4db6ac 50%, #b2dfdb 100%);" data-theme="mintFresh" onclick="changeTheme(this)"
-                        title="Mint Fresh"></span>
-                </div>
-
-                <!-- Left Side: Info label -->
                 <div class="nav-left">
-                    <span class="info-label" data-translate="navInfoLabel">أطفل نقال - المختبف وتغنيمة 🎨</span>
+                    <span class="expiry-badge" data-content-ar="تاريخ الانتهاء: {{ now()->addYear() }}" data-content-en="Expires: {{ now()->addYear() }}">{{ __('profile.expires_at') }}:
+                        {{ now()->addYear() }}</span>
+                    <a href="#" class="btn-logout">
+                        <i class="fas fa-sign-out-alt me-1"></i><span data-content-ar="تسجيل الخروج" data-content-en="Logout">{{ __('profile.logout') }}</span>
+                    </a>
                 </div>
             </div>
         </div>
-    </nav> --}}
+    </nav>
 
     <!-- ====== COVER / PROFILE HEADER ====== -->
     <section class="profile-cover">
@@ -140,8 +106,8 @@
     <section class="tab-navigation">
         <div class="container">
             <ul class="profile-tabs" id="profileTabs">
-                <li><a href="#tab-home" class="tab-link active" data-translate="tabHome"><i class="fas fa-home"></i> الرئيسية<div class="tab-star tab-star-1"><svg
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 784.11 815.53">
+                <li><a href="#tab-home" class="tab-link active" data-translate="tabHome"><i class="fas fa-home"></i> الرئيسية<div class="tab-star tab-star-1"><svg xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 784.11 815.53">
                                 <path class="fil0"
                                     d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.05,-407.78z" />
                             </svg></div>
@@ -1633,7 +1599,7 @@
                         infoDate.innerHTML = '<i class="fas fa-calendar-alt"></i> ' + dayName + ' ' + dayDate + (dayTime ? ' &nbsp;&bull;&nbsp; <i class="fas fa-clock"></i> ' + dayTime : '');
                         let statsHtml = '';
                         if (heightVal) statsHtml += '<span class="frame-stat"><i class="fas fa-arrows-alt-v"></i> ' + (isAr ? 'الطول: ' : 'Height: ') + heightVal + ' ' + heightUnit +
-                        '</span>';
+                            '</span>';
                         if (weightVal) statsHtml += '<span class="frame-stat"><i class="fas fa-weight"></i> ' + (isAr ? 'الوزن: ' : 'Weight: ') + weightVal + ' ' + weightUnit + '</span>';
                         infoStats.innerHTML = statsHtml;
                         infoPanel.style.display = 'block';

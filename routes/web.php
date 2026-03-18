@@ -8,9 +8,9 @@ use App\Http\Controllers\Website\ContactController;
 
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch')->where('locale', 'ar|en');
 
-Route::get('/profile/example/child', [\App\Http\Controllers\ExampleProfileController::class, 'child'])->name('profile.example.child');
-Route::get('/profile/example/teenager', [\App\Http\Controllers\ExampleProfileController::class, 'teenager'])->name('profile.example.teenager');
-Route::get('/profile/example/adults', [\App\Http\Controllers\ExampleProfileController::class, 'adults'])->name('profile.example.adults');
+Route::match(['get', 'post'], '/profile/example/child', [\App\Http\Controllers\ExampleProfileController::class, 'child'])->name('profile.example.child');
+Route::match(['get', 'post'], '/profile/example/teenager', [\App\Http\Controllers\ExampleProfileController::class, 'teenager'])->name('profile.example.teenager');
+Route::match(['get', 'post'], '/profile/example/adults', [\App\Http\Controllers\ExampleProfileController::class, 'adults'])->name('profile.example.adults');
 Route::get('/profile/{stage}', [ProfileViewController::class, 'show'])->name('profile.show');
 Route::get('/profile/{stage}/pin', [ProfileViewController::class, 'pinForm'])->name('profile.pin.form');
 Route::post('/profile/{stage}/pin', [ProfileViewController::class, 'verifyPin'])->name('profile.pin.verify');

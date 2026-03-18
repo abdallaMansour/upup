@@ -20,45 +20,22 @@
 <body>
 
     <!-- ====== TOP NAVBAR ====== -->
-    {{-- <nav class="top-navbar">
+    <nav class="top-navbar">
         <div class="container-fluid px-3">
             <div class="navbar-inner">
-                <!-- Right Side: Main nav buttons -->
                 <div class="nav-right">
-                    <a href="index.html" class="nav-btn" data-translate="navEditProfile">
-                        <i class="fas fa-user-edit"></i> مرحلة الطفولة
-                    </a>
-                    <button id="editProfileBtn" class="nav-btn nav-btn-primary active" data-translate="navAttendance">
-                        <i class="fas fa-shield-alt"></i> مرحلة المراهقة
-                    </button>
-                    <a href="#" class="nav-btn" data-translate="navExpenses">
-                        <i class="fas fa-file-invoice-dollar"></i> مرحلة الشباب و البلوغ
-                    </a>
-                    <button class="lang-btn" id="langBtnAr" onclick="toggleLanguage()">ع</button>
-                    <button class="lang-btn lang-btn-en" id="langBtnEn" onclick="toggleLanguage()">EN</button>
-
+                    <button class="lang-btn" id="langToggleBtn" onclick="toggleLanguage()" data-switch-to-ar="ع" data-switch-to-en="EN">EN</button>
                 </div>
-
-                <!-- Center: Theme Picker -->
-                <div class="nav-center">
-                    <span class="color-label" data-translate="colorLabel">ثيمات المراهقين</span>
-                    <span class="color-dot active-dot" style="background:linear-gradient(135deg, #A855F7 0%, #06B6D4 50%, #F472B6 100%);" data-theme="neon" onclick="changeTeenTheme(this)"
-                        title="Neon"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #22C55E 100%);" data-theme="electric" onclick="changeTeenTheme(this)"
-                        title="Electric"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #F97316 0%, #A855F7 50%, #EC4899 100%);" data-theme="creative" onclick="changeTeenTheme(this)"
-                        title="Creative"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #4C1D95 0%, #7C3AED 50%, #22D3EE 100%);" data-theme="cosmic" onclick="changeTeenTheme(this)"
-                        title="Cosmic"></span>
-                </div>
-
-                <!-- Left Side: Info label -->
                 <div class="nav-left">
-                    <span class="info-label" data-translate="navInfoLabel">أطفل نقال - المختبف وتغنيمة 🎨</span>
+                    <span class="expiry-badge" data-content-ar="تاريخ الانتهاء: {{ now()->addYear() }}" data-content-en="Expires: {{ now()->addYear() }}">{{ __('profile.expires_at') }}:
+                        {{ now()->addYear() }}</span>
+                    <a href="#" class="btn-logout">
+                        <i class="fas fa-sign-out-alt me-1"></i><span data-content-ar="تسجيل الخروج" data-content-en="Logout">{{ __('profile.logout') }}</span>
+                    </a>
                 </div>
             </div>
         </div>
-    </nav> --}}
+    </nav>
 
     <!-- ====== COVER / PROFILE HEADER ====== -->
     <section class="profile-cover">
@@ -128,8 +105,8 @@
     <section class="tab-navigation">
         <div class="container">
             <ul class="profile-tabs" id="profileTabs">
-                <li><a href="#tab-home" class="tab-link active" data-translate="tabHome"><i class="fas fa-home"></i> الرئيسية<div class="tab-star tab-star-1"><svg
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 784.11 815.53">
+                <li><a href="#tab-home" class="tab-link active" data-translate="tabHome"><i class="fas fa-home"></i> الرئيسية<div class="tab-star tab-star-1"><svg xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 784.11 815.53">
                                 <path class="fil0"
                                     d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.05,-407.78z" />
                             </svg></div>
@@ -1649,7 +1626,7 @@
                         infoDate.innerHTML = '<i class="fas fa-calendar-alt"></i> ' + dayName + ' ' + dayDate + (dayTime ? ' &nbsp;&bull;&nbsp; <i class="fas fa-clock"></i> ' + dayTime : '');
                         let statsHtml = '';
                         if (heightVal) statsHtml += '<span class="frame-stat"><i class="fas fa-arrows-alt-v"></i> ' + (isAr ? 'الطول: ' : 'Height: ') + heightVal + ' ' + heightUnit +
-                        '</span>';
+                            '</span>';
                         if (weightVal) statsHtml += '<span class="frame-stat"><i class="fas fa-weight"></i> ' + (isAr ? 'الوزن: ' : 'Weight: ') + weightVal + ' ' + weightUnit + '</span>';
                         infoStats.innerHTML = statsHtml;
                         infoPanel.style.display = 'block';

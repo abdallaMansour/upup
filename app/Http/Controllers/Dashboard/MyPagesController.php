@@ -392,28 +392,28 @@ class MyPagesController extends Controller
 
         $lifeStage = $stage->life_stage;
         $childThemes = [
-            ['id' => 'playfulRed', 'style' => 'background:linear-gradient(135deg, #e74c3c 0%, #ff9800 50%, #ffb74d 100%);', 'title' => 'Playful Red'],
-            ['id' => 'oceanBlue', 'style' => 'background:linear-gradient(135deg, #1e88e5 0%, #42a5f5 50%, #90caf9 100%);', 'title' => 'Ocean Blue'],
-            ['id' => 'forestGreen', 'style' => 'background:linear-gradient(135deg, #43a047 0%, #66bb6a 50%, #a5d6a7 100%);', 'title' => 'Forest Green'],
-            ['id' => 'sunsetOrange', 'style' => 'background:linear-gradient(135deg, #ff6f00 0%, #ff9800 50%, #ffcc80 100%);', 'title' => 'Sunset Orange'],
-            ['id' => 'purpleDreams', 'style' => 'background:linear-gradient(135deg, #7b1fa2 0%, #ab47bc 50%, #ce93d8 100%);', 'title' => 'Purple Dreams'],
-            ['id' => 'candyPink', 'style' => 'background:linear-gradient(135deg, #ec407a 0%, #f48fb1 50%, #f8bbd0 100%);', 'title' => 'Candy Pink'],
-            ['id' => 'skyBlue', 'style' => 'background:linear-gradient(135deg, #039be5 0%, #4fc3f7 50%, #b3e5fc 100%);', 'title' => 'Sky Blue'],
-            ['id' => 'sunshineYellow', 'style' => 'background:linear-gradient(135deg, #fbc02d 0%, #fdd835 50%, #fff59d 100%);', 'title' => 'Sunshine Yellow'],
-            ['id' => 'berryPurple', 'style' => 'background:linear-gradient(135deg, #8e24aa 0%, #ba68c8 50%, #e1bee7 100%);', 'title' => 'Berry Purple'],
-            ['id' => 'mintFresh', 'style' => 'background:linear-gradient(135deg, #26a69a 0%, #4db6ac 50%, #b2dfdb 100%);', 'title' => 'Mint Fresh'],
+            ['id' => 'playfulRed', 'style' => 'background:linear-gradient(135deg, #e74c3c 0%, #ff9800 50%, #ffb74d 100%);', 'title' => 'Playful Red', 'dot' => '#e74c3c', 'badgeProducts' => '#e74c3c', 'badgeFollow' => '#fde8ea', 'badgeFollowText' => '#e74c3c'],
+            ['id' => 'oceanBlue', 'style' => 'background:linear-gradient(135deg, #1e88e5 0%, #42a5f5 50%, #90caf9 100%);', 'title' => 'Ocean Blue', 'dot' => '#1e88e5', 'badgeProducts' => '#1e88e5', 'badgeFollow' => '#e8ecff', 'badgeFollowText' => '#1e88e5'],
+            ['id' => 'forestGreen', 'style' => 'background:linear-gradient(135deg, #43a047 0%, #66bb6a 50%, #a5d6a7 100%);', 'title' => 'Forest Green', 'dot' => '#43a047', 'badgeProducts' => '#43a047', 'badgeFollow' => '#d8f3e0', 'badgeFollowText' => '#43a047'],
+            ['id' => 'sunsetOrange', 'style' => 'background:linear-gradient(135deg, #ff6f00 0%, #ff9800 50%, #ffcc80 100%);', 'title' => 'Sunset Orange', 'dot' => '#ff6f00', 'badgeProducts' => '#ff6f00', 'badgeFollow' => '#fff0e0', 'badgeFollowText' => '#ff6f00'],
+            ['id' => 'purpleDreams', 'style' => 'background:linear-gradient(135deg, #7b1fa2 0%, #ab47bc 50%, #ce93d8 100%);', 'title' => 'Purple Dreams', 'dot' => '#7b1fa2', 'badgeProducts' => '#7b1fa2', 'badgeFollow' => '#f0e4ff', 'badgeFollowText' => '#7b1fa2'],
+            ['id' => 'candyPink', 'style' => 'background:linear-gradient(135deg, #ec407a 0%, #f48fb1 50%, #f8bbd0 100%);', 'title' => 'Candy Pink', 'dot' => '#ec407a', 'badgeProducts' => '#ec407a', 'badgeFollow' => '#ffe0f0', 'badgeFollowText' => '#ec407a'],
+            ['id' => 'skyBlue', 'style' => 'background:linear-gradient(135deg, #039be5 0%, #4fc3f7 50%, #b3e5fc 100%);', 'title' => 'Sky Blue', 'dot' => '#039be5', 'badgeProducts' => '#039be5', 'badgeFollow' => '#caf0f8', 'badgeFollowText' => '#039be5'],
+            ['id' => 'sunshineYellow', 'style' => 'background:linear-gradient(135deg, #fbc02d 0%, #fdd835 50%, #fff59d 100%);', 'title' => 'Sunshine Yellow', 'dot' => '#fbc02d', 'badgeProducts' => '#fbc02d', 'badgeFollow' => '#fff9e6', 'badgeFollowText' => '#c49000'],
+            ['id' => 'berryPurple', 'style' => 'background:linear-gradient(135deg, #8e24aa 0%, #ba68c8 50%, #e1bee7 100%);', 'title' => 'Berry Purple', 'dot' => '#8e24aa', 'badgeProducts' => '#8e24aa', 'badgeFollow' => '#e1bee7', 'badgeFollowText' => '#8e24aa'],
+            ['id' => 'mintFresh', 'style' => 'background:linear-gradient(135deg, #26a69a 0%, #4db6ac 50%, #b2dfdb 100%);', 'title' => 'Mint Fresh', 'dot' => '#26a69a', 'badgeProducts' => '#26a69a', 'badgeFollow' => '#d9fdf3', 'badgeFollowText' => '#028a65'],
         ];
         $teenThemes = [
-            ['id' => 'neon', 'style' => 'background:linear-gradient(135deg, #A855F7 0%, #06B6D4 50%, #F472B6 100%);', 'title' => 'Neon'],
-            ['id' => 'electric', 'style' => 'background:linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #22C55E 100%);', 'title' => 'Electric'],
-            ['id' => 'creative', 'style' => 'background:linear-gradient(135deg, #F97316 0%, #A855F7 50%, #EC4899 100%);', 'title' => 'Creative'],
-            ['id' => 'cosmic', 'style' => 'background:linear-gradient(135deg, #4C1D95 0%, #7C3AED 50%, #22D3EE 100%);', 'title' => 'Cosmic'],
+            ['id' => 'neon', 'style' => 'background:linear-gradient(135deg, #A855F7 0%, #06B6D4 50%, #F472B6 100%);', 'title' => 'Neon', 'dot' => '#A855F7', 'badgeProducts' => '#A855F7', 'badgeFollow' => '#f0e4ff', 'badgeFollowText' => '#A855F7'],
+            ['id' => 'electric', 'style' => 'background:linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #22C55E 100%);', 'title' => 'Electric', 'dot' => '#3B82F6', 'badgeProducts' => '#3B82F6', 'badgeFollow' => '#dbeafe', 'badgeFollowText' => '#3B82F6'],
+            ['id' => 'creative', 'style' => 'background:linear-gradient(135deg, #F97316 0%, #A855F7 50%, #EC4899 100%);', 'title' => 'Creative', 'dot' => '#F97316', 'badgeProducts' => '#F97316', 'badgeFollow' => '#fff0e0', 'badgeFollowText' => '#F97316'],
+            ['id' => 'cosmic', 'style' => 'background:linear-gradient(135deg, #4C1D95 0%, #7C3AED 50%, #22D3EE 100%);', 'title' => 'Cosmic', 'dot' => '#4C1D95', 'badgeProducts' => '#4C1D95', 'badgeFollow' => '#ede9fe', 'badgeFollowText' => '#4C1D95'],
         ];
         $adultThemes = [
-            ['id' => 'royalGold', 'style' => 'background:linear-gradient(135deg, #D4AF37 0%, #111827 100%);', 'title' => 'Royal Gold'],
-            ['id' => 'platinumSilver', 'style' => 'background:linear-gradient(135deg, #C0C0C0 0%, #0F172A 100%);', 'title' => 'Platinum Silver'],
-            ['id' => 'roseGold', 'style' => 'background:linear-gradient(135deg, #B76E79 0%, #1A0A0F 100%);', 'title' => 'Rose Gold'],
-            ['id' => 'indigoNight', 'style' => 'background:linear-gradient(135deg, #6366F1 0%, #020617 100%);', 'title' => 'Indigo Night'],
+            ['id' => 'royalGold', 'style' => 'background:linear-gradient(135deg, #D4AF37 0%, #111827 100%);', 'title' => 'Royal Gold', 'dot' => '#D4AF37', 'badgeProducts' => '#D4AF37', 'badgeFollow' => '#fef9e7', 'badgeFollowText' => '#b8860b'],
+            ['id' => 'platinumSilver', 'style' => 'background:linear-gradient(135deg, #C0C0C0 0%, #0F172A 100%);', 'title' => 'Platinum Silver', 'dot' => '#C0C0C0', 'badgeProducts' => '#94a3b8', 'badgeFollow' => '#f1f5f9', 'badgeFollowText' => '#64748b'],
+            ['id' => 'roseGold', 'style' => 'background:linear-gradient(135deg, #B76E79 0%, #1A0A0F 100%);', 'title' => 'Rose Gold', 'dot' => '#B76E79', 'badgeProducts' => '#B76E79', 'badgeFollow' => '#fce7e9', 'badgeFollowText' => '#B76E79'],
+            ['id' => 'indigoNight', 'style' => 'background:linear-gradient(135deg, #6366F1 0%, #020617 100%);', 'title' => 'Indigo Night', 'dot' => '#6366F1', 'badgeProducts' => '#6366F1', 'badgeFollow' => '#e0e7ff', 'badgeFollowText' => '#6366F1'],
         ];
         $themes = match ($lifeStage) {
             'child' => $childThemes,
@@ -422,7 +422,7 @@ class MyPagesController extends Controller
             default => $childThemes,
         };
 
-        return view('dashboard.my-pages.theme-lang', compact('stage', 'themes'));
+        return view('dashboard.my-pages.theme-lang', compact('stage', 'themes', 'lifeStage'));
     }
 
     public function updateThemeAndLang(Request $request, UserChildhoodStage $stage)

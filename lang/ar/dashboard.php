@@ -13,7 +13,8 @@ return [
     ],
 
     'subscription_countdown' => [
-        'title' => 'متبقي على انتهاء اشتراكك',
+        'title' => 'انتهاء الاشتراك',
+        'expires_on' => 'ينتهي اشتراكك في',
         'days' => 'يوم',
         'hours' => 'ساعة',
         'minutes' => 'دقيقة',

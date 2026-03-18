@@ -13,7 +13,8 @@ return [
     ],
 
     'subscription_countdown' => [
-        'title' => 'Time left until your subscription expires',
+        'title' => 'Subscription Expiry',
+        'expires_on' => 'Your subscription expires on',
         'days' => 'days',
         'hours' => 'hours',
         'minutes' => 'minutes',

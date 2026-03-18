@@ -11,39 +11,27 @@
                 $expiresAt = $subscription?->expires_at;
             @endphp
             @if ($expiresAt && $expiresAt->isFuture())
-                <div class="card mb-4 border-primary subscription-countdown-card">
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="rounded-circle d-inline-flex align-items-center justify-content-center bg-label-primary" style="width: 48px; height: 48px;">
-                                    <i class="bx bx-time-five bx-lg text-primary"></i>
-                                </span>
-                                <div>
-                                    <h6 class="mb-0">{{ __('dashboard.subscription_countdown.title') }}</h6>
-                                    <small class="text-body-secondary">{{ $expiresAt->format('Y-m-d H:i') }}</small>
-                                </div>
-                            </div>
-                            <div class="subscription-countdown d-flex gap-2 flex-wrap" data-expires-at="{{ $expiresAt->format('c') }}">
-                                <div class="countdown-item">
-                                    <span class="countdown-value" data-unit="days">0</span>
-                                    <span class="countdown-label">{{ __('dashboard.subscription_countdown.days') }}</span>
-                                </div>
-                                <div class="countdown-item">
-                                    <span class="countdown-value" data-unit="hours">0</span>
-                                    <span class="countdown-label">{{ __('dashboard.subscription_countdown.hours') }}</span>
-                                </div>
-                                <div class="countdown-item">
-                                    <span class="countdown-value" data-unit="minutes">0</span>
-                                    <span class="countdown-label">{{ __('dashboard.subscription_countdown.minutes') }}</span>
-                                </div>
-                                <div class="countdown-item">
-                                    <span class="countdown-value" data-unit="seconds">0</span>
-                                    <span class="countdown-label">{{ __('dashboard.subscription_countdown.seconds') }}</span>
-                                </div>
-                            </div>
-                            <a href="{{ route('dashboard.packages.index') }}" class="btn btn-sm btn-primary">{{ __('dashboard.subscription_countdown.renew') }}</a>
+                <div class="sub-banner subscription-countdown-card mb-4" data-expired-text="{{ __('dashboard.subscription_countdown.expired') }}">
+                    <div class="sub-banner-right">
+                        <div class="sub-title">
+                            <i class="bx bx-time-five bx-md"></i>
+                            {{ __('dashboard.subscription_countdown.title') }}
                         </div>
+                        <div class="sub-expire">{{ __('dashboard.subscription_countdown.expires_on') }} <strong>{{ $expiresAt->format('Y-m-d H:i') }}</strong></div>
                     </div>
+                    <div class="sub-countdown subscription-countdown" data-expires-at="{{ $expiresAt->format('c') }}">
+                        <div class="cd-box"><span class="cd-num" data-unit="days">0</span><span class="cd-label">{{ __('dashboard.subscription_countdown.days') }}</span></div>
+                        <div class="cd-sep">:</div>
+                        <div class="cd-box"><span class="cd-num" data-unit="hours">00</span><span class="cd-label">{{ __('dashboard.subscription_countdown.hours') }}</span></div>
+                        <div class="cd-sep">:</div>
+                        <div class="cd-box"><span class="cd-num" data-unit="minutes">00</span><span class="cd-label">{{ __('dashboard.subscription_countdown.minutes') }}</span></div>
+                        <div class="cd-sep">:</div>
+                        <div class="cd-box"><span class="cd-num" data-unit="seconds">00</span><span class="cd-label">{{ __('dashboard.subscription_countdown.seconds') }}</span></div>
+                    </div>
+                    <a href="{{ route('dashboard.packages.index') }}" class="btn-renew">
+                        <i class="bx bx-refresh"></i>
+                        {{ __('dashboard.subscription_countdown.renew') }}
+                    </a>
                 </div>
             @elseif ($subscription && $expiresAt && $expiresAt->isPast())
                 <div class="alert alert-warning d-flex align-items-center gap-2 mb-4" role="alert">
@@ -1205,23 +1193,88 @@
 @if (auth('web')->check())
     @section('page-css')
     <style>
-        .countdown-item {
+        /* Subscription countdown - design from color-theme-selector */
+        .sub-banner {
+            background: #0d0d0d;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 24px 40px;
+            border-radius: 12px;
+        }
+        .sub-banner-right { }
+        .sub-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .sub-title i { color: #e63946; }
+        .sub-expire {
+            font-size: 13px;
+            color: #aaa;
+        }
+        .sub-expire strong { color: #fff; }
+        .sub-countdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cd-box {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 10px;
+            min-width: 68px;
+            padding: 10px 14px;
             text-align: center;
-            min-width: 56px;
-            padding: 8px 12px;
-            background: var(--bs-body-bg);
-            border-radius: 8px;
-            border: 1px solid var(--bs-border-color);
         }
-        .countdown-value {
+        .cd-num {
             display: block;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--bs-primary);
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
         }
-        .countdown-label {
-            font-size: 0.7rem;
-            color: var(--bs-secondary);
+        .cd-label {
+            display: block;
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .cd-sep {
+            font-size: 24px;
+            font-weight: 800;
+            color: #e63946;
+            line-height: 1;
+            margin-bottom: 14px;
+        }
+        .btn-renew {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1.5px solid #555;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: border-color .2s, background .2s;
+            white-space: nowrap;
+        }
+        .btn-renew:hover { border-color: #e63946; background: rgba(230,57,70,.1); color: #fff; }
+        @media (max-width: 768px) {
+            .sub-banner { padding: 20px 20px; }
+            .cd-box { min-width: 56px; padding: 8px 10px; }
+            .cd-num { font-size: 22px; }
         }
     </style>
     @endsection
@@ -1257,25 +1310,38 @@
                 const countdownEl = document.querySelector('.subscription-countdown');
                 if (countdownEl) {
                     const expiresAt = new Date(countdownEl.dataset.expiresAt);
+                    let timer;
                     function updateCountdown() {
                         const now = new Date();
                         let diff = expiresAt - now;
                         if (diff <= 0) {
                             diff = 0;
-                            clearInterval(timer);
-                            countdownEl.closest('.subscription-countdown-card')?.querySelector('.countdown-value')?.closest('.subscription-countdown')?.insertAdjacentHTML('beforebegin', '<span class="text-danger fw-bold">انتهى</span>');
+                            if (timer) clearInterval(timer);
+                            const card = countdownEl.closest('.subscription-countdown-card');
+                            if (card) {
+                                countdownEl.style.display = 'none';
+                                const expiredMsg = document.createElement('span');
+                                expiredMsg.className = 'text-danger fw-bold';
+                                expiredMsg.textContent = card.dataset.expiredText || 'Expired';
+                                countdownEl.parentElement.insertBefore(expiredMsg, countdownEl);
+                            }
                         }
                         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                         const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                        countdownEl.querySelector('[data-unit="days"]').textContent = days;
-                        countdownEl.querySelector('[data-unit="hours"]').textContent = String(hours).padStart(2, '0');
-                        countdownEl.querySelector('[data-unit="minutes"]').textContent = String(minutes).padStart(2, '0');
-                        countdownEl.querySelector('[data-unit="seconds"]').textContent = String(seconds).padStart(2, '0');
+                        const pad = n => String(n).padStart(2, '0');
+                        const daysEl = countdownEl.querySelector('[data-unit="days"]');
+                        const hoursEl = countdownEl.querySelector('[data-unit="hours"]');
+                        const minsEl = countdownEl.querySelector('[data-unit="minutes"]');
+                        const secsEl = countdownEl.querySelector('[data-unit="seconds"]');
+                        if (daysEl) daysEl.textContent = pad(days);
+                        if (hoursEl) hoursEl.textContent = pad(hours);
+                        if (minsEl) minsEl.textContent = pad(minutes);
+                        if (secsEl) secsEl.textContent = pad(seconds);
                     }
                     updateCountdown();
-                    const timer = setInterval(updateCountdown, 1000);
+                    timer = setInterval(updateCountdown, 1000);
                 }
             });
         </script>

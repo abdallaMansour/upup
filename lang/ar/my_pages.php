@@ -27,6 +27,8 @@ return [
     'confirm_delete_input_label' => 'اكتب الاسم للتأكيد',
     'name_mismatch' => 'الاسم غير مطابق',
     'theme_language' => 'الثيم واللغة',
+    'theme_lang_hint' => 'اختر ثيم ولون الصفحة واللغة الافتراضية',
+    'preview_link' => 'معاينة الرابط الشخصي',
     'theme_lang_saved' => 'تم حفظ الثيم واللغة بنجاح.',
     'theme_label' => 'الثيم',
     'default_language_label' => 'اللغة الافتراضية',

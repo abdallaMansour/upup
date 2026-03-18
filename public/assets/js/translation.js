@@ -16,7 +16,7 @@ const translations = {
         navInfoLabel: 'أطفل نقال - المختبف وتغنيمة 🎨',
 
         // Cover
-        btnEditCover: 'تحديث صورة الغلاف',
+        btnEditCover: 'تحديث صورة البروفايل',
         profileName: 'محمد عبدالله',
         badgeChildhood: 'صدقة الطفولة',
         profileBio: 'طفلي عزاز يحب الاستكشاف والتعليم 🎓',
@@ -88,7 +88,7 @@ const translations = {
         labelBio: 'النبـذة التعريفية',
         labelProfileImage: 'صورة الملف الشخصي',
         hintProfileImage: 'اترك فارغاً لاستخدام الأيقونة الافتراضية',
-        labelCoverImage: 'صورة الغلاف',
+        labelCoverImage: 'صورة البروفايل',
         hintCoverImage: 'اترك فارغاً لاستخدام التدرج الافتراضي',
         dragDropText: 'اختر صورة من جهازك',
         btnChooseFile: 'اختر ملف',
@@ -276,7 +276,7 @@ const translations = {
         statAge: 'العمر (سنة)',
 
         // JS / Modal strings
-        modalCoverImage: 'صورة الغلاف',
+        modalCoverImage: 'صورة البروفايل',
         modalProfileImage: 'الصورة الشخصية',
         modalMeasurementsTitle: 'سجل القياسات',
         modalHeightLabel: 'الطول: ',

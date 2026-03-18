@@ -103,6 +103,7 @@ Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function
         Route::get('my-pages/{stage}/documents', [MyPagesController::class, 'documents'])->name('my-pages.documents');
         Route::put('my-pages/{stage}/education-sections', [MyPagesController::class, 'updateEducationSections'])->name('my-pages.education-sections.update');
         Route::post('my-pages/{stage}/permissions', [MyPagesController::class, 'storePermission'])->name('my-pages.permissions.store');
+        Route::get('my-pages/{stage}/theme-lang', [MyPagesController::class, 'showThemeLang'])->name('my-pages.theme-lang');
         Route::put('my-pages/{stage}/theme-lang', [MyPagesController::class, 'updateThemeAndLang'])->name('my-pages.theme-lang.update');
         Route::delete('my-pages/{stage}', [MyPagesController::class, 'destroy'])->name('my-pages.destroy');
 

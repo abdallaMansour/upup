@@ -27,6 +27,8 @@ return [
     'confirm_delete_input_label' => 'Type the name to confirm',
     'name_mismatch' => 'Name does not match',
     'theme_language' => 'Theme & Language',
+    'theme_lang_hint' => 'Choose the page theme and default language',
+    'preview_link' => 'Preview personal link',
     'theme_lang_saved' => 'Theme and language saved successfully.',
     'theme_label' => 'Theme',
     'default_language_label' => 'Default language',

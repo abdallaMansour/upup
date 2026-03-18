@@ -1224,7 +1224,7 @@
                 coverGradient.addEventListener('click', function() {
                     // Use a default cover image or fetch from profileData
                     const coverImg = 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&h=600&fit=crop';
-                    openFrameModal(coverImg, document.documentElement.dir === 'rtl' ? 'صورة الغلاف' : 'Cover Photo');
+                    openFrameModal(coverImg, document.documentElement.dir === 'rtl' ? 'صورة البروفايل' : 'Cover Photo');
                 });
             }
 

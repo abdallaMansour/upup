@@ -382,6 +382,49 @@ class MyPagesController extends Controller
         return redirect()->back()->with('success', 'تم إرسال البريد بنجاح.');
     }
 
+    public function showThemeLang(UserChildhoodStage $stage)
+    {
+        $this->ensureWebUser();
+        $user = request()->user();
+        if ($stage->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $lifeStage = $stage->life_stage;
+        $childThemes = [
+            ['id' => 'playfulRed', 'style' => 'background:linear-gradient(135deg, #e74c3c 0%, #ff9800 50%, #ffb74d 100%);', 'title' => 'Playful Red'],
+            ['id' => 'oceanBlue', 'style' => 'background:linear-gradient(135deg, #1e88e5 0%, #42a5f5 50%, #90caf9 100%);', 'title' => 'Ocean Blue'],
+            ['id' => 'forestGreen', 'style' => 'background:linear-gradient(135deg, #43a047 0%, #66bb6a 50%, #a5d6a7 100%);', 'title' => 'Forest Green'],
+            ['id' => 'sunsetOrange', 'style' => 'background:linear-gradient(135deg, #ff6f00 0%, #ff9800 50%, #ffcc80 100%);', 'title' => 'Sunset Orange'],
+            ['id' => 'purpleDreams', 'style' => 'background:linear-gradient(135deg, #7b1fa2 0%, #ab47bc 50%, #ce93d8 100%);', 'title' => 'Purple Dreams'],
+            ['id' => 'candyPink', 'style' => 'background:linear-gradient(135deg, #ec407a 0%, #f48fb1 50%, #f8bbd0 100%);', 'title' => 'Candy Pink'],
+            ['id' => 'skyBlue', 'style' => 'background:linear-gradient(135deg, #039be5 0%, #4fc3f7 50%, #b3e5fc 100%);', 'title' => 'Sky Blue'],
+            ['id' => 'sunshineYellow', 'style' => 'background:linear-gradient(135deg, #fbc02d 0%, #fdd835 50%, #fff59d 100%);', 'title' => 'Sunshine Yellow'],
+            ['id' => 'berryPurple', 'style' => 'background:linear-gradient(135deg, #8e24aa 0%, #ba68c8 50%, #e1bee7 100%);', 'title' => 'Berry Purple'],
+            ['id' => 'mintFresh', 'style' => 'background:linear-gradient(135deg, #26a69a 0%, #4db6ac 50%, #b2dfdb 100%);', 'title' => 'Mint Fresh'],
+        ];
+        $teenThemes = [
+            ['id' => 'neon', 'style' => 'background:linear-gradient(135deg, #A855F7 0%, #06B6D4 50%, #F472B6 100%);', 'title' => 'Neon'],
+            ['id' => 'electric', 'style' => 'background:linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #22C55E 100%);', 'title' => 'Electric'],
+            ['id' => 'creative', 'style' => 'background:linear-gradient(135deg, #F97316 0%, #A855F7 50%, #EC4899 100%);', 'title' => 'Creative'],
+            ['id' => 'cosmic', 'style' => 'background:linear-gradient(135deg, #4C1D95 0%, #7C3AED 50%, #22D3EE 100%);', 'title' => 'Cosmic'],
+        ];
+        $adultThemes = [
+            ['id' => 'royalGold', 'style' => 'background:linear-gradient(135deg, #D4AF37 0%, #111827 100%);', 'title' => 'Royal Gold'],
+            ['id' => 'platinumSilver', 'style' => 'background:linear-gradient(135deg, #C0C0C0 0%, #0F172A 100%);', 'title' => 'Platinum Silver'],
+            ['id' => 'roseGold', 'style' => 'background:linear-gradient(135deg, #B76E79 0%, #1A0A0F 100%);', 'title' => 'Rose Gold'],
+            ['id' => 'indigoNight', 'style' => 'background:linear-gradient(135deg, #6366F1 0%, #020617 100%);', 'title' => 'Indigo Night'],
+        ];
+        $themes = match ($lifeStage) {
+            'child' => $childThemes,
+            'teenager' => $teenThemes,
+            'adult' => $adultThemes,
+            default => $childThemes,
+        };
+
+        return view('dashboard.my-pages.theme-lang', compact('stage', 'themes'));
+    }
+
     public function updateThemeAndLang(Request $request, UserChildhoodStage $stage)
     {
         $this->ensureWebUser();
@@ -413,7 +456,7 @@ class MyPagesController extends Controller
             'default_language' => ! empty($validated['default_language']) ? $validated['default_language'] : null,
         ]);
 
-        return redirect()->back()->with('success', __('my_pages.theme_lang_saved'));
+        return redirect()->route('dashboard.my-pages.theme-lang', $stage)->with('success', __('my_pages.theme_lang_saved'));
     }
 
     public function destroy(Request $request, UserChildhoodStage $stage)

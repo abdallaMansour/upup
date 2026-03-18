@@ -1,7 +1,7 @@
 @props(['educationYears' => [], 'stage'])
 
 @if (empty($educationYears))
-    <p class="text-muted text-center py-5 w-100">لا توجد بيانات مرتبطة بالمراحل التعليمية. يمكنك ربط الأقسام (الطول والوزن، الإنجازات، إلخ) من لوحة التحكم.</p>
+    <p class="text-muted text-center py-5 w-100" data-translate="emptyEduData">لا توجد بيانات مرتبطة بالمراحل التعليمية. يمكنك ربط الأقسام (الطول والوزن، الإنجازات، إلخ) من لوحة التحكم.</p>
 @else
     <div class="edu-stage-panel active">
         @foreach ($educationYears as $year => $data)
@@ -9,9 +9,12 @@
                 $hw = $data['height_weight'] ?? null;
                 $events = $data['events'] ?? [];
                 $yearTitle = "سنة {$year}";
-                $ageStr = $stage->birth_date ? ($year - $stage->birth_date->format('Y')) . ' سنوات' : '';
-                $heightStr = $hw ? $hw->height . ' سم' : '';
-                $weightStr = $hw ? $hw->weight . ' كج' : '';
+                $ageNum = $stage->birth_date ? ($year - $stage->birth_date->format('Y')) : null;
+                $heightVal = $hw?->height;
+                $weightVal = $hw?->weight;
+                $ageStr = $ageNum !== null ? $ageNum . ' سنوات' : '';
+                $heightStr = $heightVal ? $heightVal . ' سم' : '';
+                $weightStr = $weightVal ? $weightVal . ' كج' : '';
                 $photos = [];
                 if ($hw?->imageDocument) {
                     $photos[] = route('profile.document.embed', [$stage, $hw->imageDocument]);
@@ -24,8 +27,8 @@
                     <div class="edu-year-right">
                         <span class="edu-timeline-dot"></span>
                         <div>
-                            <h5 class="edu-year-title">{{ $yearTitle }}</h5>
-                            <span class="edu-year-meta"><i class="fas fa-calendar"></i> {{ $year }}@if($ageStr) &nbsp; <i class="fas fa-child"></i> {{ $ageStr }}@endif</span>
+                            <h5 class="edu-year-title"><span data-translate="yearPrefix">سنة </span>{{ $year }}</h5>
+                            <span class="edu-year-meta"><i class="fas fa-calendar"></i> {{ $year }}@if($ageNum !== null) &nbsp; <i class="fas fa-child"></i> {{ $ageNum }} <span data-translate="unitYears">سنوات</span>@endif</span>
                         </div>
                     </div>
                     <div class="edu-year-left">
@@ -35,8 +38,8 @@
                 <div class="edu-year-body">
                     @if ($hw)
                         <div class="edu-year-stats">
-                            <span class="edu-stat"><i class="fas fa-ruler-vertical"></i> الطول: <strong>{{ $heightStr ?: '-' }}</strong></span>
-                            <span class="edu-stat"><i class="fas fa-weight"></i> الوزن: <strong>{{ $weightStr ?: '-' }}</strong></span>
+                            <span class="edu-stat"><i class="fas fa-ruler-vertical"></i> <span data-translate="labelHeight">الطول:</span> <strong>@if($heightVal){{ $heightVal }} <span data-translate="unitCm">سم</span>@else-@endif</strong></span>
+                            <span class="edu-stat"><i class="fas fa-weight"></i> <span data-translate="labelWeight">الوزن:</span> <strong>@if($weightVal){{ $weightVal }} <span data-translate="unitKg">كج</span>@else-@endif</strong></span>
                         </div>
                     @endif
                     @if (!empty($events))
@@ -87,9 +90,9 @@
                                         <span class="edu-event-date-small"><i class="fas fa-calendar-alt"></i> {{ $dateStr }}</span>
                                     </div>
                                     <div class="post-media-btns">
-                                        <button class="media-btn media-btn-blue edu-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
+                                        <button class="media-btn media-btn-blue edu-btn-details" data-translate-title="btnDetails"><i class="fas fa-th"></i></button>
                                         @if (!empty($photos))
-                                            <button class="media-btn media-btn-green edu-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
+                                            <button class="media-btn media-btn-green edu-btn-photos" data-translate-title="btnPhotos"><i class="fas fa-image"></i></button>
                                         @endif
                                     </div>
                                 </div>

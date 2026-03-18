@@ -10,6 +10,7 @@ use App\Models\UserDocument;
 use App\Services\AchievementService;
 use App\Services\TranslationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class AchievementController extends Controller
 {
@@ -68,8 +69,6 @@ class AchievementController extends Controller
             'type' => ['required', 'in:honor,success,championship,volunteering,appreciation,competition'],
             'title' => ['required', 'string', 'max:255'],
             'place' => ['nullable', 'string', 'max:255'],
-            'academic_year' => ['nullable', 'string', 'max:100'],
-            'school' => ['nullable', 'string', 'max:255'],
             'certificate_image' => ['nullable', 'file', 'image', 'max:10240'],
             'photos' => ['nullable', 'array'],
             'photos.*' => ['file', 'image', 'max:10240'],
@@ -79,6 +78,15 @@ class AchievementController extends Controller
 
         $stageId = $request->query('stage');
         $stage = $stageId ? UserChildhoodStage::where('id', $stageId)->where('user_id', $user->id)->first() : null;
+
+        $showInEducation = $request->boolean('show_in_education');
+        if ($showInEducation) {
+            $validated['school'] = $user->school_name ?? '';
+            $validated['academic_year'] = Carbon::parse($validated['record_date'])->format('Y');
+        } else {
+            $validated['school'] = '';
+            $validated['academic_year'] = '';
+        }
 
         $translatable = $translationService->prepareAchievementTranslatable($validated);
 
@@ -169,14 +177,21 @@ class AchievementController extends Controller
             'type' => ['required', 'in:honor,success,championship,volunteering,appreciation,competition'],
             'title' => ['required', 'string', 'max:255'],
             'place' => ['nullable', 'string', 'max:255'],
-            'academic_year' => ['nullable', 'string', 'max:100'],
-            'school' => ['nullable', 'string', 'max:255'],
             'certificate_image' => ['nullable', 'file', 'image', 'max:10240'],
             'photos' => ['nullable', 'array'],
             'photos.*' => ['file', 'image', 'max:10240'],
             'videos' => ['nullable', 'array'],
             'videos.*' => ['file', 'mimetypes:video/*', 'max:51200'],
         ]);
+
+        $showInEducation = $request->boolean('show_in_education');
+        if ($showInEducation) {
+            $validated['school'] = $user->school_name ?? '';
+            $validated['academic_year'] = Carbon::parse($validated['record_date'])->format('Y');
+        } else {
+            $validated['school'] = '';
+            $validated['academic_year'] = '';
+        }
 
         $translatable = $translationService->prepareAchievementTranslatable($validated);
 

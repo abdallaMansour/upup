@@ -71,24 +71,10 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12">
                         <label for="place" class="form-label">{{ __('documents.achievement_place') }}</label>
                         <input type="text" class="form-control @error('place') is-invalid @enderror" id="place" name="place" value="{{ old('place') }}">
                         @error('place')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-6">
-                        <label for="academic_year" class="form-label">{{ __('documents.achievement_academic_year') }}</label>
-                        <input type="text" class="form-control @error('academic_year') is-invalid @enderror" id="academic_year" name="academic_year" value="{{ old('academic_year') }}" placeholder="{{ __('documents.achievement_academic_year_placeholder') }}">
-                        @error('academic_year')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-12">
-                        <label for="school" class="form-label">{{ __('documents.achievement_school') }}</label>
-                        <input type="text" class="form-control @error('school') is-invalid @enderror" id="school" name="school" value="{{ old('school') }}">
-                        @error('school')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -121,6 +107,7 @@
                             <input type="checkbox" name="show_in_education" value="1" class="form-check-input" {{ old('show_in_education') ? 'checked' : '' }}>
                             <span class="form-check-label">{{ __('life_stages.show_in_education') }}</span>
                         </label>
+                        <small class="text-body-secondary d-block mt-1">{{ __('life_stages.achievement_education_hint') }}</small>
                     </div>
                 </div>
 

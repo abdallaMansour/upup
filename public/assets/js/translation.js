@@ -205,7 +205,88 @@ const translations = {
         infoAddPhotos: 'أضف صور إضافية (يمكن أكثر من صورة)',
         btnSaveInfo: 'حفظ المعلومة',
         noInformation: 'لم يتم إضافة معلومات بعد',
-        btnStartInfo: 'أضف أول معلومة'
+        btnStartInfo: 'أضف أول معلومة',
+
+        // Cover bio (all stages)
+        coverBioMyName: 'انا اسمي',
+        coverBioAndAge: 'و عمري',
+        unitYear: 'سنة',
+        unitYears: 'سنوات',
+        yearPrefix: 'سنة ',
+        badgeAdulthood: 'مرحلة البلوغ',
+        badgeTeenager: 'مرحلة المراهقة',
+        badgeChild: 'مرحلة الطفولة',
+
+        // Home events
+        homeEventsTitle: 'آخر الأحداث',
+        viewAllEvents: 'عرض الكل',
+
+        // Buttons
+        btnDetails: 'التفاصيل',
+        btnPhotos: 'الصور',
+
+        // Birth section labels
+        labelBloodType: 'فصيلة الدم',
+        labelFatherName: 'اسم الأب',
+        labelMotherName: 'اسم الأم',
+        labelDoctor: 'الطبيب',
+        altFootprint: 'بصمة القدم',
+
+        // Height / Adults
+        heightSubtitleAdults: 'تتبع النمو بمرور الوقت',
+        certsSubtitleAdults: 'وثّق إنجازاتك وشهاداتك',
+        recordedAt: 'تم التسجيل:',
+        timeAm: ' صباحاً',
+        timePm: ' مساءً',
+        unitCm: 'سم',
+        unitKg: 'كج',
+
+        // Education section
+        eduSectionTitle: 'المراحل التعليمية',
+        eduSectionSub: 'بطاقة كل سنة دراسية',
+
+        // Events section
+        eventsTitle: 'الأحداث',
+        eventsSubtitle: 'جميع الأحداث والمناسبات المهمة',
+        filterAll: 'الكل',
+        noEvents: 'لا توجد أحداث بعد.',
+        noEventsYet: 'لا توجد أحداث بعد',
+        noEventsInPeriod: 'لا توجد أحداث في هذه الفترة',
+
+        // Life Book
+        lifeBookTitle: 'كتاب الحياة',
+        viewLifeBook: 'عرض كتاب الحياة',
+
+        // Education years component
+        emptyEduData: 'لا توجد بيانات مرتبطة بالمراحل التعليمية. يمكنك ربط الأقسام (الطول والوزن، الإنجازات، إلخ) من لوحة التحكم.',
+        labelHeight: 'الطول:',
+        labelWeight: 'الوزن:',
+        badgeHonor: 'تكريم',
+        badgeAchievementSuccess: 'نجاح',
+        badgeVisit: 'زيارة',
+        badgeEvent: 'حدث',
+        badgeDrawing: 'رسم',
+        badgeVoice: 'صوت',
+        badgeInjury: 'إصابة',
+
+        // Stats (adults/child/teen)
+        statVisits: 'الزيارات والأحداث',
+        statAchievements: 'الإنجازات',
+        statMeasurements: 'سجل القياسات',
+        statAge: 'العمر (سنة)',
+
+        // JS / Modal strings
+        modalCoverImage: 'صورة الغلاف',
+        modalProfileImage: 'الصورة الشخصية',
+        modalMeasurementsTitle: 'سجل القياسات',
+        modalHeightLabel: 'الطول: ',
+        modalWeightLabel: 'الوزن: ',
+        modalMeasureImage: 'صورة القياس',
+        modalBirthPhotos: 'صور الولادة',
+        modalStageLabel: 'المرحلة:',
+        modalEventTypeLabel: 'نوع الحدث:',
+        modalGradeLabel: 'التقدير:',
+        sourceBirth: 'الولادة'
     },
 
     en: {
@@ -411,7 +492,88 @@ const translations = {
         infoAddPhotos: 'Add additional photos (multiple allowed)',
         btnSaveInfo: 'Save Information',
         noInformation: 'No information added yet',
-        btnStartInfo: 'Add First Information'
+        btnStartInfo: 'Add First Information',
+
+        // Cover bio (all stages)
+        coverBioMyName: 'My name is',
+        coverBioAndAge: 'and I am',
+        unitYear: 'year',
+        unitYears: 'years',
+        yearPrefix: 'Year ',
+        badgeAdulthood: 'Adulthood',
+        badgeTeenager: 'Teenage',
+        badgeChild: 'Childhood',
+
+        // Home events
+        homeEventsTitle: 'Latest Events',
+        viewAllEvents: 'View All',
+
+        // Buttons
+        btnDetails: 'Details',
+        btnPhotos: 'Photos',
+
+        // Birth section labels
+        labelBloodType: 'Blood Type',
+        labelFatherName: "Father's Name",
+        labelMotherName: "Mother's Name",
+        labelDoctor: 'Doctor',
+        altFootprint: 'Footprint',
+
+        // Height / Adults
+        heightSubtitleAdults: 'Track growth over time',
+        certsSubtitleAdults: 'Document your achievements and certificates',
+        recordedAt: 'Recorded:',
+        timeAm: ' AM',
+        timePm: ' PM',
+        unitCm: 'cm',
+        unitKg: 'kg',
+
+        // Education section
+        eduSectionTitle: 'Educational Stages',
+        eduSectionSub: 'Card for each academic year',
+
+        // Events section
+        eventsTitle: 'Events',
+        eventsSubtitle: 'All events and important occasions',
+        filterAll: 'All',
+        noEvents: 'No events yet.',
+        noEventsYet: 'No events yet',
+        noEventsInPeriod: 'No events in this period',
+
+        // Life Book
+        lifeBookTitle: 'Life Book',
+        viewLifeBook: 'View Life Book',
+
+        // Education years component
+        emptyEduData: 'No data linked to educational stages. You can link sections (height, weight, achievements, etc.) from the dashboard.',
+        labelHeight: 'Height:',
+        labelWeight: 'Weight:',
+        badgeHonor: 'Honor',
+        badgeAchievementSuccess: 'Success',
+        badgeVisit: 'Visit',
+        badgeEvent: 'Event',
+        badgeDrawing: 'Drawing',
+        badgeVoice: 'Voice',
+        badgeInjury: 'Injury',
+
+        // Stats (adults/child/teen)
+        statVisits: 'Visits & Events',
+        statAchievements: 'Achievements',
+        statMeasurements: 'Growth Records',
+        statAge: 'Age (years)',
+
+        // JS / Modal strings
+        modalCoverImage: 'Cover Image',
+        modalProfileImage: 'Profile Image',
+        modalMeasurementsTitle: 'Growth Records',
+        modalHeightLabel: 'Height: ',
+        modalWeightLabel: 'Weight: ',
+        modalMeasureImage: 'Measurement Image',
+        modalBirthPhotos: 'Birth Photos',
+        modalStageLabel: 'Stage:',
+        modalEventTypeLabel: 'Event Type:',
+        modalGradeLabel: 'Grade:',
+        sourceBirth: 'Birth'
     }
 };
 
@@ -419,6 +581,10 @@ const translations = {
    LANGUAGE STATE
    =========================== */
 let currentLanguage = 'ar';
+
+/* Expose for inline scripts */
+window.translations = translations;
+window.getCurrentLanguage = () => currentLanguage;
 
 /* Toggle Language */
 function toggleLanguage() {
@@ -444,6 +610,14 @@ function applyLanguage(lang) {
         }
     }
 
+    // Update title attributes
+    document.querySelectorAll('[data-translate-title]').forEach(el => {
+        const key = el.getAttribute('data-translate-title');
+        if (translations[lang] && translations[lang][key]) {
+            el.setAttribute('title', translations[lang][key]);
+        }
+    });
+
     // Update all translatable elements
     document.querySelectorAll('[data-translate]').forEach(el => {
         const key = el.getAttribute('data-translate');
@@ -453,18 +627,29 @@ function applyLanguage(lang) {
             const val = lang === 'ar' ? (contentAr || contentEn || '') : (contentEn || contentAr || '');
             if (el.tagName === 'TITLE') {
                 document.title = val || translations[lang]?.pageTitle || document.title;
+            } else if (el.tagName === 'IMG') {
+                el.setAttribute('alt', val || '');
             } else {
-                el.textContent = val;
+                const icon = el.querySelector(':scope > i');
+                if (icon) {
+                    el.innerHTML = icon.outerHTML + ' ' + (val || '').trim();
+                } else {
+                    el.textContent = val;
+                }
             }
             return;
         }
         if (translations[lang] && translations[lang][key]) {
-            const icon = el.querySelector('i');
-            if (icon) {
-                const iconHTML = icon.outerHTML;
-                el.innerHTML = iconHTML + ' ' + translations[lang][key];
+            const val = translations[lang][key];
+            if (el.tagName === 'IMG') {
+                el.setAttribute('alt', val);
             } else {
-                el.textContent = translations[lang][key];
+                const icon = el.querySelector('i');
+                if (icon) {
+                    el.innerHTML = icon.outerHTML + ' ' + val;
+                } else {
+                    el.textContent = val;
+                }
             }
         }
     });
@@ -475,7 +660,12 @@ function applyLanguage(lang) {
         const contentAr = el.getAttribute('data-content-ar') || '';
         const contentEn = el.getAttribute('data-content-en') || '';
         const val = lang === 'ar' ? (contentAr || contentEn) : (contentEn || contentAr);
-        el.textContent = val;
+        const icon = el.querySelector(':scope > i');
+        if (icon) {
+            el.innerHTML = icon.outerHTML + ' ' + (val || '').trim();
+        } else {
+            el.textContent = val;
+        }
     });
 
     // Update page title (if not handled by data-content above)
@@ -486,14 +676,26 @@ function applyLanguage(lang) {
 
     // Save preference
     localStorage.setItem('preferredLanguage', lang);
+
+    // Update single lang toggle button (shows language to switch TO)
+    updateLangToggleButton();
 }
 
-/* Init on load (stage default from DB takes priority, then localStorage) */
+function updateLangToggleButton() {
+    const btn = document.getElementById('langToggleBtn');
+    if (!btn) return;
+    btn.textContent = currentLanguage === 'ar' ? (btn.getAttribute('data-switch-to-en') || 'EN') : (btn.getAttribute('data-switch-to-ar') || 'ع');
+}
+
+/* Init on load (visitor's localStorage preference takes priority, then stage default) */
 document.addEventListener('DOMContentLoaded', function () {
     const stageLang = typeof window.stageDefaultLang !== 'undefined' && window.stageDefaultLang ? window.stageDefaultLang : null;
-    const saved = stageLang || localStorage.getItem('preferredLanguage');
+    const saved = localStorage.getItem('preferredLanguage') || stageLang;
     if (saved) {
         currentLanguage = saved;
         applyLanguage(currentLanguage);
+    } else {
+        currentLanguage = stageLang || 'ar';
+        updateLangToggleButton();
     }
 });

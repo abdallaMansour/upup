@@ -194,6 +194,10 @@ body {
   background: rgba(0, 0, 0, 0.03);
 }
 
+#langToggleBtn {
+  min-width: 36px;
+}
+
 /* Center: Color picker */
 .nav-center {
   display: flex;
@@ -236,11 +240,40 @@ body {
 .nav-left {
   display: flex;
   align-items: center;
+  gap: 12px;
 }
 
 .info-label {
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.expiry-badge {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+}
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-decoration: none;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 /* ===========================

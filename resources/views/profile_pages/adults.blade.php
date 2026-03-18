@@ -19,44 +19,7 @@
 
 <body>
 
-    <!-- ====== TOP NAVBAR ====== -->
-    {{-- <nav class="top-navbar">
-        <div class="container-fluid px-3">
-            <div class="navbar-inner">
-                <!-- Right Side: Main nav buttons -->
-                <div class="nav-right">
-                    <a href="index.html" class="nav-btn">
-                        <i class="fas fa-child"></i> مرحلة الطفولة
-                    </a>
-                    <a href="teen.html" class="nav-btn">
-                        <i class="fas fa-bolt"></i> مرحلة المراهقة
-                    </a>
-                    <button id="editProfileBtn" class="nav-btn nav-btn-primary active">
-                        <i class="fas fa-crown"></i> مرحلة الشباب و البلوغ
-                    </button>
-                    <button class="lang-btn" id="langBtnAr" onclick="toggleLanguage()">ع</button>
-                    <button class="lang-btn lang-btn-en" id="langBtnEn" onclick="toggleLanguage()">EN</button>
-
-                </div>
-
-                <!-- Center: Theme Picker -->
-                <div class="nav-center">
-                    <span class="color-label">ثيمات البلوغ</span>
-                    <span class="color-dot active-dot" style="background:linear-gradient(135deg, #D4AF37 0%, #111827 100%);" data-theme="royalGold" onclick="changeAdultTheme(this)"
-                        title="Royal Gold"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #C0C0C0 0%, #0F172A 100%);" data-theme="platinumSilver" onclick="changeAdultTheme(this)"
-                        title="Platinum Silver"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #B76E79 0%, #1A0A0F 100%);" data-theme="roseGold" onclick="changeAdultTheme(this)" title="Rose Gold"></span>
-                    <span class="color-dot" style="background:linear-gradient(135deg, #6366F1 0%, #020617 100%);" data-theme="indigoNight" onclick="changeAdultTheme(this)" title="Indigo Night"></span>
-                </div>
-
-                <!-- Left Side: Info label -->
-                <div class="nav-left">
-                    <span class="info-label">مرحلة البلوغ - النضج والتميز 👑</span>
-                </div>
-            </div>
-        </div>
-    </nav> --}}
+    @include('profile_pages.components.header', ['stage' => $stage, 'isPrivate' => $isPrivate ?? false, 'expiresAt' => $expiresAt ?? null])
 
     <!-- ====== COVER / PROFILE HEADER ====== -->
     <section class="profile-cover">
@@ -80,15 +43,15 @@
         <!-- Profile Info overlay at bottom-right of cover -->
         <div class="cover-profile-info">
             <div class="cover-profile-text">
-                <p class="cover-bio">انا اسمي </p>
+                <p class="cover-bio"><span data-translate="coverBioMyName">انا اسمي</span> </p>
                 <h1 class="cover-name" data-translate="profileName" data-content-ar="{{ $stage->name_ar ?? '' }}" data-content-en="{{ $stage->name_en ?? '' }}">{{ $stage->name }}</h1>
                 <p class="cover-bio">
                     @if ($stage->age_in_years !== null)
-                        و عمري {{ $stage->age_in_years }} سنة
+                        <span data-translate="coverBioAndAge">و عمري</span> {{ $stage->age_in_years }} <span data-translate="unitYear">سنة</span>
                     @endif
                 </p>
                 <div class="cover-badges" id="coverBadges">
-                    <span class="cover-badge">مرحلة البلوغ</span>
+                    <span class="cover-badge" data-translate="badgeAdulthood">مرحلة البلوغ</span>
                 </div>
                 @if ($stage->naming_reason)
                     <p class="cover-bio" data-content-ar="{{ $stage->naming_reason_ar ?? '' }}" data-content-en="{{ $stage->naming_reason_en ?? '' }}">{{ $stage->naming_reason }}</p>
@@ -124,19 +87,19 @@
             <div class="stats-row">
                 <div class="stat-item">
                     <span class="stat-num">{{ $visitsCount + $otherEventsCount }}</span>
-                    <span class="stat-lbl" data-translate="statPosts">الزيارات والأحداث</span>
+                    <span class="stat-lbl" data-translate="statVisits">الزيارات والأحداث</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-num">{{ $achievementsCount }}</span>
-                    <span class="stat-lbl" data-translate="statPoints">الإنجازات</span>
+                    <span class="stat-lbl" data-translate="statAchievements">الإنجازات</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-num">{{ $heightWeightsCount }}</span>
-                    <span class="stat-lbl" data-translate="statCategories">سجل القياسات</span>
+                    <span class="stat-lbl" data-translate="statMeasurements">سجل القياسات</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-num">{{ $stage->age_in_years ?? '-' }}</span>
-                    <span class="stat-lbl" data-translate="statStages">العمر (سنة)</span>
+                    <span class="stat-lbl" data-translate="statAge">العمر (سنة)</span>
                 </div>
             </div>
         </div>
@@ -278,7 +241,7 @@
                                     d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.05,-407.78z" />
                             </svg></div>
                     </a></li>
-                <li><a href="#tab-info" class="tab-link" data-translate="tabInfo"><i class="fas fa-calendar-check"></i>سسسس الأحداث<div class="tab-star tab-star-1"><svg
+                <li><a href="#tab-info" class="tab-link" data-translate="tabInfo"><i class="fas fa-calendar-check"></i>الأحداث<div class="tab-star tab-star-1"><svg
                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 784.11 815.53">
                                 <path class="fil0"
                                     d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.05,-407.78z" />
@@ -329,9 +292,13 @@
                                         (object) [
                                             'type' => 'visit',
                                             'title' => $v->title ?? 'زيارة',
+                                            'title_ar' => $v->title_ar ?? '',
+                                            'title_en' => $v->title_en ?? '',
                                             'record_date' => $v->record_date,
                                             'record_time' => $v->record_time_formatted ?? $v->record_time,
                                             'desc' => $v->other_info ?? '',
+                                            'desc_ar' => $v->other_info_ar ?? '',
+                                            'desc_en' => $v->other_info_en ?? '',
                                             'badge' => 'زيارة',
                                             'badge_class' => 'evt-milestone',
                                             'doc' => $v->mediaDocument,
@@ -345,9 +312,13 @@
                                         (object) [
                                             'type' => 'event',
                                             'title' => $e->title ?? 'حدث',
+                                            'title_ar' => $e->title_ar ?? '',
+                                            'title_en' => $e->title_en ?? '',
                                             'record_date' => $e->record_date,
                                             'record_time' => $e->record_time_formatted ?? $e->record_time,
                                             'desc' => $e->other_info ?? '',
+                                            'desc_ar' => $e->other_info_ar ?? '',
+                                            'desc_en' => $e->other_info_en ?? '',
                                             'badge' => 'حدث',
                                             'badge_class' => 'evt-education',
                                             'doc' => $e->mediaDocument,
@@ -365,9 +336,13 @@
                                         (object) [
                                             'type' => 'achievement',
                                             'title' => $a->title ?? 'إنجاز',
+                                            'title_ar' => $a->title_ar ?? '',
+                                            'title_en' => $a->title_en ?? '',
                                             'record_date' => $a->record_date,
                                             'record_time' => $a->record_time_formatted ?? $a->record_time,
                                             'desc' => $a->place ?? '',
+                                            'desc_ar' => $a->place_ar ?? '',
+                                            'desc_en' => $a->place_en ?? '',
                                             'badge' => $a->type_label ?? 'إنجاز',
                                             'badge_class' => 'evt-milestone',
                                             'doc' => $a->certificateImageDocument,
@@ -380,8 +355,8 @@
                             @endphp
                             <div class="home-events-section">
                                 <div class="home-events-header">
-                                    <h3><i class="fas fa-calendar-check"></i> آخر الأحداث</h3>
-                                    <a href="#tab-info" class="home-events-viewall" id="homeViewAllEvents"><i class="fas fa-arrow-left"></i> عرض الكل</a>
+                                    <h3><i class="fas fa-calendar-check"></i> <span data-translate="homeEventsTitle">آخر الأحداث</span></h3>
+                                    <a href="#tab-info" class="home-events-viewall" id="homeViewAllEvents"><i class="fas fa-arrow-left"></i> <span data-translate="viewAllEvents">عرض الكل</span></a>
                                 </div>
                                 <div class="events-list">
                                     @forelse($homeEvents as $evt)
@@ -409,11 +384,11 @@
                                                     <div class="event-meta-tags">
                                                         <span class="event-meta-tag"><i class="fas fa-bookmark"></i> {{ $evt->badge }}</span>
                                                         @if ($stage->age_in_years)
-                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
+                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} <span data-translate="unitYears">سنوات</span></span>
                                                         @endif
                                                     </div>
-                                                    <h4 class="event-card-title">{{ $evt->title }}</h4>
-                                                    <p class="event-card-desc">{{ Str::limit($evt->desc, 80) ?: $evt->title }}</p>
+                                                    <h4 class="event-card-title" data-content-ar="{{ $evt->title_ar ?? $evt->title }}" data-content-en="{{ $evt->title_en ?? $evt->title }}">{{ $evt->title }}</h4>
+                                                    <p class="event-card-desc" data-content-ar="{{ Str::limit($evt->desc_ar ?? '', 80) ?: ($evt->title_ar ?? $evt->title) }}" data-content-en="{{ Str::limit($evt->desc_en ?? '', 80) ?: ($evt->title_en ?? $evt->title) }}">{{ Str::limit($evt->desc, 80) ?: $evt->title }}</p>
                                                     <div class="event-date-row">
                                                         <span class="event-day-name">{{ $dayName }}</span>
                                                         @if ($dateStr)
@@ -423,13 +398,13 @@
                                                             <span><i class="fas fa-clock"></i> {{ $evt->record_time }}</span>
                                                         @endif
                                                         @if ($stage->age_in_years)
-                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
+                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} <span data-translate="unitYears">سنوات</span></span>
                                                         @endif
                                                     </div>
                                                     <div class="post-media-btns">
-                                                        <button class="media-btn media-btn-blue evt-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
+                                                        <button class="media-btn media-btn-blue evt-btn-details" data-translate-title="btnDetails"><i class="fas fa-th"></i></button>
                                                         @if (!empty($evt->photos))
-                                                            <button class="media-btn media-btn-green evt-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
+                                                            <button class="media-btn media-btn-green evt-btn-photos" data-translate-title="btnPhotos"><i class="fas fa-image"></i></button>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -462,10 +437,10 @@
                                     </div>
                                     <div class="footprint-container" id="footprintContainer">
                                         @if ($stage->footprintDocument)
-                                            <img src="{{ route('profile.document.embed', [$stage, $stage->footprintDocument]) }}" alt="بصمة القدم"
+                                            <img src="{{ route('profile.document.embed', [$stage, $stage->footprintDocument]) }}" alt="" data-translate="altFootprint"
                                                 style="width:100%;height:220px;object-fit:cover;border-radius:10px;display:block;">
                                         @else
-                                            <img src="https://images.unsplash.com/photo-1560328055-e938bb2ed50a?w=500&h=280&fit=crop" alt="بصمة القدم"
+                                            <img src="https://images.unsplash.com/photo-1560328055-e938bb2ed50a?w=500&h=280&fit=crop" alt="" data-translate="altFootprint"
                                                 style="width:100%;height:220px;object-fit:cover;border-radius:10px;display:block;">
                                         @endif
                                     </div>
@@ -511,7 +486,7 @@
                                                 <div class="birth-info-icon birth-icon-blue"><i class="fas fa-ruler-vertical"></i></div>
                                                 <div class="birth-info-detail">
                                                     <span class="birth-info-label" data-translate="birthHeightLabel">الطول عند الولادة</span>
-                                                    <span class="birth-info-value" id="birthHeightVal">{{ $stage->height }} سم</span>
+                                                    <span class="birth-info-value" id="birthHeightVal">{{ $stage->height }} <span data-translate="unitCm">سم</span></span>
                                                 </div>
                                             </div>
                                         @endif
@@ -520,7 +495,7 @@
                                                 <div class="birth-info-icon birth-icon-green"><i class="fas fa-weight"></i></div>
                                                 <div class="birth-info-detail">
                                                     <span class="birth-info-label" data-translate="birthWeightLabel">الوزن عند الولادة</span>
-                                                    <span class="birth-info-value" id="birthWeightVal">{{ $stage->weight }} كج</span>
+                                                    <span class="birth-info-value" id="birthWeightVal">{{ $stage->weight }} <span data-translate="unitKg">كج</span></span>
                                                 </div>
                                             </div>
                                         @endif
@@ -529,7 +504,7 @@
                                                 <div class="birth-info-icon birth-icon-orange"><i class="fas fa-hospital"></i></div>
                                                 <div class="birth-info-detail">
                                                     <span class="birth-info-label" data-translate="birthPlaceLabel">مكان الولادة</span>
-                                                    <span class="birth-info-value" id="birthPlaceVal">{{ $stage->birth_place }}</span>
+                                                    <span class="birth-info-value" id="birthPlaceVal" data-content-ar="{{ $stage->birth_place_ar ?? '' }}" data-content-en="{{ $stage->birth_place_en ?? '' }}">{{ $stage->birth_place }}</span>
                                                 </div>
                                             </div>
                                         @endif
@@ -537,7 +512,7 @@
                                             <div class="birth-info-item">
                                                 <div class="birth-info-icon birth-icon-pink"><i class="fas fa-tint"></i></div>
                                                 <div class="birth-info-detail">
-                                                    <span class="birth-info-label">فصيلة الدم</span>
+                                                    <span class="birth-info-label" data-translate="labelBloodType">فصيلة الدم</span>
                                                     <span class="birth-info-value">{{ $stage->blood_type }}</span>
                                                 </div>
                                             </div>
@@ -546,7 +521,7 @@
                                             <div class="birth-info-item">
                                                 <div class="birth-info-icon birth-icon-blue"><i class="fas fa-male"></i></div>
                                                 <div class="birth-info-detail">
-                                                    <span class="birth-info-label">اسم الأب</span>
+                                                    <span class="birth-info-label" data-translate="labelFatherName">اسم الأب</span>
                                                     <span class="birth-info-value" data-content-ar="{{ $stage->father_name_ar ?? '' }}" data-content-en="{{ $stage->father_name_en ?? '' }}">{{ $stage->father_name }}</span>
                                                 </div>
                                             </div>
@@ -555,7 +530,7 @@
                                             <div class="birth-info-item">
                                                 <div class="birth-info-icon birth-icon-purple"><i class="fas fa-female"></i></div>
                                                 <div class="birth-info-detail">
-                                                    <span class="birth-info-label">اسم الأم</span>
+                                                    <span class="birth-info-label" data-translate="labelMotherName">اسم الأم</span>
                                                     <span class="birth-info-value" data-content-ar="{{ $stage->mother_name_ar ?? '' }}" data-content-en="{{ $stage->mother_name_en ?? '' }}">{{ $stage->mother_name }}</span>
                                                 </div>
                                             </div>
@@ -564,7 +539,7 @@
                                             <div class="birth-info-item">
                                                 <div class="birth-info-icon birth-icon-green"><i class="fas fa-user-md"></i></div>
                                                 <div class="birth-info-detail">
-                                                    <span class="birth-info-label">الطبيب</span>
+                                                    <span class="birth-info-label" data-translate="labelDoctor">الطبيب</span>
                                                     <span class="birth-info-value" data-content-ar="{{ $stage->doctor_ar ?? '' }}" data-content-en="{{ $stage->doctor_en ?? '' }}">{{ $stage->doctor }}</span>
                                                 </div>
                                             </div>
@@ -608,7 +583,7 @@
                                         </div>
                                         <div>
                                             <h3 class="height-section-title" data-translate="heightTitle">سجل القياسات</h3>
-                                            <p class="height-section-sub">تتبع النمو بمرور الوقت</p>
+                                            <p class="height-section-sub" data-translate="heightSubtitleAdults">تتبع النمو بمرور الوقت</p>
 
                                         </div>
                                     </div>
@@ -626,14 +601,14 @@
                                         <i class="fas fa-arrows-alt-v" style="font-size:1.8rem;color:#D4AF37"></i>
                                         <div class="summary-info">
                                             <span class="summary-label" data-translate="latestHeight">آخر طول</span>
-                                            <span class="summary-value" id="latestHeightVal">{{ $latestHeight ? $latestHeight . ' سم' : '-' }}</span>
+                                            <span class="summary-value" id="latestHeightVal">@if($latestHeight){{ $latestHeight }} <span data-translate="unitCm">سم</span>@else-@endif</span>
                                         </div>
                                     </div>
                                     <div class="summary-card summary-card-blue">
                                         <i class="fas fa-weight" style="font-size:1.8rem;color:#D4AF37"></i>
                                         <div class="summary-info">
                                             <span class="summary-label" data-translate="latestWidth">آخر وزن</span>
-                                            <span class="summary-value" id="latestWeightVal">{{ $latestWeight ? $latestWeight . ' كج' : '-' }}</span>
+                                            <span class="summary-value" id="latestWeightVal">@if($latestWeight){{ $latestWeight }} <span data-translate="unitKg">كج</span>@else-@endif</span>
                                         </div>
                                     </div>
                                     <div class="summary-card summary-card-green">
@@ -666,8 +641,8 @@
                                                     @endif
                                                     @if ($hw->created_at)
                                                         <div class="measurement-note" style="font-size:0.7rem;color:#888;margin-top:4px">
-                                                            <i class="fas fa-edit" style="margin-left:4px;color:#aaa"></i> تم التسجيل: {{ $arDays[$hw->created_at->dayOfWeek] ?? '' }}
-                                                            {{ $hw->created_at->format('d-m-Y') }} – {{ $hw->created_at->format('g:i') }}{{ $hw->created_at->hour < 12 ? ' صباحاً' : ' مساءً' }}
+                                                            <i class="fas fa-edit" style="margin-left:4px;color:#aaa"></i> <span data-translate="recordedAt">تم التسجيل:</span> {{ $arDays[$hw->created_at->dayOfWeek] ?? '' }}
+                                                            {{ $hw->created_at->format('d-m-Y') }} – {{ $hw->created_at->format('g:i') }}@if($hw->created_at->hour < 12)<span data-translate="timeAm"> صباحاً</span>@else<span data-translate="timePm"> مساءً</span>@endif
                                                         </div>
                                                     @endif
                                                 </div>
@@ -677,17 +652,17 @@
                                                         <div class="measure-stat">
                                                             <div class="measure-stat-icon icon-height"><i class="fa-solid fa-arrow-up"></i></div>
                                                             <span class="measure-stat-val">{{ $hw->height ?? '-' }}</span>
-                                                            <span class="measure-stat-unit">سم</span>
+                                                            <span class="measure-stat-unit" data-translate="unitCm">سم</span>
                                                         </div>
                                                         <div class="measure-stat">
                                                             <div class="measure-stat-icon icon-width"><i class="fa-solid fa-dumbbell"></i></div>
                                                             <span class="measure-stat-val">{{ $hw->weight ?? '-' }}</span>
-                                                            <span class="measure-stat-unit">كج</span>
+                                                            <span class="measure-stat-unit" data-translate="unitKg">كج</span>
                                                         </div>
                                                         @if ($stage->age_in_years)
                                                             <div class="d-flex gap-2 wrap">
                                                                 <div class="measure-stat">
-                                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
+                                                                    <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} <span data-translate="unitYears">سنوات</span></span>
                                                                 </div>
                                                             </div>
                                                         @endif
@@ -719,7 +694,7 @@
                                         </div>
                                         <div>
                                             <h3 class="certs-section-title" data-translate="certsTitle">الشهادات والإنجازات</h3>
-                                            <p class="mt-3 certs-section-sub">وثّق إنجازاتك وشهاداتك</p>
+                                            <p class="mt-3 certs-section-sub" data-translate="certsSubtitleAdults">وثّق إنجازاتك وشهاداتك</p>
                                         </div>
                                     </div>
                                 </div>
@@ -757,7 +732,7 @@
                                                 <div class="cert-card-body">
                                                     @if ($stage->age_in_years)
                                                         <div class="mb-3">
-                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
+                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} <span data-translate="unitYears">سنوات</span></span>
                                                         </div>
                                                     @endif
                                                     <h4 class="cert-title"><i class="fas fa-graduation-cap" style="color:#7c4dff;margin-left:6px"></i> <span data-content-ar="{{ $ach->title_ar ?? '' }}" data-content-en="{{ $ach->title_en ?? '' }}">{{ $ach->title }}</span></h4>
@@ -774,9 +749,9 @@
                                                         @endif
                                                     </div>
                                                     <div class="post-media-btns">
-                                                        <button class="media-btn media-btn-blue cert-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
+                                                        <button class="media-btn media-btn-blue cert-btn-details" data-translate-title="btnDetails"><i class="fas fa-th"></i></button>
                                                         @if (!empty($photos))
-                                                            <button class="media-btn media-btn-green cert-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
+                                                            <button class="media-btn media-btn-green cert-btn-photos" data-translate-title="btnPhotos"><i class="fas fa-image"></i></button>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -798,8 +773,8 @@
                                             <i class="fas fa-graduation-cap" style="font-size:1.5rem;color:#D4AF37"></i>
                                         </div>
                                         <div>
-                                            <h3 class="edu-section-title">المراحل التعليمية</h3>
-                                            <p class="edu-section-sub mt-1">بطاقة كل سنة دراسية</p>
+                                            <h3 class="edu-section-title" data-translate="eduSectionTitle">المراحل التعليمية</h3>
+                                            <p class="edu-section-sub mt-1" data-translate="eduSectionSub">بطاقة كل سنة دراسية</p>
                                         </div>
                                     </div>
                                 </div>
@@ -817,9 +792,13 @@
                                         (object) [
                                             'type' => 'visit',
                                             'title' => $v->title ?? 'زيارة',
+                                            'title_ar' => $v->title_ar ?? '',
+                                            'title_en' => $v->title_en ?? '',
                                             'record_date' => $v->record_date,
                                             'record_time' => $v->record_time_formatted ?? $v->record_time,
                                             'desc' => $v->other_info ?? '',
+                                            'desc_ar' => $v->other_info_ar ?? '',
+                                            'desc_en' => $v->other_info_en ?? '',
                                             'badge' => 'زيارة',
                                             'badge_class' => 'evt-milestone',
                                             'doc' => $v->mediaDocument,
@@ -833,9 +812,13 @@
                                         (object) [
                                             'type' => 'event',
                                             'title' => $e->title ?? 'حدث',
+                                            'title_ar' => $e->title_ar ?? '',
+                                            'title_en' => $e->title_en ?? '',
                                             'record_date' => $e->record_date,
                                             'record_time' => $e->record_time_formatted ?? $e->record_time,
                                             'desc' => $e->other_info ?? '',
+                                            'desc_ar' => $e->other_info_ar ?? '',
+                                            'desc_en' => $e->other_info_en ?? '',
                                             'badge' => 'حدث',
                                             'badge_class' => 'evt-education',
                                             'doc' => $e->mediaDocument,
@@ -853,9 +836,13 @@
                                         (object) [
                                             'type' => 'achievement',
                                             'title' => $a->title ?? 'إنجاز',
+                                            'title_ar' => $a->title_ar ?? '',
+                                            'title_en' => $a->title_en ?? '',
                                             'record_date' => $a->record_date,
                                             'record_time' => $a->record_time_formatted ?? $a->record_time,
                                             'desc' => $a->place ?? '',
+                                            'desc_ar' => $a->place_ar ?? '',
+                                            'desc_en' => $a->place_en ?? '',
                                             'badge' => $a->type_label ?? 'إنجاز',
                                             'badge_class' => 'evt-milestone',
                                             'doc' => $a->certificateImageDocument,
@@ -875,15 +862,15 @@
                                             <i class="fas fa-calendar-check"></i>
                                         </div>
                                         <div>
-                                            <h3 class="events-section-title">الأحداث</h3>
-                                            <p class="events-section-sub">جميع الأحداث والمناسبات المهمة</p>
+                                            <h3 class="events-section-title" data-translate="eventsTitle">الأحداث</h3>
+                                            <p class="events-section-sub" data-translate="eventsSubtitle">جميع الأحداث والمناسبات المهمة</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Year Filter -->
                                 <div class="mt-4 events-filter">
-                                    <button class="events-filter-btn active" data-year="all"><i class="fas fa-layer-group"></i> الكل</button>
+                                    <button class="events-filter-btn active" data-year="all"><i class="fas fa-layer-group"></i> <span data-translate="filterAll">الكل</span></button>
                                     @foreach ($eventYears as $yr)
                                         <button class="events-filter-btn" data-year="{{ $yr }}">{{ (int)$yr - 1 }} - {{ $yr }}</button>
                                     @endforeach
@@ -917,11 +904,11 @@
                                                     <div class="event-meta-tags">
                                                         <span class="event-meta-tag"><i class="fas fa-bookmark"></i> {{ $evt->badge }}</span>
                                                         @if ($stage->age_in_years)
-                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
+                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} <span data-translate="unitYears">سنوات</span></span>
                                                         @endif
                                                     </div>
-                                                    <h4 class="event-card-title">{{ $evt->title }}</h4>
-                                                    <p class="event-card-desc">{{ Str::limit($evt->desc, 80) ?: $evt->title }}</p>
+                                                    <h4 class="event-card-title" data-content-ar="{{ $evt->title_ar ?? $evt->title }}" data-content-en="{{ $evt->title_en ?? $evt->title }}">{{ $evt->title }}</h4>
+                                                    <p class="event-card-desc" data-content-ar="{{ Str::limit($evt->desc_ar ?? '', 80) ?: ($evt->title_ar ?? $evt->title) }}" data-content-en="{{ Str::limit($evt->desc_en ?? '', 80) ?: ($evt->title_en ?? $evt->title) }}">{{ Str::limit($evt->desc, 80) ?: $evt->title }}</p>
                                                     <div class="event-date-row">
                                                         <span class="event-day-name">{{ $dayName }}</span>
                                                         @if ($dateStr)
@@ -931,13 +918,13 @@
                                                             <span><i class="fas fa-clock"></i> {{ $evt->record_time }}</span>
                                                         @endif
                                                         @if ($stage->age_in_years)
-                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} سنوات</span>
+                                                            <span class="event-meta-tag"><i class="fas fa-child"></i> {{ $stage->age_in_years }} <span data-translate="unitYears">سنوات</span></span>
                                                         @endif
                                                     </div>
                                                     <div class="post-media-btns">
-                                                        <button class="media-btn media-btn-blue evt-btn-details" title="التفاصيل"><i class="fas fa-th"></i></button>
+                                                        <button class="media-btn media-btn-blue evt-btn-details" data-translate-title="btnDetails"><i class="fas fa-th"></i></button>
                                                         @if (!empty($evt->photos))
-                                                            <button class="media-btn media-btn-green evt-btn-photos" title="الصور"><i class="fas fa-image"></i></button>
+                                                            <button class="media-btn media-btn-green evt-btn-photos" data-translate-title="btnPhotos"><i class="fas fa-image"></i></button>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -946,7 +933,7 @@
                                     @empty
                                         <div class="events-no-results">
                                             <i class="fas fa-search" style="font-size:2rem;color:var(--text-muted);opacity:0.4;"></i>
-                                            <p>لا توجد أحداث بعد</p>
+                                            <p data-translate="noEventsYet">لا توجد أحداث بعد</p>
                                         </div>
                                     @endforelse
 
@@ -954,7 +941,7 @@
                                         <!-- No results message (shown by JS when filter has no matches) -->
                                         <div class="events-no-results" id="eventsNoResults" style="display:none;">
                                             <i class="fas fa-search" style="font-size:2rem;color:var(--text-muted);opacity:0.4;"></i>
-                                            <p>لا توجد أحداث في هذه الفترة</p>
+                                            <p data-translate="noEventsInPeriod">لا توجد أحداث في هذه الفترة</p>
                                         </div>
                                     @endif
 
@@ -1003,7 +990,7 @@
                                 <div class="info-row">
                                     <div class="info-icon info-icon-purple"><i class="fas fa-weight"></i></div>
                                     <div class="info-text">
-                                        <span class="info-value">{{ $stage->weight }} كج</span>
+                                        <span class="info-value">{{ $stage->weight }} <span data-translate="unitKg">كج</span></span>
                                         <span class="info-label" data-translate="labelWeight">الوزن عند الولادة</span>
                                     </div>
                                 </div>
@@ -1012,7 +999,7 @@
                                 <div class="info-row">
                                     <div class="info-icon info-icon-blue"><i class="fas fa-ruler-vertical"></i></div>
                                     <div class="info-text">
-                                        <span class="info-value">{{ $currentHeight }} سم</span>
+                                        <span class="info-value">{{ $currentHeight }} <span data-translate="unitCm">سم</span></span>
                                         <span class="info-label" data-translate="labelCurrentHeight">الطول الحالي</span>
                                     </div>
                                 </div>
@@ -1032,8 +1019,8 @@
                     <!-- Life Book Gallery Card -->
                     <div class="sidebar-card scroll-reveal-right">
                         <div class="sidebar-header">
-                            <h5><i class="fas fa-book-open"></i> <span>كتاب الحياة</span></h5>
-                            <a href="#" class="view-all-link" id="openLifeBook">عرض كتاب الحياة</a>
+                            <h5><i class="fas fa-book-open"></i> <span data-translate="lifeBookTitle">كتاب الحياة</span></h5>
+                            <a href="#" class="view-all-link" id="openLifeBook"><span data-translate="viewLifeBook">عرض كتاب الحياة</span></a>
                         </div>
                         <div class="sidebar-body">
                             <div class="photo-grid" id="sidebarPhotoGrid">

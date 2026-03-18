@@ -75,14 +75,23 @@ class ProfileViewController extends Controller
         $locale = in_array($stage->default_language ?? '', ['ar', 'en']) ? $stage->default_language : config('app.locale', 'ar');
         app()->setLocale($locale);
 
+        $isPrivate = ! $stage->is_public;
+        $expiresAt = null;
+        if ($isPrivate) {
+            $access = session("profile_access_{$stage->id}");
+            if ($access && isset($access['expires_at'])) {
+                $expiresAt = \Carbon\Carbon::createFromTimestamp($access['expires_at'])->format('Y-m-d H:i');
+            }
+        }
+
         $educationYears = $this->buildEducationYears($stage);
         $lifeStage = $stage->life_stage;
 
         return match ($lifeStage) {
-            'child' => view('profile_pages.child', compact('stage', 'educationYears')),
-            'teenager' => view('profile_pages.teenager', compact('stage', 'educationYears')),
-            'adult' => view('profile_pages.adults', compact('stage', 'educationYears')),
-            default => view('profile_pages.child', compact('stage', 'educationYears')),
+            'child' => view('profile_pages.child', compact('stage', 'educationYears', 'isPrivate', 'expiresAt')),
+            'teenager' => view('profile_pages.teenager', compact('stage', 'educationYears', 'isPrivate', 'expiresAt')),
+            'adult' => view('profile_pages.adults', compact('stage', 'educationYears', 'isPrivate', 'expiresAt')),
+            default => view('profile_pages.child', compact('stage', 'educationYears', 'isPrivate', 'expiresAt')),
         };
     }
 
@@ -164,6 +173,13 @@ class ProfileViewController extends Controller
 
         return redirect()->route('profile.show', $stage)
             ->with('success', 'تم التحقق بنجاح.');
+    }
+
+    public function logout(UserChildhoodStage $stage)
+    {
+        session()->forget("profile_access_{$stage->id}");
+
+        return redirect()->route('profile.pin.form', $stage);
     }
 
     /**

@@ -11,6 +11,7 @@ Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('local
 Route::get('/profile/{stage}', [ProfileViewController::class, 'show'])->name('profile.show');
 Route::get('/profile/{stage}/pin', [ProfileViewController::class, 'pinForm'])->name('profile.pin.form');
 Route::post('/profile/{stage}/pin', [ProfileViewController::class, 'verifyPin'])->name('profile.pin.verify');
+Route::get('/profile/{stage}/logout', [ProfileViewController::class, 'logout'])->name('profile.logout');
 Route::get('/profile/{stage}/document/{document}/embed', [ProfileViewController::class, 'embedDocument'])->name('profile.document.embed');
 
 Route::as('website.')->group(function () {

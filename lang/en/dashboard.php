@@ -99,6 +99,16 @@ return [
         'en' => 'English',
     ],
 
+    'shortcuts' => [
+        'title' => 'Profile Examples',
+        'childhood' => 'Childhood Stage',
+        'childhood_desc' => 'Example childhood page',
+        'teenager' => 'Teenager Stage',
+        'teenager_desc' => 'Example teenager page',
+        'adults' => 'Adulthood Stage',
+        'adults_desc' => 'Example adults page',
+    ],
+
     'breadcrumb' => [
         'dashboard' => 'Dashboard',
         'my_pages' => 'My Pages',

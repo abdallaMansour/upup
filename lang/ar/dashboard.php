@@ -99,6 +99,16 @@ return [
         'en' => 'English',
     ],
 
+    'shortcuts' => [
+        'title' => 'أمثلة البروفايل',
+        'childhood' => 'مرحلة الطفولة',
+        'childhood_desc' => 'مثال صفحة الطفولة',
+        'teenager' => 'مرحلة المراهقة',
+        'teenager_desc' => 'مثال صفحة المراهقة',
+        'adults' => 'مرحلة البلوغ',
+        'adults_desc' => 'مثال صفحة البلوغ',
+    ],
+
     'breadcrumb' => [
         'dashboard' => 'لوحة التحكم',
         'my_pages' => 'صفحاتي',

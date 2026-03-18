@@ -12,7 +12,7 @@ const translations = {
         navAttendance: 'المواظبة',
         navSeller: 'البائع',
         navExpenses: 'النفقة',
-        colorLabel: 'ثيمات الأطفال',
+        colorLabel: 'مظاهر الأطفال',
         navInfoLabel: 'أطفل نقال - المختبف وتغنيمة 🎨',
 
         // Cover

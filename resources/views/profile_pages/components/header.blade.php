@@ -9,7 +9,7 @@
             @if ($isPrivate)
                 <div class="nav-left">
                     @if ($expiresAt)
-                        <span class="expiry-badge" data-content-ar="تنتهي الصلاحية: {{ $expiresAt }}" data-content-en="Expires: {{ $expiresAt }}">{{ __('profile.expires_at') }}: {{ $expiresAt }}</span>
+                        <span class="expiry-badge" data-content-ar="تاريخ الانتهاء: {{ $expiresAt }}" data-content-en="Expires: {{ $expiresAt }}">{{ __('profile.expires_at') }}: {{ $expiresAt }}</span>
                     @endif
                     <a href="{{ route('profile.logout', $stage) }}" class="btn-logout">
                         <i class="fas fa-sign-out-alt me-1"></i><span data-content-ar="تسجيل الخروج" data-content-en="Logout">{{ __('profile.logout') }}</span>

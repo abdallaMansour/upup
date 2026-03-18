@@ -12,6 +12,16 @@ return [
         'alt' => 'Banner',
     ],
 
+    'subscription_countdown' => [
+        'title' => 'Time left until your subscription expires',
+        'days' => 'days',
+        'hours' => 'hours',
+        'minutes' => 'minutes',
+        'seconds' => 'seconds',
+        'expired' => 'Your subscription has expired',
+        'renew' => 'Renew subscription',
+    ],
+
     'cards' => [
         'storage_connections' => 'Storage Connections',
         'storage_desc' => 'Google Drive and Wasabi',

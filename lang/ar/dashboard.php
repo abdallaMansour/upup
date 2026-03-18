@@ -12,6 +12,16 @@ return [
         'alt' => 'إعلان',
     ],
 
+    'subscription_countdown' => [
+        'title' => 'متبقي على انتهاء اشتراكك',
+        'days' => 'يوم',
+        'hours' => 'ساعة',
+        'minutes' => 'دقيقة',
+        'seconds' => 'ثانية',
+        'expired' => 'انتهى اشتراكك',
+        'renew' => 'تجديد الاشتراك',
+    ],
+
     'cards' => [
         'storage_connections' => 'ربط منصات التخزين',
         'storage_desc' => 'Google Drive و Wasabi',

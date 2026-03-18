@@ -221,6 +221,9 @@
                             <i class="bx bx-lock-alt bx-lg text-secondary"></i>
                         </span>
                         <h6 class="card-title mb-0 text-body-secondary">{{ __('my_pages.max_pages_reached') }}</h6>
+                        <p class="mb-0 mt-2 small">
+                            <a href="{{ route('dashboard.packages.index') }}" class="text-primary">{{ __('my_pages.upgrade_package_hint') }}</a>
+                        </p>
                     </div>
                 </div>
             </div>

@@ -48,7 +48,8 @@
                     <tr>
                         <th width="50">#</th>
                         <th>المرحلة</th>
-                        <th>اسم الصف</th>
+                        <th>اسم الصف (عربي)</th>
+                        <th>اسم الصف (إنجليزي)</th>
                         @if(auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage'))
                             <th width="120">الإجراءات</th>
                         @endif
@@ -58,8 +59,9 @@
                     @forelse ($grades as $grade)
                         <tr>
                             <td>{{ $grade->id }}</td>
-                            <td>{{ $grade->stage->name ?? '-' }}</td>
-                            <td><strong>{{ $grade->name }}</strong></td>
+                            <td>{{ $grade->stage ? $grade->stage->name_ar : '-' }}</td>
+                            <td><strong>{{ $grade->name_ar }}</strong></td>
+                            <td>{{ $grade->name_en ?? '—' }}</td>
                             @if(auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage'))
                                 <td>
                                     <div class="dropdown">
@@ -84,7 +86,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage') ? '4' : '3' }}" class="text-center py-5 text-body-secondary">
+                            <td colspan="{{ auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage') ? '5' : '4' }}" class="text-center py-5 text-body-secondary">
                                 لا توجد صفوف بعد.
                                 @if(auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage'))
                                     <a href="{{ route('dashboard.education-grades.create') }}">إضافة صف</a>

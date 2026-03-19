@@ -11,7 +11,7 @@ class PagesController extends Controller
     public function index()
     {
         $media = MediaDepartment::get();
-        $educationStages = EducationStage::with('grades')->orderBy('name')->get();
+        $educationStages = EducationStage::with('grades')->get();
 
         return view('dashboard.index', compact('media', 'educationStages'));
     }

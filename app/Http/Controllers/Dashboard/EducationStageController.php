@@ -27,9 +27,11 @@ class EducationStageController extends Controller
     public function storeStage(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name_ar' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
         ], [], [
-            'name' => 'الاسم',
+            'name_ar' => 'الاسم (عربي)',
+            'name_en' => 'الاسم (إنجليزي)',
         ]);
 
         EducationStage::create($validated);
@@ -45,9 +47,11 @@ class EducationStageController extends Controller
     public function updateStage(Request $request, EducationStage $education_stage)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name_ar' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
         ], [], [
-            'name' => 'الاسم',
+            'name_ar' => 'الاسم (عربي)',
+            'name_en' => 'الاسم (إنجليزي)',
         ]);
 
         $education_stage->update($validated);

@@ -46,7 +46,8 @@
                 <thead>
                     <tr>
                         <th width="50">#</th>
-                        <th>الاسم</th>
+                        <th>الاسم (عربي)</th>
+                        <th>الاسم (إنجليزي)</th>
                         <th>عدد الصفوف</th>
                         @if(auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage'))
                             <th width="120">الإجراءات</th>
@@ -57,7 +58,8 @@
                     @forelse ($stages as $stage)
                         <tr>
                             <td>{{ $stage->id }}</td>
-                            <td><strong>{{ $stage->name }}</strong></td>
+                            <td><strong>{{ $stage->name_ar }}</strong></td>
+                            <td>{{ $stage->name_en ?? '—' }}</td>
                             <td>{{ $stage->grades_count }}</td>
                             @if(auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage'))
                                 <td>
@@ -83,7 +85,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage') ? '4' : '3' }}" class="text-center py-5 text-body-secondary">
+                            <td colspan="{{ auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage') ? '5' : '4' }}" class="text-center py-5 text-body-secondary">
                                 لا توجد مراحل تعليمية بعد.
                                 @if(auth('admin')->check() && auth('admin')->user()->hasPermission('education-stages.manage'))
                                     <a href="{{ route('dashboard.education-stages.create') }}">إضافة مرحلة</a>

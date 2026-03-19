@@ -31,10 +31,12 @@ class EducationGradeController extends Controller
     {
         $validated = $request->validate([
             'education_stage_id' => ['required', 'exists:education_stages,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name_ar' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
         ], [], [
             'education_stage_id' => 'المرحلة',
-            'name' => 'اسم الصف',
+            'name_ar' => 'اسم الصف (عربي)',
+            'name_en' => 'اسم الصف (إنجليزي)',
         ]);
 
         EducationGrade::create($validated);
@@ -53,10 +55,12 @@ class EducationGradeController extends Controller
     {
         $validated = $request->validate([
             'education_stage_id' => ['required', 'exists:education_stages,id'],
-            'name' => ['required', 'string', 'max:255'],
+            'name_ar' => ['required', 'string', 'max:255'],
+            'name_en' => ['nullable', 'string', 'max:255'],
         ], [], [
             'education_stage_id' => 'المرحلة',
-            'name' => 'اسم الصف',
+            'name_ar' => 'اسم الصف (عربي)',
+            'name_en' => 'اسم الصف (إنجليزي)',
         ]);
 
         $education_grade->update($validated);

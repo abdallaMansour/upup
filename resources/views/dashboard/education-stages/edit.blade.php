@@ -18,9 +18,17 @@
                 @method('PUT')
 
                 <div class="mb-4">
-                    <label for="name" class="form-label">الاسم <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $education_stage->name) }}" required maxlength="255">
-                    @error('name')
+                    <label for="name_ar" class="form-label">الاسم (عربي) <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('name_ar') is-invalid @enderror" id="name_ar" name="name_ar" value="{{ old('name_ar', $education_stage->name_ar) }}" required maxlength="255">
+                    @error('name_ar')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="name_en" class="form-label">الاسم (إنجليزي)</label>
+                    <input type="text" class="form-control @error('name_en') is-invalid @enderror" id="name_en" name="name_en" value="{{ old('name_en', $education_stage->name_en) }}" maxlength="255" placeholder="e.g. Primary">
+                    @error('name_en')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

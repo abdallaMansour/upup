@@ -26,7 +26,7 @@ return [
     'confirm_delete_message' => 'لحذف هذه المرحلة، يرجى كتابة الاسم في الحقل أدناه:',
     'confirm_delete_input_label' => 'اكتب الاسم للتأكيد',
     'name_mismatch' => 'الاسم غير مطابق',
-    'theme_language' => 'المظهر واللغة',
+    'theme_language' => 'المظهر',
     'theme_lang_hint' => 'اختر مظهر ولون الصفحة واللغة الافتراضية',
     'preview_link' => 'معاينة الرابط الشخصي',
     'theme_lang_saved' => 'تم حفظ المظهر واللغة بنجاح.',

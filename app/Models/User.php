@@ -27,7 +27,8 @@ class User extends Authenticatable
         'banned_at',
         'education_stage_id',
         'education_grade_id',
-        'school_name',
+        'school_name_ar',
+        'school_name_en',
     ];
 
     /**
@@ -102,5 +103,21 @@ class User extends Authenticatable
     public function educationGrade()
     {
         return $this->belongsTo(EducationGrade::class, 'education_grade_id');
+    }
+
+    /**
+     * Get school name for current locale (ar or en) with fallback.
+     */
+    public function getSchoolNameAttribute(): ?string
+    {
+        $locale = app()->getLocale();
+        $ar = $this->attributes['school_name_ar'] ?? null;
+        $en = $this->attributes['school_name_en'] ?? null;
+
+        if ($locale === 'ar') {
+            return $ar ?? $en;
+        }
+
+        return $en ?? $ar;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\EducationStage;
 use App\Models\MediaDepartment;
+use App\Services\TranslationService;
 use Illuminate\Http\Request;
 
 class PagesController extends Controller
@@ -16,7 +17,7 @@ class PagesController extends Controller
         return view('dashboard.index', compact('media', 'educationStages'));
     }
 
-    public function updateEducation(Request $request)
+    public function updateEducation(Request $request, TranslationService $translationService)
     {
         $validated = $request->validate([
             'education_stage_id' => ['nullable', 'exists:education_stages,id'],
@@ -36,7 +37,24 @@ class PagesController extends Controller
         }
 
         $user = auth()->user();
-        $user->update($validated);
+
+        $schoolName = trim($validated['school_name'] ?? '');
+        if ($schoolName !== '') {
+            [$ar, $en] = $translationService->translateForBothLocales($schoolName);
+            $user->update([
+                'education_stage_id' => $validated['education_stage_id'] ?? null,
+                'education_grade_id' => $validated['education_grade_id'] ?? null,
+                'school_name_ar' => $ar ?: null,
+                'school_name_en' => $en ?: null,
+            ]);
+        } else {
+            $user->update([
+                'education_stage_id' => $validated['education_stage_id'] ?? null,
+                'education_grade_id' => $validated['education_grade_id'] ?? null,
+                'school_name_ar' => null,
+                'school_name_en' => null,
+            ]);
+        }
 
         return redirect()->route('dashboard.index')->with('success', 'تم تحديث المرحلة التعليمية بنجاح.');
     }

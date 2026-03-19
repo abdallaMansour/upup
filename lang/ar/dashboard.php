@@ -38,6 +38,24 @@ return [
         'features_desc' => 'مميزات التطبيق',
         'education_stage' => 'المرحلة التعليمية',
         'education_desc' => 'المرحلة والصف والمدرسة',
+        'account_settings' => 'إعدادات الحساب',
+        'account_settings_desc' => 'تعديل البيانات وكلمة المرور',
+    ],
+
+    'account_settings' => [
+        'title' => 'إعدادات الحساب',
+        'account_tab' => 'الحساب',
+        'security_tab' => 'الأمان',
+        'name' => 'الاسم',
+        'email' => 'البريد الإلكتروني',
+        'phone' => 'الهاتف',
+        'change_password' => 'تغيير كلمة المرور',
+        'current_password' => 'كلمة المرور الحالية',
+        'new_password' => 'كلمة المرور الجديدة',
+        'confirm_password' => 'تأكيد كلمة المرور',
+        'current_password_invalid' => 'كلمة المرور الحالية غير صحيحة',
+        'account_updated' => 'تم تحديث بيانات الحساب بنجاح.',
+        'password_updated' => 'تم تغيير كلمة المرور بنجاح.',
     ],
 
     'modal' => [

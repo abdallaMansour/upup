@@ -153,6 +153,19 @@
                         </div>
                     </a>
                 </div>
+
+                {{-- إعدادات الحساب --}}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a href="{{ route('dashboard.account-settings.index') }}" class="card h-100 text-decoration-none border shadow-sm">
+                        <div class="card-body text-center">
+                            <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-secondary" style="width: 56px; height: 56px;">
+                                <i class="icon-base bx bx-user icon-lg text-secondary"></i>
+                            </span>
+                            <h6 class="card-title mb-1">{{ __('dashboard.cards.account_settings') }}</h6>
+                            <small class="text-body-secondary">{{ __('dashboard.cards.account_settings_desc') }}</small>
+                        </div>
+                    </a>
+                </div>
             </div>
 
             @if (session('success'))

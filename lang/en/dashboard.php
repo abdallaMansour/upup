@@ -38,6 +38,24 @@ return [
         'features_desc' => 'App features',
         'education_stage' => 'Education Stage',
         'education_desc' => 'Stage, grade and school',
+        'account_settings' => 'Account Settings',
+        'account_settings_desc' => 'Edit profile and password',
+    ],
+
+    'account_settings' => [
+        'title' => 'Account Settings',
+        'account_tab' => 'Account',
+        'security_tab' => 'Security',
+        'name' => 'Name',
+        'email' => 'Email',
+        'phone' => 'Phone',
+        'change_password' => 'Change Password',
+        'current_password' => 'Current Password',
+        'new_password' => 'New Password',
+        'confirm_password' => 'Confirm Password',
+        'current_password_invalid' => 'Current password is incorrect',
+        'account_updated' => 'Account updated successfully.',
+        'password_updated' => 'Password changed successfully.',
     ],
 
     'modal' => [

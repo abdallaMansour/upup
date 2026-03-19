@@ -31,6 +31,7 @@ use App\Http\Controllers\Dashboard\StoragePlatformController;
 use App\Http\Controllers\Dashboard\SubscriptionController as DashboardSubscriptionController;
 use App\Http\Controllers\Dashboard\EducationStageController;
 use App\Http\Controllers\Dashboard\EducationGradeController;
+use App\Http\Controllers\Dashboard\AccountSettingsController;
 
 // Admin Auth (login only - no register, no forgot-password)
 Route::prefix('auth')->middleware('guest:admin')->group(function () {
@@ -44,6 +45,12 @@ Route::post('auth/logout', [AdminAuthController::class, 'logout'])->name('logout
 Route::middleware(['auth:web,admin', EnsureUserVerified::class])->group(function () {
     Route::get('/', [PagesController::class, 'index'])->name('index');
     Route::post('education', [PagesController::class, 'updateEducation'])->name('education.update')->middleware('auth:web');
+
+    Route::middleware('auth:web')->group(function () {
+        Route::get('account-settings', [AccountSettingsController::class, 'index'])->name('account-settings.index');
+        Route::put('account-settings', [AccountSettingsController::class, 'updateAccount'])->name('account-settings.update');
+        Route::put('account-settings/password', [AccountSettingsController::class, 'updatePassword'])->name('account-settings.password.update');
+    });
 
     // Verification (must be accessible before full verification)
     Route::get('verification', [VerificationController::class, 'index'])->name('verification.index');

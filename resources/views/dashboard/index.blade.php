@@ -91,8 +91,8 @@
                             <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-label-success" style="width: 56px; height: 56px;">
                                 <i class="icon-base bx bx-child icon-lg text-success"></i>
                             </span>
-                            <h6 class="card-title mb-1">صفحاتي</h6>
-                            <small class="text-body-secondary">مراحل الطفولة وذكرياتها</small>
+                            <h6 class="card-title mb-1">{{ __('dashboard.cards.my_pages') }}</h6>
+                            <small class="text-body-secondary">{{ __('dashboard.cards.my_pages_desc') }}</small>
                         </div>
                     </a>
                 </div>
@@ -169,7 +169,7 @@
                         <form action="{{ route('dashboard.education.update') }}" method="POST">
                             @csrf
                             <div class="modal-header">
-                                <h5 class="modal-title">المرحلة التعليمية</h5>
+                                <h5 class="modal-title">{{ __('dashboard.modal.education_title') }}</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
@@ -206,9 +206,9 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label for="school_name" class="form-label">اسم المدرسة أو الجامعة</label>
+                                    <label for="school_name" class="form-label">{{ __('dashboard.modal.school_name') }}</label>
                                     <input type="text" name="school_name" id="school_name" class="form-control @error('school_name') is-invalid @enderror"
-                                        value="{{ old('school_name', optional(auth()->user())->school_name) }}" placeholder="مثال: مدرسة النور" maxlength="255">
+                                        value="{{ old('school_name', optional(auth()->user())->school_name) }}" placeholder="{{ __('dashboard.modal.school_placeholder') }}" maxlength="255">
                                     @error('school_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

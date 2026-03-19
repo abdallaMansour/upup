@@ -75,7 +75,7 @@
                                 <span class="mini-badge products" style="background:{{ $t['badgeProducts'] }};">{{ __('my_pages.life_stage_' . ($stage->life_stage ?? 'child')) }}</span>
                             </div>
                         </div>
-                        <div class="theme-label">{{ $t['title'] }}</div>
+                        <div class="theme-label">{{ __('my_pages.theme.' . $t['id']) }}</div>
                     </label>
                 @endforeach
             </div>
